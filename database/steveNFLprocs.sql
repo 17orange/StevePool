@@ -30,7 +30,8 @@ delimiter //
 ##### StevePoolUser functions
 create procedure Login( in _uid    int unsigned , 
                         in _pword  char(32)     ,
-                        in _IP     varchar(100) )
+                        in _IP     varchar(100) ,
+                        in _bInfo  varchar(255) )
 begin
   declare _userID int unsigned default 0;
 
@@ -46,7 +47,7 @@ begin
     insert into Session (userID, IP) values (_userID, _IP);
 
     # add in the event
-    insert into Event (userID, type, atTime) values (_userID, 'login', now());
+    insert into Event (userID, type, atTime, browserInfo) values (_userID, 'login', now(), _bInfo);
   end if;
 end;  //
 

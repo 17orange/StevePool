@@ -1,4 +1,31 @@
     <script type="text/javascript">
+      function GetBrowserInfo(){
+        var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []; 
+        if(/trident/i.test(M[1])){
+          tem=/\brv[ :]+(\d+)/g.exec(ua) || []; 
+          return {name:'IE',version:(tem[1]||'')};
+          }   
+        if(M[1]==='Chrome'){
+          tem=ua.match(/\bOPR\/(\d+)/)
+          if(tem!=null)   {return {name:'Opera', version:tem[1]};}
+        }   
+        M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+        if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
+        return {
+          name: M[0],
+          version: M[1]
+        };
+      }
+
+      function GetOSInfo() {
+        var OSName="Unknown OS";
+        if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+        if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+        if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+        if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+        return OSName;
+      }
+
       function TryLogin()
       {
         var user = document.getElementById("loginUser").value;
@@ -14,6 +41,8 @@
         }
         else
         {
+          var bInfo = GetBrowserInfo();
+          document.getElementById("browserInfo").value = bInfo.name + " v" + bInfo.version + " on " + GetOSInfo();
           document.getElementById("loginForm").submit();
         }
       }
@@ -60,6 +89,7 @@
       <div style="position:relative; background:#D9DCE3; width:400px; height:275px; margin:100px auto; border:5px solid #314972; z-index:101; text-align:center; border-radius:10px; color:#6E809F;">
         <form action="helpers/login.php" method="post" id="loginForm" target="taskWindow">
           <input type="hidden" name="task" value="login" />
+          <input type="hidden" name="browserInfo" id="browserInfo" value="No browser set" />
           <table style="border-spacing:10px; width:100%;">
             <tr>
               <td class="noBorder" colspan=2><span style="font-size:200%; font-weight:bold">Login</span></td>

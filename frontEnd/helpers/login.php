@@ -16,6 +16,7 @@
     // clean it
     $uname = mysqli_real_escape_string( $link, $_POST["loginUser"] );
     $pass = mysqli_real_escape_string( $link, $_POST["loginPW"] );
+    $bInfo = mysqli_real_escape_string( $link, $_POST["browserInfo"] );
 
     // test the values they sent
     $results = runQuery( "select * from User where username='" . $uname . "' or email='" . $uname . "'" );
@@ -41,13 +42,15 @@
       // grab their userID
       $results = mysqli_fetch_assoc( $results2 );
       $uid = $results["userID"];
-      runQuery( "call Login(" . $uid . ",md5('" . $pass . "'),'" . $_SERVER['REMOTE_ADDR'] . "')");
+      runQuery( "call Login(" . $uid . ",md5('" . $pass . "'),'" . $_SERVER['REMOTE_ADDR'] . "','" . $bInfo . "')");
 
       // save the session ID for future use
       $results = mysqli_fetch_assoc( runQuery( "select sessionID from Session where userID=" . $uid ));
       $_SESSION["spsID"] = $results["sessionID"];
+      $_SESSION["browserInfo"] = $bInfo;
 
       setcookie("spsID", $_SESSION["spsID"], time() + 3600 * 24 * 30, "/", $_SERVER["SERVER_NAME"]);
+      setcookie("browserInfo", $_SESSION["browserInfo"], time() + 3600 * 24 * 30, "/", $_SERVER["SERVER_NAME"]);
 ?>
       parent.location.search = "?refresh=" + Math.random();
 <?php

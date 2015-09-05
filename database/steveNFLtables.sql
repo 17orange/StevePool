@@ -103,7 +103,8 @@ create table Event (eventID int unsigned primary key auto_increment,
                     gameID int unsigned,
                     type enum('userAdded', 'userEdited', 'userRemoved', 'login', 'madePicks', 'picksEdited', 
                               'lockChange', 'adminPicksEdited', 'accountChanged') not null,
-                    atTime datetime not null);
+                    atTime datetime not null,
+                    browserInfo varchar(255));
 
 create table Session(sessionID int unsigned primary key auto_increment,
                      userID int unsigned not null,
