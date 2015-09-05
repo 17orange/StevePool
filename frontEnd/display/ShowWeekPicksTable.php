@@ -154,7 +154,7 @@
       }
 ?>
           <td class="headerBackgroundTable" style="width:3%; border-left:none;">Score<br><span id="caption<?php echo $grouping; ?>"><?php echo $MNFscore; ?></span></td>
-          <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('points');">Points</td>
+          <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('points');">Total<br/>Points</td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('maxPts');">Max</td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('ytdPts');">YTD</td>
 <?php

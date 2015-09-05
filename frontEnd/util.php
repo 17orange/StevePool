@@ -4,7 +4,7 @@ include_once "SqlException.php";
 
 	global $link, $realDB; 
 
-	$STAGING = false;
+	$STAGING = true;
 
 	$username = "StevePoolUser";
 	$password = '$t3v3P00lU$3r';

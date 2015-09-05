@@ -467,7 +467,7 @@
           <td style="display:none">TB1</td>
           <td style="display:none">TB2</td>
           <td style="display:none">TB3</td>
-          <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('points');">Points</td>
+          <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('points');">Total Points</td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('maxPts');">Max</td>
 <?php
       if( $_SESSION["showPicksWeek"] < 22 )
@@ -499,7 +499,7 @@
       $userID = $thisPick["userID"];
       echo "        </tr>\n        <tr class=\"" . (($myID == $thisPick["userID"]) ? "my" : "table") . "Row\" style=\"color:#" . 
           (($thisPick["advances"] == "Y") ? "007500" : (($thisPick["advances"] == "N") ? "AF0000" : "888800")) . 
-          "\">\n          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "&nbsp;" : $currRank) . 
+          "\">\n          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : $currRank) . 
           "</td>\n          " . "<td class=\"lightBackgroundTable" . (($myID == $thisPick["userID"]) ? " myName\" id=\"myPicks" : "") . 
           "\">" . $thisPick["pName"] . "</td>\n";
       echo "          <td class=\"lightBackgroundTable\">" . $thisPick["sPts"] . "</td>\n";
@@ -514,13 +514,13 @@
       if( $_SESSION["showPicksWeek"] > 19 )
       {
         echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] < 0) 
-            ? "&nbsp;&nbsp;" : (($thisPick["prevWeek2"] < 0) ? (($thisPick["prevWeek2"] + 1) * -1) : $thisPick["prevWeek2"])) . "</td>\n";
+            ? "--&nbsp;" : (($thisPick["prevWeek2"] < 0) ? (($thisPick["prevWeek2"] + 1) * -1) : $thisPick["prevWeek2"])) . "</td>\n";
       }
       // show conference score
       if( $_SESSION["showPicksWeek"] > 20 )
       {
         echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . 
-            ((($thisPick["prevWeek1"] < 0) || ($thisPick["prevWeek2"] < 0)) ? "&nbsp;&nbsp;" : 
+            ((($thisPick["prevWeek1"] < 0) || ($thisPick["prevWeek2"] < 0)) ? "--&nbsp;" : 
             (($thisPick["prevWeek3"] < 0) ? (($thisPick["prevWeek3"] + 1) * -1) : $thisPick["prevWeek3"])) . "</td>\n";
         echo "          <td style=\"display:none;\">" . $thisPick["weeklyWins"] . "</td>\n";
       }
@@ -530,7 +530,7 @@
     echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">";
     if($hasBye || $eliminated)
     {
-      echo "&nbsp;";
+      echo "--";
     }
     else if($thisPick["winner"] == "" && !$poolLocked)
     {
@@ -575,7 +575,7 @@
       $extras = ($_SESSION["showPicksWeek"] == 20) ? 2 : 9;
       for( $z=0; $z<$extras; $z++ )
       {
-        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">&nbsp;</td>\n";
+        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">--</td>\n";
       }
     }
 
@@ -591,7 +591,7 @@
       $toggle = (($toggle == 1) && ($_SESSION["showPicksWeek"] == 20)) ? 2 : 
                 ((($toggle == 2) && ($_SESSION["showPicksWeek"] == 20)) ? 1 : $toggle);
       $tbName = "tieBreaker" . (4 - ($toggle % 4));
-      echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "&nbsp;" : (($thisPick[$tbName] == "0") 
+      echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick[$tbName] == "0") 
           ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID) 
                    ? "X" : $thisPick[$tbName]))) . "</td>\n";
     }
@@ -601,7 +601,7 @@
     {
       if( $_SESSION["showPicksWeek"] == 22 )
       {
-        echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "&nbsp;" : (($thisPick["tieBreaker1"] == "0") 
+        echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick["tieBreaker1"] == "0") 
             ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID) 
                      ? "X" : $thisPick["tieBreaker1"]))) . "</td>\n";
       }
@@ -609,7 +609,7 @@
       echo "          <td style=\"display:none\">" . $thisPick["tb2"] . "</td>\n";
       echo "          <td style=\"display:none\">" . (($games[0]["status"] == 1) ? "0" : $thisPick["tieBreaker1"]) . "</td>\n";
       echo "          <td class=\"lightBackgroundTable\">" . ($hasBye ? "Bye" : ($eliminated ? "Out" : $thisPick["wPts"])) . "</td>\n";
-      echo "          <td class=\"lightBackgroundTable\">" . ($hasBye ? "&nbsp;" : ($eliminated ? "&nbsp;&nbsp;" : $possibleMax)) . "</td>\n";
+      echo "          <td class=\"lightBackgroundTable\">" . ($hasBye ? "--" : ($eliminated ? "--&nbsp;" : $possibleMax)) . "</td>\n";
       if( $_SESSION["showPicksWeek"] < 22 )
       {
         echo "          <td class=\"lightBackgroundTable\">" . (($thisPick["advances"] == "Y") ? "Yes" : 
@@ -741,11 +741,11 @@
             for( var j=start; j<end; j+=1 )
             {
               var thisVal = rows[j].cells[compareIndex].innerHTML;
-              if( isNumeric && ((thisVal == "Bye") || (thisVal == "&nbsp;")) )
+              if( isNumeric && ((thisVal == "Bye") || (thisVal == "--")) )
               {
                 thisVal = 20;
               }
-              else if( isNumeric && ((thisVal == "Out") || (thisVal == "&nbsp;&nbsp;")) )
+              else if( isNumeric && ((thisVal == "Out") || (thisVal == "--&nbsp;")) )
               {
                 thisVal = -20;
               }

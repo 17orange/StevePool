@@ -108,7 +108,7 @@
             $i . "');\">W" . $i . "</td>\n";
       }
 ?>
-          <td class="headerBackgroundTable" style="cursor:pointer;" onClick="SortTable('points');">Points</td>
+          <td class="headerBackgroundTable" style="cursor:pointer;" onClick="SortTable('points');">Total<br/>Points</td>
           <td class="headerBackgroundTable" style="cursor:pointer;" onClick="SortTable('wins');">Weekly<br/>Wins</td>
           <td class="headerBackgroundTable" style="cursor:pointer;" onClick="SortTable('misses');">Missed<br/>Weeks</td>
           <td class="headerBackgroundTable" style="cursor:pointer;" onClick="SortTable('picks');">Correct<br/>Picks</td>

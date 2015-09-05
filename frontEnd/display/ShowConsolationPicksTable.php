@@ -71,6 +71,14 @@
           <td colspan="19" class="headerBackgroundTable" style="font-size:24px;">Consolation Pool Standings</td>
         </tr>
         <tr>
+          <td colspan="2" class="headerBackgroundTable">&nbsp;</td>
+          <td colspan="4" class="headerBackgroundTable">Wild Card</td>
+          <td colspan="4" class="headerBackgroundTable">Divisional Round</td>
+          <td colspan="2" class="headerBackgroundTable">Conference Championships</td>
+          <td colspan="2" class="headerBackgroundTable">Super Bowl</td>
+          <td colspan="5" class="headerBackgroundTable">&nbsp;</td>
+        </tr>
+        <tr>
           <td class="headerBackgroundTable" style="width:3%;">Rank</td>
           <td class="headerBackgroundTable" style="width:16%; cursor:pointer;" onClick="SortTable('name');">Player</td>
 <?php
@@ -111,7 +119,7 @@
   }
 ?>
           <td class="headerBackgroundTable" style="width:3%; border-left:none;">Score<br><span id="caption1"><?php echo $MNFscore; ?></span></td>
-          <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('weekPts');">Points</td>
+          <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('weekPts');">Total Points</td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('maxPts');">Max</td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('picks');">Correct Picks</td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('ytdPts');">Regular Season</td>
