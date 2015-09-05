@@ -1,0 +1,471 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #D9DCE3;
+  position: absolute;
+  font-size: 16px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+button {
+  font-family: 'Fjalla One', sans-serif;
+  background: #D9DCE3;
+  cursor: pointer;
+}
+
+.bigButton {
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 24px;
+  background: #D9DCE3;
+  cursor: pointer;
+}
+
+select {
+  font-family: 'Fjalla One', sans-serif;
+  background: #D9DCE3;
+}
+
+.mainHeader {
+  background: #0A1F42;
+  position: relative;
+  color: #D9DCE3;
+}
+
+.mainTitle {
+  position: absolute;
+  text-align: right;
+  width: 100%;
+  left: -20px;
+  top: 82px;
+  font-size: 50px;
+}
+
+.mainSubtitle {
+  position: absolute;
+  text-align: right;
+  width: 100%;
+  left: -20px;
+  top: 168px;
+  font-size: 25px;
+}
+
+.loggedInInfo {
+  position: absolute;
+  text-align: right;
+  width: 100%;
+  left: -20px;
+  top: 28px;
+  font-size: 25px;
+}
+
+.navMenuDiv {
+  width: 1200px; 
+  max-width:100%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.navMenu {
+  list-style: none outside none; 
+  float: right !important; 
+  margin-right: 20px; 
+  padding: 5px 0px;
+}
+
+.mainTable {
+  padding: 10px 25px;
+  margin: 5px;
+  background: #0A1F42;
+  color: #D9DCE3;
+  border: 5px solid #314972;
+  border-radius: 10px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+  width: 1200px;
+  max-width: 100%;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.reloadableTable {
+  border-collapse: collapse;
+  width: 100%; 
+  text-align: center; 
+  border-spacing: 0;
+  font-size: 12px;
+  color: #0A1F42;
+}
+
+.gameScoreTable {
+  width: 100%;
+  border-spacing: 0;
+  padding: 5px;
+}
+
+.navButtonActive {
+  padding: 10px 25px;
+  margin: 5px;
+  background-color: #0A1F42;
+  color: #D9DCE3;
+  border: 5px solid #6E809F;
+  border-radius: 10px;
+}
+
+.navButton {
+  padding: 10px 25px;
+  margin: 5px;
+  background-color: #D9DCE3;
+  color: #6E809F;
+  border: 5px solid #0A1F42;
+  border-radius: 10px;
+}
+
+.navButton:hover {
+  background-color: #6E809F;
+  border: 5px solid #0A1F42;
+  color: #D9DCE3;
+  border-radius: 10px;
+}
+
+a.wash:link, a.wash:visited, a.wash:hover, a.wash:active {
+  text-decoration:none;
+}
+
+.lightBackgroundTable {
+  background-color: #D9DCE3;
+  height: 100%;
+}
+
+.headerBackgroundTable {
+  background-color: #6E809F;
+}
+
+.navLi {
+  position: relative;
+  float: left;
+}
+
+.clearfix {
+  clear: both;
+}
+
+.mpImgTD {
+  position: relative;
+  z-index: 1;
+}
+
+.BGimg {
+  width: 100%;
+  height: 100%;
+  opacity: 0.15;
+  filter: alpha(opacity=15);
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.BGimg3 {
+  display: block;
+  max-width: 80%;
+  max-height: 80%;
+  width: auto;
+  height: auto;
+  opacity: 1;
+  filter: alpha(opacity=100);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.imgDiv {
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  opacity: 1;
+  filter: alpha(opacity=100);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.teamLogo {
+  width: 100%;
+  height: auto;
+}
+
+.BGimg2 {
+  width: 100%;
+  height: 100%;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.mpAwayTeamLocked {
+  border: 3px solid #314972;
+  border-bottom-style: none;
+  background-color: #6E809F;
+  color: #0A1F42;
+}
+
+.mpHomeTeamLocked {
+  border: 3px solid #314972;
+  border-top-style: none;
+  background-color: #6E809F;
+  color: #0A1F42;
+}
+
+.mpAwayTeam {
+  border: 2px solid #314972;
+  border-bottom-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+}
+
+.mpHomeTeam {
+  border: 2px solid #314972;
+  border-top-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+}
+
+.mpMobileAwayTeamLocked {
+  border: 3px solid #314972;
+  border-right-style: none;
+  background-color: #6E809F;
+  color: #0A1F42;
+  width: 20%;
+}
+
+.mpMobileHomeTeamLocked {
+  border: 3px solid #314972;
+  border-left-style: none;
+  background-color: #6E809F;
+  color: #0A1F42;
+  width: 20%;
+}
+
+.mpMobileAwayTeam {
+  border: 2px solid #314972;
+  border-right-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+  width: 20%;
+}
+
+.mpMobileHomeTeam {
+  border: 2px solid #314972;
+  border-left-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+  width: 20%;
+}
+
+.mpLockedSelection {
+  border: 5px solid #314972;
+  background-color: #6E809F;
+  color: #0A1F42;
+}
+
+.mpValidSelection {
+  border: 5px solid #007500;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+}
+
+.mpInvalidSelection {
+  border: 5px solid #AF0000;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+}
+
+.mpGameInfo {
+  border: 2px solid #314972;
+  border-bottom-style: none;
+  border-top-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+}
+
+.mpGameInfoLocked {
+  border: 3px solid #314972;
+  border-bottom-style: none;
+  border-top-style: none;
+  background-color: #6E809F;
+  color: #0A1F42;
+}
+
+.mpMobileGameInfo {
+  border: 2px solid #314972;
+  border-left-style: none;
+  border-right-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+  width: 20%;
+}
+
+.mpMobileGameInfoLocked {
+  border: 3px solid #314972;
+  border-left-style: none;
+  border-right-style: none;
+  background-color: #6E809F;
+  color: #0A1F42;
+  width: 20%;
+}
+
+.mpMobileBGText {
+  position: relative;
+  text-align: center;
+  font-size: 50px;
+  width: 20%;
+}
+
+.dragTable {
+  width: 0px;
+  height: 0px;
+  border-spacing: 0px;
+  text-align: center;
+  position: absolute;
+  color: #0A1F42;
+  z-index: 3;
+  font-size: 14px;
+}
+
+td {
+  border: 1px solid #314972;
+  padding: 0;
+}
+
+.tableRow {
+  height:100%;
+}
+
+.myRow {
+  height:100%;
+  border:5px solid #314972;
+}
+
+.myName {
+  font-weight:bold; 
+  font-size:150%;
+}
+
+.gsTL {
+  border-width:1px 1px 1px 0px;
+}
+
+.gsBR {
+  border-width:0px 1px 1px 1px;
+}
+
+.gsBL {
+  border-width:0px 1px 1px 0px;
+}
+
+.posTop {
+  border-width: 2px 2px 2px 2px;
+  cursor: pointer;
+}
+
+.posOther {
+  border-width: 0px 2px 2px 2px;
+  cursor: pointer;
+}
+
+.posTeam {
+  position:relative;
+  height:100%;
+  width:100%;
+  font-size:14px;
+}
+
+.noBorder {
+  border: 0;
+}
+
+.cellShadeOuter {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.cellShadeBG {
+  width: 100%;
+  height: 101%;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  opacity: 0.25;
+  filter=alpha(25);
+  z-index: 1;
+}
+
+.cellShadeTable {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.cellShadeCell {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.blankIt {
+  opacity: 0;
+  filter=alpha(0);
+}
+
+.centerIt {
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  width: 100%;
+  transform: translate(0, -50%);
+}
+
+.deadlineInfo {
+  display: inline-table;
+  vertical-align: middle;
+  margin-left: 20px;
+  font-size: 20px;
+}
+
+.poolLogo {
+  vertical-align: middle;
+}
+
+.fjalla {
+  font-family: 'Fjalla One', sans-serif;
+}
+
+.montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
