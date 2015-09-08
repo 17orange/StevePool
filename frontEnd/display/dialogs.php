@@ -82,6 +82,7 @@
         $('#loginDialog').css( 'top', $(window).scrollTop() + 'px');
         $('#accountDialog').css( 'top', $(window).scrollTop() + 'px');
         $('#pickConfirmDialog').css( 'top', $(window).scrollTop() + 'px');
+        $('#pickErrorDialog').css( 'top', $(window).scrollTop() + 'px');
       }
     </script>
     <div id="loginDialog" style="position:absolute; width:100%; height:100%; display:none;">
@@ -176,6 +177,14 @@
       <div style="position:relative; background:#D9DCE3; width:500px; height:200px; margin:100px auto; border:5px solid #314972; z-index:101; text-align:center; border-radius:10px; color:#6E809F;"><br><br>
         <span style="font-size:200%; text-align:center; width:100%;">Picks saved successfully!</span><br><br><br>
         <span class="navButton" onclick="$('#pickConfirmDialog').slideToggle('fast');">OK</span>
+      </div>
+    </div>
+
+    <div id="pickErrorDialog" style="position:absolute; width:100%; height:100%; display:none;">
+      <div style="position:absolute; width:100%; height:100%; background:#000000; opacity:0.5; z-index:100;" onclick="$('#pickErrorDialog').slideToggle('fast');"></div>
+      <div style="position:relative; background:#D9DCE3; width:500px; height:200px; margin:100px auto; border:5px solid #314972; z-index:101; text-align:center; border-radius:10px; color:#6E809F;"><br><br>
+        <span style="font-size:200%; text-align:center; width:100%;">Error saving picks.  Please try again.</span><br><br><br>
+        <span class="navButton" onclick="$('#pickErrorDialog').slideToggle('fast');">OK</span>
       </div>
     </div>
 

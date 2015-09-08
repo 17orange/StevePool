@@ -213,7 +213,7 @@
               <br/>
               <div>
                 <span style="font-size: 30px;"><?php echo ($MNFgame["awayTeam"] . " @ " . $MNFgame["homeTeam"]); ?> Combined Score</span>
-                <input id="tieBreak" name="tieBreak" type="text" maxlength="3" onKeyUp="NumbersOnly(); ToggleSaveButton();" value="<?php
+                <input id="tieBreak" name="tieBreak" type="text" maxlength="3" onKeyUp="NumbersOnly(); ToggleSaveButtonMobile();" value="<?php
   echo ($TBresult["tieBreaker"] != 0) ? $TBresult["tieBreaker"] : "";
 ?>" style="width:60px; font-size: 30px;" />
               </div>

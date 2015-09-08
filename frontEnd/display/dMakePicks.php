@@ -151,6 +151,14 @@
   </script>
 <?php
   }
+  else if( isset($showFailure) && $showFailure )
+  {
+?>
+  <script type="text/javascript">
+    $('#pickErrorDialog').slideToggle('fast');
+  </script>
+<?php
+  }
 
   if( isset($_POST["windowScrollPos"]) )
   {

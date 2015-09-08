@@ -1,6 +1,7 @@
 <?php
   // make sure they've submitted some picks
   $showSuccess = false;
+  $showFailure = false;
   if( isset($_POST["picksType"]) && isset($_POST["game1"]) && $_POST["picksType"] == "regularSeason" )
   {
     // make sure these are valid game ids
@@ -37,8 +38,18 @@
       // run it
       runQuery( $saveQuery );
 
-      // let them know it worked
+      // let them know if it worked
       $showSuccess = true;
+      for( $i=1; $i<17 && $showSuccess; $i++ )
+      {
+        if( isset($_POST["game" . $i]) ) 
+        {
+          $checkResult = mysqli_fetch_assoc( runQuery( "select winner, points from Pick join Session using (userID) where gameID=" . 
+                                                       $_POST["game" . $i] . " and sessionID=" . $_SESSION["spsID"] ) );
+          $showFailure = ($checkResult["winner"] != $winners[$_POST["pts" . $i]]) || ($checkResult["points"] != $_POST["pts" . $i]);
+          $showSuccess = !$showFailure;
+        }
+      }
     }
   }
   else if( isset($_POST["picksType"]) && isset($_POST["game1"]) && $_POST["picksType"] == "wildCard" )
