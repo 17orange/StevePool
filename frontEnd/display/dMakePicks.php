@@ -80,11 +80,11 @@
       echo "      <div style=\"height:100px;\"></div>\n";
     }
     // the picks for this week aren't open yet
-    else if( $results["openYet"] == "N" )
+    else if( $openResults["openYet"] == "N" )
     {
       echo "      <div style=\"height:100px;\"></div>\n";
       echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">Picks for next week will open at " . 
-          $results["openStr"] . "</div>\n";
+          $openResults["openStr"] . "</div>\n";
       echo "      <div style=\"height:100px;\"></div>\n";
     }
     // regular season picks

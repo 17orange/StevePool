@@ -6,24 +6,27 @@
   $eraResults = runQuery( "select if(now() > (select value from Constants where name='preseasonEnd'), 'SUCCESS', if(now() > (select value from Constants where name='preseasonStart'), 'Preseason', 'Offseason')) as heading");
   $era = mysqli_fetch_assoc($eraResults);
 
-  $results = runQuery( "select season, weekNumber, if(now()>=openTime, 'Y', 'N') as openYet, date_Format(openTime, '%l:%i%p %W') as openStr " . 
-                       "from Game join WeekDeadline using (season, weekNumber) where status < 3 order by gameID asc limit 1" );
+  $results = runQuery( "select season, weekNumber from Game where status < 3 order by gameID asc limit 1" );
+  $openResults = runQuery( "select if(now()>=openTime, 'Y', 'N') as openYet, date_Format(openTime, '%l:%i%p %W') as openStr " . 
+                           "from Game join WeekDeadline using (season, weekNumber) where lockTime > now() order by gameID asc limit 1" );
   if( mysqli_num_rows($results) == 0 )
   {
     $results = mysqli_fetch_assoc( runQuery( "select season, weekNumber, if(now()>=openTime, 'Y', 'N') as openYet, " . 
                                              "date_Format(openTime, '%l:%i%p %W') as openStr from Game " . 
                                              "join WeekDeadline using (season, weekNumber) order by gameID desc limit 1" ) );
+    $openResults = $results;
   }
   else
   {
     $results = mysqli_fetch_assoc( $results );
+    $openResults = mysqli_fetch_assoc( $openResults );
   }
 
   if( $era["heading"] == "SUCCESS" )
   {
-    if( $results["openYet"] == "N" )
+    if( $openResults["openYet"] == "N" )
     {
-      echo "          <tr><td class='noBorder'>Picks for next week will open at " . $results["openStr"] . "</td></tr>\n";
+      echo "          <tr><td class='noBorder'>Picks for next week will open at " . $openResults["openStr"] . "</td></tr>\n";
     }
     else
     {

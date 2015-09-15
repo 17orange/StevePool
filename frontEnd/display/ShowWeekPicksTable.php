@@ -51,7 +51,7 @@
                        "abs(tieBreaker - " . $MNFscore . ") as tb1, Division.name as dName, Conference.name as cName, " .
                        (($_SESSION["showPicksSplit"] == "division") ? "divID" : 
                         (($_SESSION["showPicksSplit"] == "conference") ? "confID" : "1")) . " as section, " .   
-                       "if(Game.status=3, 1, 0) as isFinal " . 
+                       "if(Game.status=3, 1, 0) as isFinal, homeScore, awayScore, if(Game.status=1, 1, 0) as inFuture " . 
                        "from WeekResult join SeasonResult using (userID, season) join User using (userID) " . 
                        "join Game using (weekNumber, season) join Pick using (userID, gameID) " . 
                        "join Division using (divID) join Conference using (confID) " . 
@@ -201,12 +201,13 @@
     {
       echo "<div class=\"cellShadeOuter\">\n";
       echo "<div class=\"cellShadeBG\" style=\"background-color:#" . (($thisPick["winner"] == $thisPick["leader"]) ? "00AA00" : 
-          (($thisPick["status"] == 1) ? "D9DCE3" : ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) 
+          (($thisPick["inFuture"] == 1) ? "D9DCE3" : ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) 
           ? "FFFF00" : "FF0000"))) . ";\"></div>\n";
       $span = "<span style=\"color:#" . 
-          (($thisPick["winner"] == $thisPick["leader"]) ? "007500" : (($thisPick["status"] == 1) ? "0A1F42" : 
-          ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) ? "888800" : "BF0000"))) . 
-          ";\">" . $thisPick["winner"] . " " . $thisPick["pPts"] . "</span>";
+          (($thisPick["winner"] == $thisPick["leader"]) ? "007500" : (($thisPick["inFuture"] == 1) ? "0A1F42" : 
+          ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) ? "888800" : "BF0000"))) . ";" . 
+          ((!$thisPick["inFuture"] && !$thisPick["isFinal"]) ? " font-style:italic;" : "") . "\">" . $thisPick["winner"] . 
+          " " . $thisPick["pPts"] . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? "<div class=\"blankIt\">" : "") . $span . "<br>";
       echo "<div class=\"imgDiv\"><img class=\"teamLogo" . ($logosHidden ? " blankIt" : "") . "\" src=\"" . 
           getIcon($thisPick["winner"], $_SESSION["showPicksSeason"]) . "\"/></div>";

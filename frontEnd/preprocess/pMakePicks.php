@@ -2,7 +2,7 @@
   // make sure they've submitted some picks
   $showSuccess = false;
   $showFailure = false;
-  if( isset($_POST["picksType"]) && isset($_POST["game1"]) && $_POST["picksType"] == "regularSeason" )
+  if( isset($_POST["picksType"]) && $_POST["picksType"] == "regularSeason" )
   {
     // make sure these are valid game ids
     $query = "select weekNumber from Game where gameID in (-1";
