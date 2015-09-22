@@ -2,11 +2,10 @@
   // grab the current week and season
   if( !isset($_SESSION["showPicksWeek"]) )
   {
-    $results = runQuery( "select weekNumber from Game join WeekResult using (weekNumber, season) where status < 3 order by gameID limit 1" );
-    if( mysqli_num_rows( $results ) > 0 )
+    $results = RunQuery( "select weekNumber from Game join WeekResult using (weekNumber, season) where status < 3 order by gameID limit 1" );
+    if( count( $results ) > 0 )
     {
-      $results = mysqli_fetch_assoc( $results );
-      $_SESSION["showPicksWeek"] = $results["weekNumber"];
+      $_SESSION["showPicksWeek"] = $results[0]["weekNumber"];
     }
     else
     {
@@ -15,8 +14,8 @@
   }
   if( !isset($_SESSION["showPicksSeason"]) )
   {
-    $results = mysqli_fetch_assoc( runQuery( "select season from Game join WeekResult using (weekNumber, season) order by gameID desc limit 1" ) );
-    $_SESSION["showPicksSeason"] = $results["season"];
+    $results = RunQuery( "select season from Game join WeekResult using (weekNumber, season) order by gameID desc limit 1" );
+    $_SESSION["showPicksSeason"] = $results[0]["season"];
   }
   if( !isset($_SESSION["showPicksSplit"]) )
   {
@@ -30,17 +29,11 @@
     }
     else
     {
-      $results = mysqli_fetch_assoc( runQuery( "select inPlayoffs from SeasonResult join Session using (userID) " . 
-                                               "where sessionID=" . $_SESSION["spsID"] . " and season=" . 
-                                               $_SESSION["showPicksSeason"] ) );
-      $_SESSION["showPicksSplit"] = (($results["inPlayoffs"] == "Y") ? "playoffs" : "consolation");
+      $results = RunQuery( "select inPlayoffs from SeasonResult join Session using (userID) where sessionID=" . 
+                           $_SESSION["spsID"] . " and season=" . $_SESSION["showPicksSeason"] );
+      $_SESSION["showPicksSplit"] = (($results[0]["inPlayoffs"] == "Y") ? "playoffs" : "consolation");
     }
   }
-
-
-  // see whether we should show the buttons
-  $gamesToGo = mysqli_fetch_assoc( runQuery( "select count(*) as num from Game where season=" . $_SESSION["showPicksSeason"] . 
-                                             " and weekNumber=" . $_SESSION["showPicksWeek"] . " and status in (1,2) " ) );
 ?>
     <div class="mainTable montserrat" id="mainTable">
       <table style="width:100%;">
@@ -75,6 +68,7 @@
           </td>
           <td class="noBorder fjalla" style="width:20%; text-align:center;">
 <?php
+  $logosHidden = false;
   if( isset($_SESSION["spsID"]) )
   {
     $logosHidden = (isset($_SESSION["spHideLogos"]) && $_SESSION["spHideLogos"] == "TRUE");
@@ -108,18 +102,18 @@
                 <option value="conference"<?php echo ($_SESSION["showPicksSplit"] == "conference") ? " selected" : ""; ?>>Conference Standings</option>
                 <option value="division"<?php echo ($_SESSION["showPicksSplit"] == "division") ? " selected" : ""; ?>>Division Standings</option>
                 <option value="consolation"<?php
-  $seasonResult = mysqli_fetch_assoc( runQuery( "select value from Constants where name='fetchSeason'" ) );
-  $weekResult = mysqli_fetch_assoc( runQuery( "select value from Constants where name='fetchWeek'" ) );
+  $seasonResult = RunQuery( "select value from Constants where name='fetchSeason'" );
+  $weekResult = RunQuery( "select value from Constants where name='fetchWeek'" );
   
   echo ($_SESSION["showPicksSplit"] == "consolation") ? " selected" : ""; 
-  if( $_SESSION["showPicksSeason"] >= $seasonResult["value"] && $weekResult["value"] < 18 )
+  if( $_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 18 )
   {
     echo " disabled";
   }
 ?>>Consolation Standings</option>
                 <option value="playoffs"<?php
   echo ($_SESSION["showPicksSplit"] == "playoffs") ? " selected" : ""; 
-  if( $_SESSION["showPicksSeason"] >= $seasonResult["value"] && $weekResult["value"] < 18 )
+  if( $_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 18 )
   {
     echo " disabled";
   }
@@ -141,13 +135,13 @@
     echo "                <option value=\"18\"" . ((18 == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
           ">Wild Card Round</option>\n";
     echo "                <option value=\"19\"" . ((19 == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
-         (($_SESSION["showPicksSeason"] >= $seasonResult["value"] && $weekResult["value"] < 19 ) ? " disabled" : "") .
+         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 19 ) ? " disabled" : "") .
          ">Divisional Round</option>\n";
     echo "                <option value=\"20\"" . ((20 == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
-         (($_SESSION["showPicksSeason"] >= $seasonResult["value"] && $weekResult["value"] < 20 ) ? " disabled" : "") .
+         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 20 ) ? " disabled" : "") .
          ">Conference Championship</option>\n";
     echo "                <option value=\"22\"" . ((22 == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
-         (($_SESSION["showPicksSeason"] >= $seasonResult["value"] && $weekResult["value"] < 22 ) ? " disabled" : "") .
+         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 22 ) ? " disabled" : "") .
          ">Super Bowl</option>\n";
   }
   else
@@ -155,7 +149,7 @@
     for( $i=1; $i<18; $i++ )
     {
       echo "                <option value=\"" . $i . "\"" . (($i == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
-          ((($_SESSION["showPicksSeason"] >= $seasonResult["value"]) && ($i > $weekResult["value"])) ? " disabled" : "") . 
+          ((($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"]) && ($i > $weekResult[0]["value"])) ? " disabled" : "") . 
           ">" . $i . "</option>\n";
     }
   }
@@ -170,11 +164,11 @@
               <span>of</span>
               <select name="showPicksSeason" onchange="document.getElementById('changeOutcomeWeek').submit();">
 <?php
-  $results = runQuery( "select distinct(season) as season from SeasonResult order by season" );
-  while( ($row = mysqli_fetch_assoc( $results )) != null )
+  $results = RunQuery( "select distinct(season) as season from SeasonResult order by season" );
+  foreach( $results as $row )
   {
     echo "                <option value=\"" . $row["season"] . "\"" . (($row["season"] == $_SESSION["showPicksSeason"]) ? " selected" : "") . 
-        ((($row["season"] >= $seasonResult["value"]) && ($_SESSION["showPicksWeek"] > $weekResult["value"])) ? " disabled" : "") . 
+        ((($row["season"] >= $seasonResult[0]["value"]) && ($_SESSION["showPicksWeek"] > $weekResult[0]["value"])) ? " disabled" : "") . 
         ">" . $row["season"] . "</option>\n";
   }
 ?>

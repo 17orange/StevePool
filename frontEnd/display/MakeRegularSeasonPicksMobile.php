@@ -10,7 +10,8 @@
   // make sure we've got the week right
   if( !isset($result) )
   {
-    $result = mysqli_fetch_assoc( RunQuery("select weekNumber, season from Game where lockTime >= now() and status!=19 order by weekNumber limit 1") );
+    $result = RunQuery("select weekNumber, season from Game where lockTime >= now() and status!=19 order by weekNumber limit 1", false);
+    $result = $result[0];
   }
 ?>
       <span style="font-size: 30px">Making Picks for Week <?php echo $result["weekNumber"]; ?>
@@ -31,11 +32,11 @@
   $pickResults = RunQuery( "select gameID, points, winner, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
                            "status, timeLeft, homeScore, awayScore from Pick join Game using (gameID) " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . 
-                           $result["weekNumber"] . " and season=" . $result["season"] );
+                           $result["weekNumber"] . " and season=" . $result["season"], false );
   $picks = array();
   $playedTeams = "'XQZ'";
   $MNFgame = null;
-  while( ($thisPick = mysqli_fetch_assoc($pickResults)) != null )
+  foreach( $pickResults as $thisPick )
   {
     $picks[17 - $thisPick["points"]] = $thisPick;
     $playedTeams .= ",'" . $thisPick["homeTeam"] . "','" . $thisPick["awayTeam"] . "'";
@@ -49,7 +50,7 @@
   $byes = array();
   $byeCount = 0;
   $byeResults = RunQuery( "select teamID from Team where teamID not in (" . $playedTeams . ")");
-  while( ($thisBye = mysqli_fetch_assoc($byeResults)) != null )
+  foreach( $byeResults as $thisBye )
   {
     $byes[count($byes)] = $thisBye["teamID"];
   }
@@ -206,19 +207,18 @@
   }
 
   // grab the tiebreaker they set
-  $TBresult = mysqli_fetch_assoc( RunQuery( "select tieBreaker from WeekResult join Session using (userID) where sessionID=" . 
-                                              $_SESSION["spsID"] . " and weekNumber=" . $result["weekNumber"] . " and season=" . 
-                                              $result["season"] ) );
+  $TBresult = RunQuery( "select tieBreaker from WeekResult join Session using (userID) where sessionID=" . $_SESSION["spsID"] . 
+                        " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"] );
 ?>
               <br/>
               <div>
                 <span style="font-size: 30px;"><?php echo ($MNFgame["awayTeam"] . " @ " . $MNFgame["homeTeam"]); ?> Combined Score</span>
                 <input id="tieBreak" name="tieBreak" type="text" maxlength="3" onKeyUp="NumbersOnly(); ToggleSaveButtonMobile();" value="<?php
-  echo ($TBresult["tieBreaker"] != 0) ? $TBresult["tieBreaker"] : "";
+  echo ($TBresult[0]["tieBreaker"] != 0) ? $TBresult[0]["tieBreaker"] : "";
 ?>" style="width:60px; font-size: 30px;" />
               </div>
               <br/>
-              <button id="saveRosterButton" class="bigButton" onclick="document.getElementById('windowScrollPos').value = $(window).scrollTop(); showWarning = false; document.getElementById('makePicksForm').submit();"<?php 
+              <button id="saveRosterButton" style="font-size:48px;" class="bigButton" onclick="document.getElementById('windowScrollPos').value = $(window).scrollTop(); showWarning = false; document.getElementById('makePicksForm').submit();"<?php 
   echo $saveButtonEnabled ? "" : " disabled"; ?>>Save Picks</button>
             </form>
           </td>

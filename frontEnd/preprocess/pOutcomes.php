@@ -15,12 +15,12 @@
     }
 
     // see if we need to cap the playoffs stuff
-    $seasonResult = mysqli_fetch_assoc( runQuery( "select value from Constants where name='fetchSeason'" ) );
-    $weekResult = mysqli_fetch_assoc( runQuery( "select value from Constants where name='fetchWeek'" ) );
-    if( $_SESSION["showPicksSplit"] == "playoffs" && $_POST["showPicksSeason"] == $seasonResult["value"] && 
-        $_POST["showPicksWeek"] > $weekResult["value"] )
+    $seasonResult = RunQuery( "select value from Constants where name='fetchSeason'" );
+    $weekResult = RunQuery( "select value from Constants where name='fetchWeek'" );
+    if( $_SESSION["showPicksSplit"] == "playoffs" && $_POST["showPicksSeason"] == $seasonResult[0]["value"] && 
+        $_POST["showPicksWeek"] > $weekResult[0]["value"] )
     {
-      $_POST["showPicksWeek"] = $weekResult["value"];
+      $_POST["showPicksWeek"] = $weekResult[0]["value"];
     }
 
     $_SESSION["showPicksWeek"] = $_POST["showPicksWeek"];

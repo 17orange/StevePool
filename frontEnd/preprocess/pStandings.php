@@ -12,8 +12,8 @@
   // if they dont have anything set, default to now
   if( !isset($_SESSION["showStandingsSeason"]) )
   {
-    $results = mysqli_fetch_assoc( runQuery( "select season from Game join WeekResult using (weekNumber, season) order by gameID desc limit 1" ) );
-    $_SESSION["showStandingsSeason"] = $results["season"];
+    $results = RunQuery( "select season from Game join WeekResult using (weekNumber, season) order by gameID desc limit 1" );
+    $_SESSION["showStandingsSeason"] = $results[0]["season"];
   }
   if( !isset($_SESSION["showStandingsSplit"]) )
   {

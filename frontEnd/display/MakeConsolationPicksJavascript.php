@@ -2,34 +2,34 @@
       var emptyImg = "includes/nfl.png";
 <?php
   // fill in the seed data
-  $afcSeed1 = mysqli_fetch_assoc( RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
-                                            " and weekNumber=19 order by gameID limit 0,1" ) );
-  $afcSeed2 = mysqli_fetch_assoc( RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
-                                            " and weekNumber=19 order by gameID limit 1,1" ) );
-  $afcWCGame1 = mysqli_fetch_assoc( RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                                              " and weekNumber=18 order by gameID limit 0,1" ) );
-  $afcWCGame2 = mysqli_fetch_assoc( RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                                              " and weekNumber=18 order by gameID limit 1,1" ) );
-  $afcSeed1 = $afcSeed1["homeTeam"];
-  $afcSeed2 = $afcSeed2["homeTeam"];
-  $afcSeed3 = $afcWCGame1["homeTeam"];
-  $afcSeed4 = $afcWCGame2["homeTeam"];
-  $afcSeed5 = $afcWCGame2["awayTeam"];
-  $afcSeed6 = $afcWCGame1["awayTeam"];
-  $nfcSeed1 = mysqli_fetch_assoc( RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
-                                            " and weekNumber=19 order by gameID limit 2,1" ) );
-  $nfcSeed2 = mysqli_fetch_assoc( RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
-                                            " and weekNumber=19 order by gameID limit 3,1" ) );
-  $nfcWCGame1 = mysqli_fetch_assoc( RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                                              " and weekNumber=18 order by gameID limit 2,1" ) );
-  $nfcWCGame2 = mysqli_fetch_assoc( RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                                              " and weekNumber=18 order by gameID limit 3,1" ) );
-  $nfcSeed1 = $nfcSeed1["homeTeam"];
-  $nfcSeed2 = $nfcSeed2["homeTeam"];
-  $nfcSeed3 = $nfcWCGame1["homeTeam"];
-  $nfcSeed4 = $nfcWCGame2["homeTeam"];
-  $nfcSeed5 = $nfcWCGame2["awayTeam"];
-  $nfcSeed6 = $nfcWCGame1["awayTeam"];
+  $afcSeed1 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
+                        " and weekNumber=19 order by gameID limit 0,1" );
+  $afcSeed2 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
+                        " and weekNumber=19 order by gameID limit 1,1" );
+  $afcWCGame1 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
+                          " and weekNumber=18 order by gameID limit 0,1" );
+  $afcWCGame2 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
+                          " and weekNumber=18 order by gameID limit 1,1" );
+  $afcSeed1 = $afcSeed1[0]["homeTeam"];
+  $afcSeed2 = $afcSeed2[0]["homeTeam"];
+  $afcSeed3 = $afcWCGame1[0]["homeTeam"];
+  $afcSeed4 = $afcWCGame2[0]["homeTeam"];
+  $afcSeed5 = $afcWCGame2[0]["awayTeam"];
+  $afcSeed6 = $afcWCGame1[0]["awayTeam"];
+  $nfcSeed1 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
+                        " and weekNumber=19 order by gameID limit 2,1" );
+  $nfcSeed2 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
+                        " and weekNumber=19 order by gameID limit 3,1" );
+  $nfcWCGame1 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
+                          " and weekNumber=18 order by gameID limit 2,1" );
+  $nfcWCGame2 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
+                          " and weekNumber=18 order by gameID limit 3,1" );
+  $nfcSeed1 = $nfcSeed1[0]["homeTeam"];
+  $nfcSeed2 = $nfcSeed2[0]["homeTeam"];
+  $nfcSeed3 = $nfcWCGame1[0]["homeTeam"];
+  $nfcSeed4 = $nfcWCGame2[0]["homeTeam"];
+  $nfcSeed5 = $nfcWCGame2[0]["awayTeam"];
+  $nfcSeed6 = $nfcWCGame1[0]["awayTeam"];
 
   echo "      var AS1 = '" . $afcSeed1 . "';\n";
   echo "      var AS2 = '" . $afcSeed2 . "';\n";

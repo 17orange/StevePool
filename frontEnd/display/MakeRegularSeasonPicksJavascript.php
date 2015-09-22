@@ -492,13 +492,13 @@
         var newRow = row + direction;
         while( newRow > 0 && newRow < 17 && direction != 0 )
         {
-          if( document.getElementById("mp3_" + newRow).className != "mpLockedSelection" )
+          if( document.getElementById("mp3_" + newRow).className.indexOf("mpLockedSelection") != -1 )
           {
-            direction = 0;
+            newRow += direction;
           }
           else
           {
-            newRow += direction;
+            direction = 0;
           }
         }
 

@@ -1,11 +1,11 @@
       <span>Making Picks for Super Bowl</span>
 <?php
   // grab the two teams
-  $superBowlTeams = mysqli_fetch_assoc( RunQuery( "select awayTeam as AFC, homeTeam as NFC from Game where weekNumber=" . 
-                                                  $result["weekNumber"] . " and season=" . $result["season"] ) );
+  $superBowlTeams = RunQuery( "select awayTeam as AFC, homeTeam as NFC from Game where weekNumber=" . 
+                              $result["weekNumber"] . " and season=" . $result["season"] );
 ?>
-      <button onClick="PickAllAwayTeams()">All <?php echo $superBowlTeams["AFC"]; ?></button>
-      <button onClick="PickAllHomeTeams()">All <?php echo $superBowlTeams["NFC"]; ?></button>
+      <button onClick="PickAllAwayTeams()">All <?php echo $superBowlTeams[0]["AFC"]; ?></button>
+      <button onClick="PickAllHomeTeams()">All <?php echo $superBowlTeams[0]["NFC"]; ?></button>
       <br/>
       <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
         <tr><td class="noBorder" colspan=11>&nbsp;</td></tr>
@@ -35,9 +35,9 @@
                            "if(type='winner2Q', 3, if(type='winner1Q', 4, if(type='passYds', 5, if(type='passYds2Q', 6, " . 
                            "if(type='rushYds', 7, if(type='rushYds2Q', 8, if(type='TDs', 9,10))))))))) as ord from Pick " . 
                            "join Game using (gameID) join Session using (userID) where sessionID=" . $_SESSION["spsID"] . 
-                           " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"] );
+                           " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"], false );
   $picks = array();
-  while( ($thisPick = mysqli_fetch_assoc($pickResults)) != null )
+  foreach( $pickResults as $thisPick )
   {
     $picks[$thisPick["ord"]] = $thisPick;
   }
@@ -184,14 +184,13 @@
   }
 
   // grab the tiebreaker they set
-  $TBresult = mysqli_fetch_assoc( RunQuery( "select tieBreaker1 from PlayoffResult join Session using (userID) where sessionID=" . 
-                                            $_SESSION["spsID"] . " and weekNumber=" . $result["weekNumber"] . " and season=" . 
-                                            $result["season"] ) );
+  $TBresult = RunQuery( "select tieBreaker1 from PlayoffResult join Session using (userID) where sessionID=" . $_SESSION["spsID"] . 
+                        " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"] );
 ?>
               <br/>
               <span>Combined Super Bowl score</span>
               <input id="tieBreak" name="tieBreak" type="text" maxlength="3" onKeyUp="NumbersOnly(); ToggleSaveButton();" value="<?php
-  echo $TBresult["tieBreaker1"];
+  echo $TBresult[0]["tieBreaker1"];
 ?>" style="width:35px;" />
               <br/><br/>
               <button id="saveRosterButton" onclick="document.getElementById('windowScrollPos').value = $(window).scrollTop(); document.getElementById('makePicksForm').submit();"<?php 

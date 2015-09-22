@@ -19,18 +19,18 @@
     $bInfo = mysqli_real_escape_string( $link, $_POST["browserInfo"] );
 
     // test the values they sent
-    $results = runQuery( "select * from User where username='" . $uname . "' or email='" . $uname . "'" );
-    $results2 = runQuery( "select * from User where (username='" . $uname . "' or email='" . $uname . "') and password=md5('" . $pass . "')" );
+    $results = RunQuery( "select * from User where username='" . $uname . "' or email='" . $uname . "'" );
+    $results2 = RunQuery( "select * from User where (username='" . $uname . "' or email='" . $uname . "') and password=md5('" . $pass . "')" );
 
     // user doesnt exist
-    if( mysqli_num_rows( $results ) == 0 )
+    if( count( $results ) == 0 )
     {
 ?>
       parent.document.getElementById("loginError").innerHTML = "No user matching that username/email found.";
 <?php
     }
     // user exists, but password is bad
-    else if( mysqli_num_rows( $results2 ) == 0 )
+    else if( count( $results2 ) == 0 )
     {
 ?>
       parent.document.getElementById("loginError").innerHTML = "Wrong password.";
@@ -40,13 +40,12 @@
     else
     {
       // grab their userID
-      $results = mysqli_fetch_assoc( $results2 );
-      $uid = $results["userID"];
-      runQuery( "call Login(" . $uid . ",md5('" . $pass . "'),'" . $_SERVER['REMOTE_ADDR'] . "','" . $bInfo . "')");
+      $uid = $results2[0]["userID"];
+      RunQuery( "call Login(" . $uid . ",md5('" . $pass . "'),'" . $_SERVER['REMOTE_ADDR'] . "','" . $bInfo . "')", false);
 
       // save the session ID for future use
-      $results = mysqli_fetch_assoc( runQuery( "select sessionID from Session where userID=" . $uid ));
-      $_SESSION["spsID"] = $results["sessionID"];
+      $results = RunQuery( "select sessionID from Session where userID=" . $uid );
+      $_SESSION["spsID"] = $results[0]["sessionID"];
       $_SESSION["browserInfo"] = $bInfo;
 
       setcookie("spsID", $_SESSION["spsID"], time() + 3600 * 24 * 30, "/", $_SERVER["SERVER_NAME"]);

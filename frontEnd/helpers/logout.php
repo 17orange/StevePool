@@ -17,7 +17,7 @@
     $sid = mysqli_real_escape_string( $link, $_SESSION["spsID"] );
 
     // log them out and reload the parent
-    runQuery( "call Logout(" . $sid . ",'" . $_SERVER['REMOTE_ADDR'] . "')");
+    RunQuery( "call Logout(" . $sid . ",'" . $_SERVER['REMOTE_ADDR'] . "')", false);
 
     // save the session ID for future use
     unset($_SESSION["spsID"]);

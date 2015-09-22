@@ -1,3 +1,4 @@
+import urllib
 import statsUtil
 import fetchWeek
 from subprocess import Popen
@@ -25,6 +26,9 @@ cur.execute("drop table LockTimes")
 
 # mark the latest update
 cur.execute("update Constants set value='1' where name='fetchWeek'")
+
+# clear the cache
+urllib.urlopen("http://localhost/stevePool/helm/flushCache.php").read()
 
 # commit the changes
 statsUtil.db.commit()

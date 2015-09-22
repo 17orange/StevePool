@@ -23,8 +23,8 @@
               <span>for</span>
               <select name="showStandingsSeason" onchange="document.getElementById('changeStandings').submit();">
 <?php
-  $results = runQuery( "select distinct(season) as season from SeasonResult order by season" );
-  while( ($row = mysqli_fetch_assoc( $results )) != null )
+  $results = RunQuery( "select distinct(season) as season from SeasonResult order by season" );
+  foreach( $results as $row )
   {
     echo "                <option value=\"" . $row["season"] . "\"" . 
         (($row["season"] == $_SESSION["showStandingsSeason"]) ? " selected" : "") . ">" . $row["season"] . "</option>\n";

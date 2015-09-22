@@ -14,27 +14,26 @@
   $myID = 0;
   if( isset($_SESSION["spsID"]) )
   {
-    $results = mysqli_fetch_assoc( runQuery( "select coalesce(userID, 0) as userID from Session where sessionID=" . 
-                                             $_SESSION["spsID"] ) );
-    $myID = $results["userID"];
+    $results = RunQuery( "select coalesce(userID, 0) as userID from Session where sessionID=" . $_SESSION["spsID"] );
+    $myID = $results[0]["userID"];
   }
 
   // grab the next refresh time
   $gamesLive = 0;
   $lastWeek = 18;
-  $results = mysqli_num_rows( runQuery( "select count(*) as num, weekNumber from Game where season=" . 
-                                        $_SESSION["showStandingsSeason"] . " and status=2 order by gameTime, gameID" ) );
-  if( $results["num"] > 0 )
+  $results = RunQuery( "select count(*) as num, weekNumber from Game where season=" . 
+                       $_SESSION["showStandingsSeason"] . " and status=2 order by gameTime, gameID" );
+  if( $results[0]["num"] > 0 )
   {
-    $gamesLive = $results["num"];
-    $lastWeek = $results["weekNumber"];
+    $gamesLive = $results[0]["num"];
+    $lastWeek = $results[0]["weekNumber"];
   }
 
-  $results = runQuery( "select gameTime, weekNumber from Game where season=" . $_SESSION["showStandingsSeason"] . 
+  $results = RunQuery( "select gameTime, weekNumber from Game where season=" . $_SESSION["showStandingsSeason"] . 
                        " and status=1 order by gameTime asc limit 1" );
-  if( mysqli_num_rows($results) > 0 )
+  if( count($results) > 0 )
   {
-    $results = mysqli_fetch_assoc( $results );
+    $results = $results[0];
     $firstRefresh = $results["gameTime"];
     if( $results["weekNumber"] < $lastWeek )
     {
@@ -44,7 +43,7 @@
 
   // grab all of the rows
   $section = -1;
-  $results = runQuery( "select userID, concat(firstName, ' ', lastName) as pName, WeekResult.points as wPts, " .
+  $results = RunQuery( "select userID, concat(firstName, ' ', lastName) as pName, WeekResult.points as wPts, " .
                        "SeasonResult.points as sPts, Division.name as dName, Conference.name as cName, weekNumber, " .
                        (($_SESSION["showStandingsSplit"] == "division") ? "divID" : 
                         (($_SESSION["showStandingsSplit"] == "conference") ? "confID" : "1")) . " as section, " .
@@ -57,10 +56,9 @@
   $currRank = 0;
   $playerCount = 0;
   $currScore = 50000;
-  $thisWeek = mysqli_fetch_assoc($results);
-  while( $thisWeek != null )
+  foreach( $results as $num => $thisWeek )
   {
-    $nextWeek = mysqli_fetch_assoc($results);
+    $nextWeek = ($num < (count($results) - 1)) ? $results[$num + 1] : null;
 
     // see if we need to start a new table
     if( $thisWeek["section"] != $section )
@@ -163,9 +161,6 @@
       echo "          <td class=\"lightBackgroundTable\">" . (($thisWeek["firstRoundBye"] == "Y") ? "Yes" : 
           (($thisWeek["firstRoundBye"] == "N") ? "No" : "Maybe")) . "</td>\n";
     }
-
-    // move to the next one
-    $thisWeek = $nextWeek;
   }
   echo "        </tr>\n";
 ?>

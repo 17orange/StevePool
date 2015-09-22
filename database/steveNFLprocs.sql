@@ -84,6 +84,7 @@ begin
   declare _numGames tinyint unsigned default 0;
   declare _numGamesNeeded tinyint unsigned default 0;
   declare _numGamesMissed tinyint unsigned default 0;
+  declare _numAlreadyLocked tinyint unsigned default 0;
   declare _userID int unsigned default 0;
   select if(_pick16!='',1,0) + if(_pick15!='',1,0) + if(_pick14!='',1,0) + if(_pick13!='',1,0) + if(_pick12!='',1,0) + 
          if(_pick11!='',1,0) + if(_pick10!='',1,0) + if(_pick9!='',1,0) + if(_pick8!='',1,0) + if(_pick7!='',1,0) + 
@@ -103,9 +104,15 @@ begin
           _pick8, _pick7, _pick6, _pick5, _pick4, _pick3, _pick2, _pick1));
   select count(*) into _numGamesNeeded from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason');
+  select count(*) into _numAlreadyLocked from Pick join Game using (gameID) join Session using (userID) 
+         where sessionID=_sessID and points in (if(_pick16!='',16,0), 
+         if(_pick15!='',15,0), if(_pick14!='',14,0), if(_pick13!='',13,0), if(_pick12!='',12,0), if(_pick11!='',11,0), 
+         if(_pick10!='',10,0), if(_pick9!='',9,0), if(_pick8!='',8,0), if(_pick7!='',7,0), if(_pick6!='',6,0), 
+         if(_pick5!='',5,0), if(_pick4!='',4,0), if(_pick3!='',3,0), if(_pick2!='',2,0), if(_pick1!='',1,0)) and 
+         weekNumber=_week and lockTime<now() and season=(select value from Constants where name='fetchSeason');
 
   # make sure everything is set up correct-like
-  if _numGames = _numGamesNeeded and _numPicks = _numGames and _numGamesMissed = 0 then
+  if _numGames = _numGamesNeeded and _numPicks = _numGames and _numGamesMissed = 0 and _numAlreadyLocked = 0 then
     # save the winners they picked
     update Pick join Session using (userID) join Game using (gameID) set winner=_pick16, points=16 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 

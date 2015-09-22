@@ -43,6 +43,24 @@
         {
           var bInfo = GetBrowserInfo();
           document.getElementById("browserInfo").value = bInfo.name + " v" + bInfo.version + " on " + GetOSInfo();
+          document.getElementById("loginForm").action = "helpers/login.php";
+          document.getElementById("loginForm").submit();
+        }
+      }
+
+      function TryReset()
+      {
+        var user = document.getElementById("loginUser").value;
+        var error = document.getElementById("loginError");
+        if( user == "" )
+        {
+          error.innerHTML = "You must enter either your username or email address.";
+        }
+        else
+        {
+          var bInfo = GetBrowserInfo();
+          document.getElementById("browserInfo").value = bInfo.name + " v" + bInfo.version + " on " + GetOSInfo();
+          document.getElementById("loginForm").action = "helpers/forgotPassword.php";
           document.getElementById("loginForm").submit();
         }
       }
@@ -112,7 +130,7 @@
               <td class="noBorder" colspan=2><span id="loginError" style="font-size:100%; color:#FF0000;"></span></td>
             </tr>
             <tr>
-              <td class="noBorder" colspan=2><a href="helpers/forgotPassword.php" target="taskWindow"><span style="font-size:100%;">Reset My Password</span></a></td>
+              <td class="noBorder" colspan=2><button onClick="TryReset(); return false;">Reset My Password</button></td>
             </tr>
           </table>
         </form>
@@ -124,10 +142,9 @@
   $acctEmail = "";
   if( isset($_SESSION["spsID"]) )
   {
-    $results = mysqli_fetch_assoc( runQuery( "select username, email from User join Session using (userID) where sessionID=" . 
-                                             $_SESSION["spsID"] ) );
-    $acctUser = $results["username"];
-    $acctEmail = $results["email"];
+    $results = RunQuery( "select username, email from User join Session using (userID) where sessionID=" . $_SESSION["spsID"] );
+    $acctUser = $results[0]["username"];
+    $acctEmail = $results[0]["email"];
   }
 ?>
     <div id="accountDialog" style="position:absolute; width:100%; height:100%; display:none;">

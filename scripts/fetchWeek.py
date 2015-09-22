@@ -398,5 +398,8 @@ if __name__ == "__main__":
 	# mark the latest update
 	cur.execute("update Constants set value=now() where name='lastUpdate'")
 	
+	# clear the cache
+	urllib.urlopen("http://localhost/stevePool/helm/flushCache.php").read()
+
 	# commit the changes
 	statsUtil.db.commit()

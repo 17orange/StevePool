@@ -20,9 +20,8 @@
   if( isset($_SESSION["spsID"]) )
   {
     $spsID = mysqli_real_escape_string( $link, $_SESSION["spsID"] );
-    $results = runQuery( "select * from Session where sessionID=" . $spsID . " and IP='" . 
-                         $_SERVER["REMOTE_ADDR"] . "'" );
-    if( mysqli_num_rows( $results ) == 0 )
+    $results = RunQuery( "select * from Session where sessionID=" . $spsID . " and IP='" . $_SERVER["REMOTE_ADDR"] . "'", false );
+    if( count( $results ) == 0 )
     {
       unset( $_SESSION["spsID"] );
     }
@@ -33,9 +32,9 @@
   }
   if( isset($_SESSION["spsID"]) && !isset($_SESSION["playerName"]) )
   {
-    $results = mysqli_fetch_assoc( runQuery( "select concat(firstName, ' ' , lastName) as playerName from User " . 
-                                             "join Session using (userID) where sessionID=" . $_SESSION["spsID"] ) );
-    $_SESSION["playerName"] = $results["playerName"];
+    $results = RunQuery( "select concat(firstName, ' ' , lastName) as playerName from User " . 
+                         "join Session using (userID) where sessionID=" . $_SESSION["spsID"] );
+    $_SESSION["playerName"] = $results[0]["playerName"];
   }
 
   // see if they hid the logos

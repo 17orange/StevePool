@@ -12,11 +12,12 @@
 
   // grab their userID so we can show their picks
   $myID = 0;
+  $logosHidden = false;
   if( isset($_SESSION["spsID"]) )
   {
-    $results = mysqli_fetch_assoc( runQuery( "select coalesce(userID, 0) as userID from Session where sessionID=" . 
-                                             $_SESSION["spsID"] ) );
-    $myID = $results["userID"];
+    $results = RunQuery( "select coalesce(userID, 0) as userID from Session where sessionID=" . $_SESSION["spsID"] );
+    $myID = $results[0]["userID"];
+    $logosHidden = (isset($_SESSION["spHideLogos"]) && $_SESSION["spHideLogos"] == "TRUE");
   }
 
   // grab the games from that week
@@ -24,10 +25,10 @@
   $gamesLive = 0;
   $firstRefresh = "";
   $minGameID = -1;
-  $results = runQuery( "select *, if(homeScore > awayScore, homeTeam, if(awayScore > homeScore, awayTeam, '')) as leader, " .
+  $results = RunQuery( "select *, if(homeScore > awayScore, homeTeam, if(awayScore > homeScore, awayTeam, '')) as leader, " .
                        "if(lockTime>now(), 0, 1) as isLocked " . 
-                       "from Game where weekNumber>17 and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID" );
-  while( ($thisGame = mysqli_fetch_assoc($results)) != null )
+                       "from Game where weekNumber>17 and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID", false );
+  foreach( $results as $thisGame )
   {
     if( $minGameID == -1 || $thisGame["gameID"] < $minGameID )
     {
@@ -51,7 +52,7 @@
 
   // grab all of the rows
   $poolLocked = (($games[0]["isLocked"] == 1) && ($games[0]["status"] != 19));
-  $results = runQuery( "select userID, concat(firstName, ' ', lastName) as pName, ConsolationResult.points as cPts, " . 
+  $results = RunQuery( "select userID, concat(firstName, ' ', lastName) as pName, ConsolationResult.points as cPts, " . 
                        "wc1AFC, wc2AFC, wc1NFC, wc2NFC, div1AFC, div2AFC, div1NFC, div2NFC, confAFC, confNFC, " . 
                        "superBowl, picksCorrect, tieBreaker, abs(tieBreaker - " . $MNFscore . ") as tb2, " . 
                        "(" . $MNFscore . " - tieBreaker) as tb3, SeasonResult.points as tb4, SeasonResult.weeklyWins as tb5, " . 
@@ -60,7 +61,7 @@
                        "where season=" . $_SESSION["showPicksSeason"] . " order by filter asc, cPts desc, picksCorrect desc, " . 
                        ($poolLocked ? "tb2 asc, tb3 desc, " : "") . "tb4 desc, tb5 desc" );
   $pickBank = array();
-  while( ($thisPick = mysqli_fetch_assoc($results)) != null )
+  foreach( $results as $thisPick )
   {
     $pickBank[count($pickBank)] = $thisPick;
   }

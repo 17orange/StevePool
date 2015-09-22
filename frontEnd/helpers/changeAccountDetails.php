@@ -21,10 +21,9 @@
     $pword2 = (isset($_POST["acctPW2"]) && ($_POST["acctPW2"] != "")) ? mysqli_real_escape_string( $link, $_POST["acctPW2"] ) : "";
 
     // make sure nobody else has that username
-    $thisGuy = mysqli_fetch_assoc( runQuery( "select userID from User join Session using (userID) where sessionID=" . $sid ));
-    $results = mysqli_fetch_assoc( runQuery( "select count(*) as num from User where userID != " . $thisGuy["userID"] . 
-                                             " and username='" . $username . "'" ) );
-    if( $results["num"] != 0 )
+    $thisGuy = RunQuery( "select userID from User join Session using (userID) where sessionID=" . $sid );
+    $results = RunQuery( "select count(*) as num from User where userID != " . $thisGuy[0]["userID"] . " and username='" . $username . "'" );
+    if( $results[0]["num"] != 0 )
     {
 ?>
       parent.document.getElementById('acctError').innerHTML = "Username already in use";
@@ -33,9 +32,8 @@
     else
     {
       // make sure nobody else has that email
-      $results = mysqli_fetch_assoc( runQuery( "select count(*) as num from User where userID != " . $thisGuy["userID"] . 
-                                             " and email='" . $email . "'" ) );
-      if( $results["num"] != 0 )
+      $results = RunQuery( "select count(*) as num from User where userID != " . $thisGuy[0]["userID"] . " and email='" . $email . "'" );
+      if( $results[0]["num"] != 0 )
       {
 ?>
       parent.document.getElementById('acctError').innerHTML = "Email already in use";
@@ -44,9 +42,8 @@
       else
       {
         // make sure he sent the right password
-        $results = mysqli_fetch_assoc( runQuery( "select count(*) as num from User where userID = " . $thisGuy["userID"] . 
-                                                 " and password=md5('" . $pword . "')" ) );
-        if( $results["num"] != 1 )
+        $results = RunQuery( "select count(*) as num from User where userID = " . $thisGuy[0]["userID"] . " and password=md5('" . $pword . "')" );
+        if( $results[0]["num"] != 1 )
         {
 ?>
       parent.document.getElementById('acctError').innerHTML = "Password not correct";
@@ -56,8 +53,7 @@
         {
           // ok go ahead and update it
           $newPW = ($pword2 != "") ? ("md5('" . $pword2 . "')") : "null";
-          $results = mysqli_fetch_assoc( runQuery( "call EditAccount(" . $sid . ", '" . $username . "', '" . 
-                                                   $email . "', " . $newPW . ")" ) );
+          $results = RunQuery( "call EditAccount(" . $sid . ", '" . $username . "', '" . $email . "', " . $newPW . ")", false );
 ?>
       parent.document.getElementById('acctError').innerHTML = "Info updated!";
 <?php

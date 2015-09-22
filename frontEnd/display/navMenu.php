@@ -3,26 +3,27 @@
       <div class="deadlineInfo">
         <table>
 <?php
-  $eraResults = runQuery( "select if(now() > (select value from Constants where name='preseasonEnd'), 'SUCCESS', if(now() > (select value from Constants where name='preseasonStart'), 'Preseason', 'Offseason')) as heading");
-  $era = mysqli_fetch_assoc($eraResults);
+  $era = RunQuery( "select if(now() > (select value from Constants where name='preseasonEnd'), 'SUCCESS', " . 
+                   "if(now() > (select value from Constants where name='preseasonStart'), 'Preseason', 'Offseason')) as heading", false);
 
-  $results = runQuery( "select season, weekNumber from Game where status < 3 order by gameID asc limit 1" );
-  $openResults = runQuery( "select if(now()>=openTime, 'Y', 'N') as openYet, date_Format(openTime, '%l:%i%p %W') as openStr " . 
-                           "from Game join WeekDeadline using (season, weekNumber) where lockTime > now() order by gameID asc limit 1" );
-  if( mysqli_num_rows($results) == 0 )
+  $results = RunQuery( "select season, weekNumber from Game where status < 3 order by gameID asc limit 1" );
+  $openResults = RunQuery( "select if(now()>=openTime, 'Y', 'N') as openYet, date_Format(openTime, '%l:%i%p %W') as openStr " . 
+                           "from Game join WeekDeadline using (season, weekNumber) where lockTime > now() order by gameID asc limit 1", false );
+  if( count($results) == 0 )
   {
-    $results = mysqli_fetch_assoc( runQuery( "select season, weekNumber, if(now()>=openTime, 'Y', 'N') as openYet, " . 
-                                             "date_Format(openTime, '%l:%i%p %W') as openStr from Game " . 
-                                             "join WeekDeadline using (season, weekNumber) order by gameID desc limit 1" ) );
+    $results = RunQuery( "select season, weekNumber, if(now()>=openTime, 'Y', 'N') as openYet, " . 
+                         "date_Format(openTime, '%l:%i%p %W') as openStr from Game " . 
+                         "join WeekDeadline using (season, weekNumber) order by gameID desc limit 1", false );
+    $results = $results[0];
     $openResults = $results;
   }
   else
   {
-    $results = mysqli_fetch_assoc( $results );
-    $openResults = mysqli_fetch_assoc( $openResults );
+    $results = $results[0];
+    $openResults = $openResults[0];
   }
 
-  if( $era["heading"] == "SUCCESS" )
+  if( $era[0]["heading"] == "SUCCESS" )
   {
     if( $openResults["openYet"] == "N" )
     {
@@ -32,18 +33,18 @@
     {
       echo "          <tr><td class='noBorder'>Current Week Deadlines:</td></tr>\n";
 
-      $lockResults = mysqli_fetch_assoc( runQuery( "select count(*) as num from Game where season=" . $results["season"] . 
-                                                   " and weekNumber=" . $results["weekNumber"] . " and lockTime <= now()" ));
-      if( $lockResults["num"] > 0 )
+      $lockResults = RunQuery( "select count(*) as num from Game where season=" . $results["season"] . 
+                               " and weekNumber=" . $results["weekNumber"] . " and lockTime <= now()", false );
+      if( $lockResults[0]["num"] > 0 )
       {
-        echo "          <tr><td class='noBorder'>" . $lockResults["num"] . " game" . (($lockResults["num"] == 1) ? " is" : "s are") . 
+        echo "          <tr><td class='noBorder'>" . $lockResults[0]["num"] . " game" . (($lockResults["num"] == 1) ? " is" : "s are") . 
             " locked!</td></tr>\n";
       }
 
-      $lockResults = runQuery( "select count(*) as num, date_Format(lockTime, if(lockTime<date_add(now(), interval 1 week), '%l:%i%p %W', " . 
+      $lockResults = RunQuery( "select count(*) as num, date_Format(lockTime, if(lockTime<date_add(now(), interval 1 week), '%l:%i%p %W', " . 
                                "'%l:%i%p %b %e')) as lockStr from Game where season=" . $results["season"] . " and weekNumber=" . 
-                               $results["weekNumber"] . " and lockTime > now() group by lockTime order by lockTime" );
-      while( ($thisLock = mysqli_fetch_assoc($lockResults)) != null )
+                               $results["weekNumber"] . " and lockTime > now() group by lockTime order by lockTime", false );
+      foreach( $lockResults as $thisLock )
       {
         echo "          <tr><td class='noBorder'>" . $thisLock["num"] . " game" . (($thisLock["num"] == 1) ? "" : "s") . " lock" . 
             (($thisLock["num"] == 1) ? "s" : "") . " at " . $thisLock["lockStr"] . "</td></tr>\n";
@@ -60,9 +61,9 @@
 ?></span>
       <span class="mainTitle">Steve's <?php echo $results["season"]; ?> NFL Office Pool</span>
       <span class="mainSubtitle"><?php
-  if( $era["heading"] != "SUCCESS" )
+  if( $era[0]["heading"] != "SUCCESS" )
   {
-    echo $era["heading"];
+    echo $era[0]["heading"];
   }
   else if( $results["weekNumber"] == 18 )
   {

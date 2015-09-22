@@ -1,17 +1,17 @@
 <?php
   // see what week they need to be setting
-  $poolResults = mysqli_fetch_assoc( RunQuery( "select inPlayoffs, firstRoundBye from SeasonResult join Session using (userID) " . 
-                                               "where sessionID=" . $_SESSION["spsID"] . " and season=(select value from Constants " .
-                                               "where name='fetchSeason')" ) );
+  $poolResults = RunQuery( "select inPlayoffs, firstRoundBye from SeasonResult join Session using (userID) where sessionID=" . 
+                           $_SESSION["spsID"] . " and season=(select value from Constants where name='fetchSeason')" );
+  $poolResults = $poolResults[0];
   $gamesStillTBP = 1;
-  $result = RunQuery("select weekNumber, season from Game where lockTime >= now() and status!=19 order by weekNumber limit 1");
-  if( mysqli_num_rows( $result ) == 0 )
+  $result = RunQuery("select weekNumber, season from Game where lockTime >= now() and status!=19 order by weekNumber limit 1", false);
+  if( count( $result ) == 0 )
   {
     $gamesStillTBP = 0;
   }
   else
   {
-    $result = mysqli_fetch_assoc( $result );
+    $result = $result[0];
 
     if( $result["weekNumber"] < 18 )
     {
@@ -37,19 +37,19 @@
 ?>
     <div class="mainTable" id="mainTable">
 <?php
-  if( $gamesStillTBP == 0 )
+  if( isset($gamesStillTBP) && $gamesStillTBP == 0 )
   {
-    $playoffsPlayed = mysqli_fetch_assoc( RunQuery( "select count(*) as num from Game where weekNumber>17 and season=(select value " . 
-                                                    "from Constants where name='fetchSeason') and status not in (1,19)" ) );
-    $gamesLeft = mysqli_fetch_assoc( RunQuery( "select count(*) as num from Game where weekNumber>17 and season=(select value " . 
-                                               "from Constants where name='fetchSeason') and status in (1,19)" ) );
-    if( $poolResults["inPlayoffs"] == "N" && $playoffsPlayed["num"] > 0 )
+    $playoffsPlayed = RunQuery( "select count(*) as num from Game where weekNumber>17 and season=(select value " . 
+                                "from Constants where name='fetchSeason') and status not in (1,19)" );
+    $gamesLeft = RunQuery( "select count(*) as num from Game where weekNumber>17 and season=(select value " . 
+                           "from Constants where name='fetchSeason') and status in (1,19)" );
+    if( $poolResults["inPlayoffs"] == "N" && $playoffsPlayed[0]["num"] > 0 )
     {
       echo "      <div style=\"height:100px;\"></div>\n";
       echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">Picks closed for consolation pool</div>\n";
       echo "      <div style=\"height:100px;\"></div>\n";
     }
-    else if( $gamesLeft["num"] > 0 )
+    else if( $gamesLeft[0]["num"] > 0 )
     {
       echo "      <div style=\"height:100px;\"></div>\n";
       echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">Upcoming matchups yet to be determined</div>\n";
@@ -67,9 +67,8 @@
     // see if they got eliminated already
     if( $result["weekNumber"] >= 18 && $poolResults["inPlayoffs"] == "Y" )
     {
-      $outOfPlayoffs = mysqli_fetch_assoc( RunQuery( "select prevWeek1, prevWeek2, prevWeek3 from PlayoffResult " . 
-                                                     "join Session using (userID) where sessionID=" . 
-                                                     $_SESSION["spsID"] . " and weekNumber=22") );
+      $outOfPlayoffs = RunQuery( "select prevWeek1, prevWeek2, prevWeek3 from PlayoffResult join Session using (userID) where sessionID=" . 
+                                 $_SESSION["spsID"] . " and weekNumber=22");
     }
 
     // they're not in the pool for this season
@@ -107,9 +106,9 @@
       }
     }
     // they've been eliminated
-    else if( ($result["weekNumber"] == 19 && $outOfPlayoffs["prevWeek1"] < 0) || 
-             ($result["weekNumber"] == 20 && $outOfPlayoffs["prevWeek2"] < 0) || 
-             ($result["weekNumber"] == 22 && $outOfPlayoffs["prevWeek3"] < 0))
+    else if( ($result["weekNumber"] == 19 && $outOfPlayoffs[0]["prevWeek1"] < 0) || 
+             ($result["weekNumber"] == 20 && $outOfPlayoffs[0]["prevWeek2"] < 0) || 
+             ($result["weekNumber"] == 22 && $outOfPlayoffs[0]["prevWeek3"] < 0))
     {
       echo "      <div style=\"height:100px;\"></div>\n";
       echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">You have been eliminated from the playoff pool!  Better luck next year!</div>\n";

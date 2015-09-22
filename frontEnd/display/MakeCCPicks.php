@@ -27,9 +27,9 @@
   $pickResults = RunQuery( "select gameID, points, winner, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
                            "status, timeLeft, homeScore, awayScore, type from Pick join Game using (gameID) " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . 
-                           $result["weekNumber"] . " and season=" . $result["season"] );
+                           $result["weekNumber"] . " and season=" . $result["season"], false );
   $picks = array();
-  while( ($thisPick = mysqli_fetch_assoc($pickResults)) != null )
+  foreach( $pickResults as $thisPick )
   {
     $picks[5 - $thisPick["points"]] = $thisPick;
   }
@@ -167,12 +167,12 @@
 <?php
   $games = RunQuery( "select homeTeam, awayTeam from Game where weekNumber=" . $result["weekNumber"] . 
                      " and season=" . $result["season"] . " order by gameTime desc" );
-  $tieBreakers = mysqli_fetch_assoc( RunQuery( "select tieBreaker1, tieBreaker2, tieBreaker3, tieBreaker4 from PlayoffResult " . 
-                                               "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . 
-                                               " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"] ) );
+  $tieBreakers = RunQuery( "select tieBreaker1, tieBreaker2, tieBreaker3, tieBreaker4 from PlayoffResult " . 
+                           "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . 
+                           " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"] );
   $count = 1;
   $halftimeTBs = "";
-  while( ($thisGame = mysqli_fetch_assoc($games)) != null )
+  foreach( $games as $thisGame )
   {
     echo "              <tr>\n";
     echo "                <td class=\"noBorder\" style=\"width:25%;\">&nbsp;</td>\n"; 
@@ -189,7 +189,7 @@
     echo "                <td class=\"noBorder\" colspan=5>\n";
     echo "                  <span>Combined final score</span>\n";
     echo "                  <input id=\"tieBreak" . $count . "\" name=\"tieBreak" . $count . "\" type=\"text\" maxlength=\"3\" " . 
-        "onKeyUp=\"NumbersOnly('tieBreak" . $count . "'); ToggleSaveButton();\" value=\"" . $tieBreakers["tieBreaker" . $count] . 
+        "onKeyUp=\"NumbersOnly('tieBreak" . $count . "'); ToggleSaveButton();\" value=\"" . $tieBreakers[0]["tieBreaker" . $count] . 
         "\" style=\"width:35px;\" />\n";  
     echo "              </tr>\n";
     echo "              <tr style=\"height:30px\"><td class=\"noBorder\">&nbsp;</td></tr>\n";
@@ -210,7 +210,7 @@
     $halftimeTBs .= "                  <span>Combined halftime score</span>\n";
     $halftimeTBs .= "                  <input id=\"tieBreak" . ($count + 2) . "\" name=\"tieBreak" . $count . "\" type=\"text\" " . 
                     "maxlength=\"3\" onKeyUp=\"NumbersOnly('tieBreak" . ($count + 2) . "'); ToggleSaveButton();\" value=\"" . 
-                    $tieBreakers["tieBreaker" . ($count + 2)] . "\" style=\"width:35px;\" />\n";  
+                    $tieBreakers[0]["tieBreaker" . ($count + 2)] . "\" style=\"width:35px;\" />\n";  
     $halftimeTBs .= "              </tr>\n";
     $halftimeTBs .= "              <tr style=\"height:30px\"><td class=\"noBorder\">&nbsp;</td></tr>\n";
     $count++;

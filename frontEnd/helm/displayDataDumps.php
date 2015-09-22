@@ -4,7 +4,7 @@
     {
       // get the season
       $season = mysqli_fetch_assoc( runQuery( "select value from Constants where name='fetchSeason' " ) );
-      $season = "2014"; //$season["value"];
+      $season = $season["value"];
       $week = $_POST["dataDumpWeek"];
 
       // regular season standings

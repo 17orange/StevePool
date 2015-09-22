@@ -5,7 +5,7 @@
   if( isset($_POST["picksType"]) && $_POST["picksType"] == "regularSeason" )
   {
     // make sure these are valid game ids
-    $query = "select weekNumber from Game where gameID in (-1";
+    $query = "select distinct(weekNumber) as week from Game where gameID in (-1";
     $winners = array();
     for( $i=1; $i<17; $i++ )
     {
@@ -16,12 +16,11 @@
       }
     }
     $query .= ")";
-    $weekResults = runQuery( $query );
-    if( mysqli_num_rows( $results ) == 1 )
+    $weekResults = RunQuery( $query );
+    if( count( $weekResults ) == 1 )
     {
       // grab that week number
-      $weekNum = mysqli_fetch_assoc( $weekResults );
-      $weekNum = $weekNum["weekNumber"];
+      $weekNum = $weekResults[0]["week"];
 
       // clean the tiebreaker
       $tieBreak = mysqli_real_escape_string($link, $_POST["tieBreak"]);
@@ -36,7 +35,7 @@
       $saveQuery .= ")";
 
       // run it
-      runQuery( $saveQuery );
+      RunQuery( $saveQuery, false );
 
       // let them know if it worked
       $showSuccess = true;
@@ -44,9 +43,9 @@
       {
         if( isset($_POST["game" . $i]) ) 
         {
-          $checkResult = mysqli_fetch_assoc( runQuery( "select winner, points from Pick join Session using (userID) where gameID=" . 
-                                                       $_POST["game" . $i] . " and sessionID=" . $_SESSION["spsID"] ) );
-          $showFailure = ($checkResult["winner"] != $winners[$_POST["pts" . $i]]) || ($checkResult["points"] != $_POST["pts" . $i]);
+          $checkResult = RunQuery( "select winner, points from Pick join Session using (userID) where gameID=" . 
+                                   $_POST["game" . $i] . " and sessionID=" . $_SESSION["spsID"], false );
+          $showFailure = ($checkResult[0]["winner"] != $winners[$_POST["pts" . $i]]) || ($checkResult[0]["points"] != $_POST["pts" . $i]);
           $showSuccess = !$showFailure;
         }
       }
@@ -66,12 +65,11 @@
       }
     }
     $query .= ")";
-    $weekResults = runQuery( $query );
-    if( mysqli_num_rows( $results ) == 1 )
+    $weekResults = RunQuery( $query );
+    if( count( $weekResults ) == 1 )
     {
       // grab that week number
-      $weekNum = mysqli_fetch_assoc( $weekResults );
-      $weekNum = $weekNum["weekNumber"];
+      $weekNum = $weekResults[0]["weekNumber"];
 
       // clean the tiebreakers
       $tieBreak1 = mysqli_real_escape_string($link, $_POST["tb1"]);
@@ -89,7 +87,7 @@
       $saveQuery .= ")";
 
       // run it
-      runQuery( $saveQuery );
+      RunQuery( $saveQuery, false );
 
       // let them know it worked
       $showSuccess = true;
@@ -109,12 +107,11 @@
       }
     }
     $query .= ")";
-    $weekResults = runQuery( $query );
-    if( mysqli_num_rows( $results ) == 1 )
+    $weekResults = RunQuery( $query );
+    if( count( $weekResults ) == 1 )
     {
       // grab that week number
-      $weekNum = mysqli_fetch_assoc( $weekResults );
-      $weekNum = $weekNum["weekNumber"];
+      $weekNum = $weekResults[0]["weekNumber"];
 
       // clean the tiebreakers
       $tieBreak1 = mysqli_real_escape_string($link, $_POST["tb1"]);
@@ -132,7 +129,7 @@
       $saveQuery .= ")";
 
       // run it
-      runQuery( $saveQuery );
+      RunQuery( $saveQuery, false );
 
       // let them know it worked
       $showSuccess = true;
@@ -154,12 +151,11 @@
       }
     }
     $query .= ")";
-    $weekResults = runQuery( $query );
-    if( mysqli_num_rows( $results ) == 1 )
+    $weekResults = RunQuery( $query );
+    if( count( $weekResults ) == 1 )
     {
       // grab that week number
-      $weekNum = mysqli_fetch_assoc( $weekResults );
-      $weekNum = $weekNum["weekNumber"];
+      $weekNum = $weekResults[0]["weekNumber"];
 
       // clean the tiebreakers
       $tieBreak1 = mysqli_real_escape_string($link, $_POST["tb1"]);
@@ -179,7 +175,7 @@
       $saveQuery .= ")";
 
       // run it
-      runQuery( $saveQuery );
+      RunQuery( $saveQuery, false );
 
       // let them know it worked
       $showSuccess = true;
@@ -200,7 +196,7 @@
     $saveQuery .= ")";
 
     // run it
-    runQuery( $saveQuery );
+    RunQuery( $saveQuery, false );
 
     // let them know it worked
     $showSuccess = true;
@@ -228,7 +224,7 @@
                  $confAFC . "','" . $confNFC . "','" . $superBowl . "'," . $tieBreak . ")";
 
     // run it
-    runQuery( $saveQuery );
+    RunQuery( $saveQuery, false );
 
     // let them know it worked
     $showSuccess = true;

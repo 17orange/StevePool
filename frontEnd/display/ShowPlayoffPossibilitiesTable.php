@@ -22,21 +22,21 @@
 
   // grab their userID so we can show their picks
   $myID = 0;
+  $logosHidden = false;
   if( isset($_SESSION["spsID"]) )
   {
-    $results = mysqli_fetch_assoc( runQuery( "select coalesce(userID, 0) as userID from Session where sessionID=" . 
-                                             $_SESSION["spsID"] ) );
-    $myID = $results["userID"];
+    $results = RunQuery( "select coalesce(userID, 0) as userID from Session where sessionID=" . $_SESSION["spsID"] );
+    $myID = $results[0]["userID"];
+    $logosHidden = (isset($_SESSION["spHideLogos"]) && $_SESSION["spHideLogos"] == "TRUE");
   }
 
   // grab their picks if they're trying to show best or worst
   if( $standingsType == "best" || $standingsType == "worst" )
   {
-    $results = runQuery( "select gameID, winner, if(homeTeam=winner, awayTeam, homeTeam) as loser " . 
-                         "from Pick join Game using (gameID) where userID=" . $myID . 
-                         " and weekNumber=" . $_SESSION["showPicksWeek"] . " and season=" . $_SESSION["showPicksSeason"] . 
-                         " and status != 3" );
-    while( ($thisPick = mysqli_fetch_assoc( $results )) != null )
+    $results = RunQuery( "select gameID, winner, if(homeTeam=winner, awayTeam, homeTeam) as loser from Pick " . 
+                         "join Game using (gameID) where userID=" . $myID . " and weekNumber=" . 
+                         $_SESSION["showPicksWeek"] . " and season=" . $_SESSION["showPicksSeason"] . " and status != 3" );
+    foreach( $results as $thisPick )
     {
       $_SESSION["forcedWinners"][$thisPick["gameID"]] = $thisPick[($standingsType == "best") ? "winner" : "loser"];
     }
@@ -46,9 +46,9 @@
   $games = array();
   $gamesLive = 0;
   $firstRefresh = "";
-  $results = runQuery( "select *, if(lockTime>now(), 0, 1) as isLocked from Game where weekNumber=" . $_SESSION["showPicksWeek"] . 
-                       " and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID" );
-  while( ($thisGame = mysqli_fetch_assoc($results)) != null )
+  $results = RunQuery( "select *, if(lockTime>now(), 0, 1) as isLocked from Game where weekNumber=" . $_SESSION["showPicksWeek"] . 
+                       " and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID", false );
+  foreach( $results as $thisGame )
   {
     $games[count($games)] = $thisGame;
     if( $thisGame["status"] == "2" )
@@ -126,9 +126,9 @@
             "using (weekNumber, season) left join Pick using (userID, gameID) join Division using (divID) join " . 
             "Conference using (confID) where weekNumber=" . $_SESSION["showPicksWeek"] . " and season=" . 
             $_SESSION["showPicksSeason"] . " order by section" . $sort . ", sPts desc, userID, gameTime, gameID, typeSort";
-  $results = runQuery( $query );
+  $results = RunQuery( $query );
   $pickBank = array();
-  while( ($thisPick = mysqli_fetch_assoc($results)) != null )
+  foreach( $results as $thisPick )
   {
     $pickBank[count($pickBank)] = $thisPick;
   }
@@ -1106,12 +1106,4 @@
               }
             }
           }
-<?php
-/*
-  if( $_SESSION["showPicksWeek"] == 22 )
-  {
-    echo "          SuperBowlTiebreakers();\n";
-  }
-*/
-?>
         </script>
