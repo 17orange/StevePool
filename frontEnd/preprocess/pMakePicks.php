@@ -49,6 +49,12 @@
           $showSuccess = !$showFailure;
         }
       }
+
+      // if they saved their picks, wipe the cache
+      if( $showSuccess )
+      {
+        $memcache->flush();
+      }
     }
   }
   else if( isset($_POST["picksType"]) && isset($_POST["game1"]) && $_POST["picksType"] == "wildCard" )
