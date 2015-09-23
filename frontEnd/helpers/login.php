@@ -44,7 +44,7 @@
       RunQuery( "call Login(" . $uid . ",md5('" . $pass . "'),'" . $_SERVER['REMOTE_ADDR'] . "','" . $bInfo . "')", false);
 
       // save the session ID for future use
-      $results = RunQuery( "select sessionID from Session where userID=" . $uid );
+      $results = RunQuery( "select sessionID from Session where userID=" . $uid, false );
       $_SESSION["spsID"] = $results[0]["sessionID"];
       $_SESSION["browserInfo"] = $bInfo;
 

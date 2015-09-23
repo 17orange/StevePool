@@ -24,7 +24,7 @@
 
     try {
       $queryHash = "QUERYLENGTH" . strlen($query) . "HASH" . md5($query);
-      if( $memcache->get($queryHash) === false ) {
+      if( !$cacheThis || $memcache->get($queryHash) === false ) {
         if( !mysqli_ping( $link ) ) {
           mysqli_close( $link );
           $link = mysqli_connect( "localhost",$username,$password, $realDB) or die("Connect Unsuccessful!".mysql_error());

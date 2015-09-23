@@ -24,6 +24,7 @@
     if( count( $results ) == 0 )
     {
       unset( $_SESSION["spsID"] );
+      setcookie("spsID", null, time() - 3600 * 24 * 30, "/", $_SERVER["SERVER_NAME"]);
     }
     else
     {
