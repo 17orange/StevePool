@@ -237,9 +237,11 @@
   echo "        </tr>\n";
 ?>
         <script type="text/javascript">
+          var mostRecentSort = "points";
           function SortTable(arg)
           {
             var i1 = 0;
+            mostRecentSort = arg;
             var rows = document.getElementById("reloadableTable").rows;
             while( i1 < rows.length )
             {
@@ -350,6 +352,7 @@
       $delayTime = 86400000;
     }
 ?>
+                SortTable(mostRecentSort);
                 setTimeout(function() { ReloadPage("<?php echo $standingsType; ?>") }, <?php echo $delayTime; ?>);
 <?php
   }

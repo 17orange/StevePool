@@ -37,7 +37,7 @@
                                " and weekNumber=" . $results["weekNumber"] . " and lockTime <= now()", false );
       if( $lockResults[0]["num"] > 0 )
       {
-        echo "          <tr><td class='noBorder'>" . $lockResults[0]["num"] . " game" . (($lockResults["num"] == 1) ? " is" : "s are") . 
+        echo "          <tr><td class='noBorder'>" . $lockResults[0]["num"] . " game" . (($lockResults[0]["num"] == 1) ? " is" : "s are") . 
             " locked!</td></tr>\n";
       }
 

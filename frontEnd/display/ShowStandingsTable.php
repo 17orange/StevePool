@@ -334,6 +334,7 @@
               {
                 // tack on the new elements
                 document.getElementById("reloadableTable").innerHTML = xmlhttp.responseText;
+                SortTable(mostRecentSort);
                 setTimeout(function() { ReloadPage("<?php echo $standingsType; ?>") }, <?php echo $delayTime; ?>);
               }
             }
