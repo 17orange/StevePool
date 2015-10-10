@@ -420,6 +420,7 @@
               return;
             }
             sorting = true;
+            var scrollTop = $(window).scrollTop();
 
             mostRecentSort = arg;
             var i1 = 0;
@@ -461,6 +462,7 @@
 
             // tell them it's safe
             sorting = false;
+            $('html, body').scrollTop(scrollTop);
           }
 
           // this does a hybrid of mergesort and insertion sort
@@ -493,6 +495,7 @@
 
             // now dump it all back out to the visuals
             var myHTMLs = [];
+            var rank = 1, count = 0, max = 3000, thisScore;
             for( var j=0; j<myRows.length; j+=1 )
             {
               myHTMLs.push( rows[myRows[j][0]].innerHTML );
@@ -502,6 +505,15 @@
               rows[j + start].innerHTML = myHTMLs[j];
               // fix the row so it highlights me
               rows[j + start].className = (rows[j + start].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
+              thisScore = parseInt(rows[j+start].cells[rows[j+start].cells.length - 2].innerHTML);
+              if( thisScore < max )
+              {
+                max = thisScore;
+                rank += count;
+                count = 0;
+              }
+              rows[j+start].cells[0].innerHTML = rank.toString();
+              count++;
             }
           }
 

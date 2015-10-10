@@ -6,6 +6,23 @@
         }
       });
 
+      var illegalPointValues = [<?php
+  $showComma = false;
+  $pickResults = RunQuery( "select points from Pick join Game using (gameID) join Session using (userID) " . 
+                           "where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . $result["weekNumber"] . 
+                           " and season=" . $result["season"] . " and lockTime < now()", false );
+  foreach( $pickResults as $row ) {
+    echo ($showComma ? "," : "") . $row["points"];
+    $showComma = true;
+  }
+
+  $gameCount = RunQuery( "select 16 - count(*) as num from Game where weekNumber=" . 
+                         $result["weekNumber"] . " and season=" . $result["season"] );
+  for($i=$gameCount[0]["num"]; $i>0; $i--) {
+    echo ($showComma ? "," : "") . $i;
+    $showComma = true;
+  }
+?>];
       var currentMousePos = {x:-1, y:-1};
       var currentOffset = {x:0, y:0};
       $(document).mousemove(function(event) {
@@ -26,8 +43,9 @@
           for( var i=1; i<17; i++ )
           {
             var targOff = $("#mp3_" + i).offset();
-            if( i != currentDragPos && !($("#mp3_" + i).hasClass("mpLockedSelection")) && 
-                targOff.left <= dragCenter && dragCenter <= (targOff.left + $("#mp1_" + i).width()) )
+            if( i != currentDragPos && targOff.left <= dragCenter && dragCenter <= (targOff.left + $("#mp1_" + i).width()) && 
+                (($("#mp3_" + i).hasClass("mpValidSelection")) || ($("#mp3_" + i).hasClass("mpInvalidSelection"))) && 
+                illegalPointValues.indexOf(i) < 0 )
             {
               newDragPos = i;
               i = 17;
@@ -492,13 +510,14 @@
         var newRow = row + direction;
         while( newRow > 0 && newRow < 17 && direction != 0 )
         {
-          if( document.getElementById("mp3_" + newRow).className.indexOf("mpLockedSelection") != -1 )
+          if( (($("#mp3_" + newRow).hasClass("mpValidSelection")) || ($("#mp3_" + newRow).hasClass("mpInvalidSelection"))) && 
+                illegalPointValues.indexOf(newRow) < 0 )
           {
-            newRow += direction;
+            direction = 0;
           }
           else
           {
-            direction = 0;
+            newRow += direction;
           }
         }
 

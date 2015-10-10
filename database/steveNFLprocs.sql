@@ -85,11 +85,15 @@ begin
   declare _numGamesNeeded tinyint unsigned default 0;
   declare _numGamesMissed tinyint unsigned default 0;
   declare _numAlreadyLocked tinyint unsigned default 0;
+  declare _minimumPoints tinyint unsigned default 0;
   declare _userID int unsigned default 0;
+  select 16 - count(*) into _minimumPoints from Game where weekNumber=_week and season=
+         (select value from Constants where name='fetchSeason');
   select if(_pick16!='',1,0) + if(_pick15!='',1,0) + if(_pick14!='',1,0) + if(_pick13!='',1,0) + if(_pick12!='',1,0) + 
          if(_pick11!='',1,0) + if(_pick10!='',1,0) + if(_pick9!='',1,0) + if(_pick8!='',1,0) + if(_pick7!='',1,0) + 
-         if(_pick6!='',1,0) + if(_pick5!='',1,0) + if(_pick4!='',1,0) + if(_pick3!='',1,0) + if(_pick2!='',1,0) + 
-         if(_pick1!='',1,0) into _numPicks;
+         if(_minimumPoints<6 and _pick6!='',1,0) + if(_minimumPoints<5 and _pick5!='',1,0) + 
+         if(_minimumPoints<4 and _pick4!='',1,0) + if(_minimumPoints<3 and _pick3!='',1,0) + 
+         if(_minimumPoints<2 and _pick2!='',1,0) + if(_minimumPoints<1 and _pick1!='',1,0) into _numPicks;
   select count(*) into _numGames from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason') and (homeTeam in 
          (_pick16, _pick15, _pick14, _pick13, _pick12, _pick11, _pick10, _pick9,
@@ -669,7 +673,7 @@ begin
     update Pick set winner=if(_pick1='', null, _pick1), points=1 where userID=_userID and gameID=_gameID1;
 
     # fix the tiebreaker
-    update WeekResult join Game using (weekNumber) set tieBreaker=_tieBreak where userID=_userID and gameID=_gameID1;
+    update WeekResult join Game using (weekNumber) set tieBreaker=_tieBreak where userID=_userID and gameID=_gameID16;
 
     # add an event for it
     select weekNumber into _numWeeks from Game where gameID in 
