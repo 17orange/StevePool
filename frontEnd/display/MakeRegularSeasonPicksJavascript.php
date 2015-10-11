@@ -45,7 +45,7 @@
             var targOff = $("#mp3_" + i).offset();
             if( i != currentDragPos && targOff.left <= dragCenter && dragCenter <= (targOff.left + $("#mp1_" + i).width()) && 
                 (($("#mp3_" + i).hasClass("mpValidSelection")) || ($("#mp3_" + i).hasClass("mpInvalidSelection"))) && 
-                illegalPointValues.indexOf(i) < 0 )
+                illegalPointValues.indexOf(17 - i) < 0 )
             {
               newDragPos = i;
               i = 17;
@@ -511,7 +511,7 @@
         while( newRow > 0 && newRow < 17 && direction != 0 )
         {
           if( (($("#mp3_" + newRow).hasClass("mpValidSelection")) || ($("#mp3_" + newRow).hasClass("mpInvalidSelection"))) && 
-                illegalPointValues.indexOf(newRow) < 0 )
+                illegalPointValues.indexOf(17 - newRow) < 0 )
           {
             direction = 0;
           }
