@@ -244,7 +244,7 @@
       echo "        </tr>\n";
 ?>
         <tr>
-          <td class="headerBackgroundTable" style="width:3%;">Rank</td>
+          <td class="headerBackgroundTable" style="width:3%;">W<?php echo $_SESSION["showPicksWeek"]; ?><br>Rank</td>
           <td class="headerBackgroundTable" style="width:16%; cursor:pointer;" onClick="SortTable('name');">Player</td>
 <?php
       // show the games from that week
@@ -434,6 +434,13 @@
               }
               else
               {
+                // fix the heading
+                if( mostRecentSort == "weekPts" || mostRecentSort == "ytdPts" )
+                {
+                  rows[i1-1].cells[0].innerHTML = ((mostRecentSort == "weekPts") ? "W<?php echo $_SESSION["showPicksWeek"];
+                  ?>" : "YTD") + "<br>Rank";
+                }
+
                 // find the end of this section
                 var i2 = i1;
                 while( i2 >= 0 && i2 < rows.length && rows[i2].cells[0].className == "lightBackgroundTable" )
@@ -505,15 +512,18 @@
               rows[j + start].innerHTML = myHTMLs[j];
               // fix the row so it highlights me
               rows[j + start].className = (rows[j + start].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
-              thisScore = parseInt(rows[j+start].cells[rows[j+start].cells.length - 2].innerHTML);
-              if( thisScore < max )
+              if( mostRecentSort == "weekPts" || mostRecentSort == "ytdPts" )
               {
-                max = thisScore;
-                rank += count;
-                count = 0;
+                thisScore = parseInt(rows[j+start].cells[rows[j+start].cells.length - ((mostRecentSort == "weekPts") ? 2 : 1)].innerHTML);
+                if( thisScore < max )
+                {
+                  max = thisScore;
+                  rank += count;
+                  count = 0;
+                }
+                rows[j+start].cells[0].innerHTML = rank.toString();
+                count++;
               }
-              rows[j+start].cells[0].innerHTML = rank.toString();
-              count++;
             }
           }
 

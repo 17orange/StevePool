@@ -115,7 +115,7 @@
       echo "        </tr>\n";
 ?>
         <tr>
-          <td class="headerBackgroundTable" style="width:3%;">Rank</td>
+          <td class="headerBackgroundTable" style="width:3%;">W<?php echo $_SESSION["showPicksWeek"]; ?><br>Rank</td>
           <td class="headerBackgroundTable" style="width:16%; cursor:pointer;" onClick="SortTable('name');">Player</td>
 <?php
       // show the games from that week
@@ -252,6 +252,13 @@
               }
               else
               {
+                // fix the heading
+                if( mostRecentSort == "points" || mostRecentSort == "ytdPts" )
+                {
+                  rows[i1-1].cells[0].innerHTML = ((mostRecentSort == "points") ? "W<?php echo $_SESSION["showPicksWeek"];
+                  ?>" : "YTD") + "<br>Rank";
+                }
+
                 // find the end of this section
                 var i2 = i1;
                 while( i2 >= 0 && i2 < rows.length && rows[i2].cells[0].className == "lightBackgroundTable" )
@@ -313,6 +320,7 @@
 
             // now dump it all back out to the visuals
             var myHTMLs = [];
+            var rank = 1, count = 0, max = 3000, thisScore;
             for( var j=0; j<myRows.length; j+=1 )
             {
               myHTMLs.push( rows[myRows[j][0]].innerHTML );
@@ -322,6 +330,18 @@
               rows[j + start].innerHTML = myHTMLs[j];
               // fix the row so it highlights me
               rows[j + start].className = (rows[j + start].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
+              if( mostRecentSort == "points" || mostRecentSort == "ytdPts" )
+              {
+                thisScore = parseInt(rows[j+start].cells[rows[j+start].cells.length - ((mostRecentSort == "points") ? 3 : 1)].innerHTML);
+                if( thisScore < max )
+                {
+                  max = thisScore;
+                  rank += count;
+                  count = 0;
+                }
+                rows[j+start].cells[0].innerHTML = rank.toString();
+                count++;
+              }
             }
           }
 

@@ -554,15 +554,18 @@
               rows[j + start].innerHTML = myHTMLs[j];
               // fix the row so it highlights me
               rows[j + start].className = (rows[j + start].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
-              thisScore = parseInt(rows[j+start].cells[rows[j+start].cells.length - 5].innerHTML);
-              if( thisScore < max )
+              if( mostRecentSort == "weekPts" )
               {
-                max = thisScore;
-                rank += count;
-                count = 0;
+                thisScore = parseInt(rows[j+start].cells[rows[j+start].cells.length - 5].innerHTML);
+                if( thisScore < max )
+                {
+                  max = thisScore;
+                  rank += count;
+                  count = 0;
+                }
+                rows[j+start].cells[0].innerHTML = rank.toString();
+                count++;
               }
-              rows[j+start].cells[0].innerHTML = rank.toString();
-              count++;
             }
           }
 
@@ -602,7 +605,7 @@
             }
             recalculating = true;
 
-            mostRecentSort = "points";
+            mostRecentSort = "weekPts";
             ReloadPage("force&forcedWinnerGameID=" + gameID + "&forcedWinner=" + winner );
 
             // tell them it's safe

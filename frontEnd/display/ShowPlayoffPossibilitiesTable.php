@@ -816,7 +816,7 @@
               rows[j + start].className = (rows[j + start].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
               thisScore = rows[j+start].cells[rows[j+start].cells.length - <?php 
                 echo ($_SESSION["showPicksWeek"] == 22) ? 2 : 3; ?>].innerHTML;
-              if( thisScore != "Bye" && thisScore != "Out" ) 
+              if( thisScore != "Bye" && thisScore != "Out" && mostRecentSort == "points" ) 
               {
                 thisScore = parseInt(thisScore);
                 if( thisScore < max )
