@@ -1,4 +1,21 @@
     <script type="text/javascript">
+      var showWarning = false;
+      $(window).on("beforeunload", function() {
+        if( showWarning ) {
+          return "Are you sure? You didn't finish the form!";
+        }
+      });
+
+      var illegalPointValues = [<?php
+  $showComma = false;
+  $pickResults = RunQuery( "select points from Pick join Game using (gameID) join Session using (userID) " . 
+                           "where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . $result["weekNumber"] . 
+                           " and season=" . $result["season"] . " and lockTime < now()", false );
+  foreach( $pickResults as $row ) {
+    echo ($showComma ? "," : "") . $row["points"];
+    $showComma = true;
+  }
+?>];
       var currentMousePos = {x:-1, y:-1};
       var currentOffset = {x:0, y:0};
       $(document).mousemove(function(event) {
@@ -284,6 +301,76 @@
         document.getElementById("saveRosterButton").disabled = !canSave;
       }
 
+      function ToggleSaveButtonMobile()
+      {
+        var canSave = true;
+        for( var i=1; i<5 && canSave; i++ )
+        {
+          var testElem = document.getElementById("mp3_" + i);
+          canSave = (testElem.className.indexOf("mpLockedSelection") != -1) || ((testElem.className.indexOf("mpInvalidSelection") == -1) &&
+                    ((testElem.innerHTML.indexOf("<img") != -1) || (testElem.innerHTML.indexOf("TIE") != -1)));
+
+          // adjust the teams they're saving
+          if( testElem.innerHTML.indexOf("<img") != -1 || testElem.innerHTML.indexOf("TIE") != -1)
+          {
+            // find where in the array this game is located
+            var thisTeam = testElem.innerHTML.substr(0, testElem.innerHTML.indexOf("<br>"));
+            var lookTeam = thisTeam;
+            if( testElem.innerHTML.indexOf("TIE") != -1 )
+            {
+              var thisTeam = "TIE";
+              var lookTeam = "";
+              for( var k=1; k<4 && lookTeam == ""; k++ )
+              {
+                var teamHTML = document.getElementById("mp" + k + "_" + i).innerHTML;
+                if( teamHTML.indexOf("<img") != -1 )
+                {
+                  lookTeam = teamHTML.substr(0, teamHTML.indexOf("<br>"));
+                }
+              }
+            }
+
+            // check to see whether this column holds a winner or halftime pick
+            var lookType = "";
+            for( var k=1; k<4 && lookType == ""; k++ )
+            {
+              var typeHTML = document.getElementById("mpH" + k + "_" + i).innerHTML;
+              if( typeHTML.indexOf("Final") != -1 )
+              {
+                lookType = "winner";
+              }
+              else if( typeHTML.indexOf("Halftime") != -1 )
+              {
+                lookType = "winner2Q";
+              }
+            }
+
+            // run through the list of values until we find this one
+            for( var k=1; k<5; k++ )
+            {
+              var thisHome = document.getElementById("homeTeam" + k);
+              var thisAway = document.getElementById("awayTeam" + k);
+              var thisType = document.getElementById("pickType" + k).value;
+              if( thisHome != null && thisAway != null && thisType == lookType &&
+                  ((thisHome.value == lookTeam) || (thisAway.value == lookTeam)) )
+              {
+                // set its winner and point value
+                document.getElementById("winner" + k).value = thisTeam;
+                document.getElementById("pts" + k).value = 5 - i;
+                k = 5;
+              }
+            }
+          }
+
+          // grab the tiebreaker
+          document.getElementById("tb" + i).value = document.getElementById("tieBreak" + i).value;
+          canSave &= (document.getElementById("tieBreak" + i).value != "");
+          canSave &= (document.getElementById("tieBreak" + i).value != "0");
+        }
+
+        document.getElementById("saveRosterButton").disabled = !canSave;
+      }
+
       function NumbersOnly(id)
       {
         var allowed = "0123456789";
@@ -378,6 +465,280 @@
         }
 
         ToggleSaveButton();
+      }
+      function PickAllHomeTeamsMobile()
+      {
+        for( var i=1; i<5; i++ )
+        {
+          SetWinnerMobile(i, true);
+        }
+      }
+
+      function PickAllAwayTeamsMobile()
+      {
+        for( var i=1; i<5; i++ )
+        {
+          SetWinnerMobile(i, false);
+        }
+      }
+
+      var pickHibernating = false;
+      function SetWinnerMobile(row, homeTeam)
+      {
+        // find the current winner of this game
+        var offset = (document.getElementById("mp1_" + row).className.indexOf("mpImgTD") != -1) 
+                     ? 0 
+                     : ((document.getElementById("mp2_" + row).className.indexOf("mpImgTD") != -1)
+                       ? 1 : 2);
+
+        // ignore it if we need to
+        if(pickHibernating || ((homeTeam == "TIE") && (offset == 1))) {
+          return;
+        }
+
+        // set it to be a tie
+        if( homeTeam == "TIE" && offset != 1)
+        {
+          // pause this to eat the double taps
+          pickHibernating = true;
+          setTimeout(function() { pickHibernating = false; }, 1000);
+
+          // gap team
+          var destElem = document.getElementById("mp" + (4 - offset) + "_" + row);
+          var srcElem = document.getElementById("mp3_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpImgTD mpMobile" + ((offset == 0) ? "Home" : "Away") + "Team mpMobileWipeTop";
+          destElem.onclick = function() { SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), (offset == 0)) };
+          destElem.style.textAlign = null;
+
+          // game info
+          destElem = document.getElementById("mp3_" + row);
+          srcElem = document.getElementById("mp" + (offset + 2) + "_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpValidSelection";
+          destElem.onclick = null;
+
+          // wall team
+          destElem = document.getElementById("mp" + (2 + offset) + "_" + row);
+          srcElem = document.getElementById("mp" + ((offset * 2) + 1) + "_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpImgTD mpMobile" + ((offset == 0) ? "Away" : "Home") + "Team mpMobileWipeTop";
+          destElem.onclick = function() { SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), (offset != 0)) };
+          destElem.style.textAlign = null;
+
+          // points
+          destElem = document.getElementById("mp1_" + row);
+          destElem.innerHTML = 5 - row;
+          destElem.className = "noBorder mpMobileBGText";
+          destElem.style.textAlign = "right";
+          destElem.onclick = null;
+
+          // points
+          destElem = document.getElementById("mp5_" + row);
+          destElem.innerHTML = 5 - row;
+          destElem.className = "noBorder mpMobileBGText";
+          destElem.style.textAlign = "left";
+          destElem.onclick = null;
+
+          // header
+          srcElem = document.getElementById("mpH" + (offset + 1) + "_" + row);
+          destElem = document.getElementById("mpH2_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = srcElem.className;
+          destElem.colSpan = srcElem.colSpan;
+          destElem = document.getElementById("mpH3_" + row);
+          destElem.innerHTML = "";
+          destElem.className = "noBorder";
+          destElem.colSpan = 1;
+          destElem = document.getElementById("mpH1_" + row);
+          destElem.innerHTML = "";
+          destElem.className = "noBorder";
+          destElem.colSpan = 1;
+        }
+        // set it to be the homeTeam winning
+        else if( homeTeam && offset > 0)
+        {
+          // away team
+          var destElem = document.getElementById("mp1_" + row);
+          var srcElem = document.getElementById("mp" + (offset + 1) + "_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpImgTD mpMobileAwayTeam mpMobileWipeTop";
+          destElem.onclick = function() { SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), false) };
+          destElem.style.textAlign = null;
+
+          // game info
+          destElem = document.getElementById("mp2_" + row);
+          srcElem = document.getElementById("mp" + (offset + 2) + "_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpMobileGameInfo mpMobileWipeTop";
+          destElem.onclick = null;
+
+          // home team
+          destElem = document.getElementById("mp3_" + row);
+          srcElem = document.getElementById("mp" + (offset + 3) + "_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpImgTD mpValidSelection";
+          destElem.onclick = null;
+
+          // arrow
+          destElem = document.getElementById("mp4_" + row);
+          destElem.innerHTML = "<---";
+          destElem.className = "noBorder mpMobileBGText";
+          destElem.onclick = null;
+
+          // points
+          destElem = document.getElementById("mp5_" + row);
+          destElem.innerHTML = 5 - row;
+          destElem.className = "noBorder mpMobileBGText";
+          destElem.style.textAlign = "left";
+          destElem.onclick = null;
+
+          // header
+          srcElem = document.getElementById("mpH" + (offset + 1) + "_" + row);
+          destElem = document.getElementById("mpH1_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = srcElem.className;
+          destElem.colSpan = srcElem.colSpan;
+          destElem = document.getElementById("mpH2_" + row);
+          destElem.innerHTML = "";
+          destElem.className = "noBorder";
+          destElem.colSpan = 1;
+          destElem = document.getElementById("mpH3_" + row);
+          destElem.innerHTML = "";
+          destElem.className = "noBorder";
+          destElem.colSpan = 1;
+        }
+        // set it to be the awayTeam winning
+        else if( !homeTeam && offset < 2)
+        {
+          // home team
+          var destElem = document.getElementById("mp5_" + row);
+          var srcElem = document.getElementById("mp" + (offset + 3) + "_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpImgTD mpMobileHomeTeam mpMobileWipeTop";
+          destElem.onclick = function() { SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), true) };
+          destElem.style.textAlign = null;
+
+          // game info
+          var destElem = document.getElementById("mp4_" + row);
+          var srcElem = document.getElementById("mp" + (offset + 2) + "_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpMobileGameInfo mpMobileWipeTop";
+          destElem.onclick = null;
+
+          // away team
+          var destElem = document.getElementById("mp3_" + row);
+          var srcElem = document.getElementById("mp" + (offset + 1) + "_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = "mpImgTD mpValidSelection";
+          destElem.onclick = null;
+
+          // arrow
+          var destElem = document.getElementById("mp2_" + row);
+          destElem.innerHTML = "--->";
+          destElem.className = "noBorder mpMobileBGText";
+          destElem.onclick = null;
+
+          // points
+          var destElem = document.getElementById("mp1_" + row);
+          destElem.innerHTML = 5 - row;
+          destElem.className = "noBorder mpMobileBGText";
+          destElem.style.textAlign = "right";
+          destElem.onclick = null;
+
+          // header
+          srcElem = document.getElementById("mpH" + (offset + 1) + "_" + row);
+          destElem = document.getElementById("mpH3_" + row);
+          destElem.innerHTML = srcElem.innerHTML;
+          destElem.className = srcElem.className;
+          destElem.colSpan = srcElem.colSpan;
+          destElem = document.getElementById("mpH2_" + row);
+          destElem.innerHTML = "";
+          destElem.className = "noBorder";
+          destElem.colSpan = 1;
+          destElem = document.getElementById("mpH1_" + row);
+          destElem.innerHTML = "";
+          destElem.className = "noBorder";
+          destElem.colSpan = 1;
+        }
+
+        // put the warning up
+        showWarning = true;
+
+        ToggleSaveButtonMobile();
+      }
+
+      function MoveRowMobile(row, direction)
+      {
+        // find the row it wants to go to
+        row = parseInt(row);
+        var newRow = row + direction;
+        while( newRow > 0 && newRow < 5 && direction != 0 )
+        {
+          if( (($("#mp3_" + newRow).hasClass("mpValidSelection")) || ($("#mp3_" + newRow).hasClass("mpInvalidSelection"))) && 
+                illegalPointValues.indexOf(5 - newRow) < 0 )
+          {
+            direction = 0;
+          }
+          else
+          {
+            newRow += direction;
+          }
+        }
+
+        // no valid move in that direction
+        if( direction != 0 )
+        {
+          return;
+        }
+
+        // swap them
+        for( var i=1; i<6; i++ )
+        {
+          var destElem = document.getElementById("mp" + i + "_" + newRow);
+          var origElem = document.getElementById("mp" + i + "_" + row);
+          var temp = destElem.innerHTML;
+          destElem.innerHTML = origElem.innerHTML;
+          origElem.innerHTML = temp;
+          temp = destElem.className;
+          destElem.className = origElem.className;
+          origElem.className = temp;
+          temp = destElem.onclick;
+          destElem.onclick = origElem.onclick;
+          origElem.onclick = temp;
+          temp = destElem.style.textAlign;
+          destElem.style.textAlign = origElem.style.textAlign;
+          origElem.style.textAlign = temp;
+        }
+        for( var i=1; i<4; i++ )
+        {
+          var destElem = document.getElementById("mpH" + i + "_" + newRow);
+          var origElem = document.getElementById("mpH" + i + "_" + row);
+          var temp = destElem.innerHTML;
+          destElem.innerHTML = origElem.innerHTML;
+          origElem.innerHTML = temp;
+          temp = destElem.className;
+          destElem.className = origElem.className;
+          origElem.className = temp;
+          temp = destElem.colSpan;
+          destElem.colSpan = origElem.colSpan;
+          origElem.colSpan = temp;
+        }
+
+        // fix the edges
+        for( var i=0; i<4; i++ )
+        {
+          var testElem = document.getElementById("mp" + ((i % 2) ? 1 : 5) + "_" + ((i < 2) ? row : newRow));
+          if( testElem.className.indexOf("noBorder") != -1 )
+          {
+            testElem.innerHTML = 5 - ((i < 2) ? row : newRow);
+          }
+        }
+
+        // put the warning up
+        showWarning = true;
+
+        ToggleSaveButtonMobile();
       }
     </script>
     <table id="dragger" class="dragTable montserrat">

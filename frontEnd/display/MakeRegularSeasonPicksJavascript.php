@@ -430,7 +430,7 @@
           var srcElem = document.getElementById("mp" + (offset + 1) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
           destElem.className = "mpImgTD mpMobileAwayTeam";
-          destElem.onclick = function() { SetWinnerMobile(row, false) };
+          destElem.onclick = function() { SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), false) };
           destElem.style.textAlign = null;
 
           // game info
@@ -445,6 +445,7 @@
           var srcElem = document.getElementById("mp" + (offset + 3) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
           destElem.className = "mpImgTD mpValidSelection";
+          destElem.onclick = null;
 
           // arrow
           var destElem = document.getElementById("mp4_" + row);
@@ -467,7 +468,7 @@
           var srcElem = document.getElementById("mp" + (offset + 3) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
           destElem.className = "mpImgTD mpMobileHomeTeam";
-          destElem.onclick = function() { SetWinnerMobile(row, true) };
+          destElem.onclick = function() { SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), true) };
           destElem.style.textAlign = null;
 
           // game info
@@ -482,6 +483,7 @@
           var srcElem = document.getElementById("mp" + (offset + 1) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
           destElem.className = "mpImgTD mpValidSelection";
+          destElem.onclick = null;
 
           // arrow
           var destElem = document.getElementById("mp2_" + row);
