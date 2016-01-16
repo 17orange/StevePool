@@ -450,12 +450,13 @@
     {
       echo "<div class=\"cellShadeOuter\">\n";
       echo "<div class=\"cellShadeBG\"" . ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "" : 
-          (" style=\"background-color:#" . 
-          (($thisPick["winner"] == $thisPick["leader"]) ? "00AA00": "FF0000") . ";\"")) . "></div>\n";
+          (" style=\"background-color:#" . (($thisPick["winner"] == $thisPick["leader"]) ? "00AA00" : 
+          (($thisPick["leader"] == "TIE") ? "FFFF00" : "FF0000")) . ";\"")) . "></div>\n";
       $span = "<span style=\"color:#" . 
           ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "0A1F42" : 
-          (($thisPick["winner"] == $thisPick["leader"]) ? "007500": "BF0000")) . ";\">" . $thisPick["winner"] . 
-          (($thisPick["pPts"] > 0) ? (" " . $thisPick["pPts"]) : "") . "</span>";
+          (($thisPick["winner"] == $thisPick["leader"]) ? "007500": (($thisPick["leader"] == "TIE") ? "888800" : "BF0000"))) . ";" . 
+          (($thisPick["gStatus"] == 2) ? " font-style:italic;" : "") . "\">" . 
+          $thisPick["winner"] . (($thisPick["pPts"] > 0) ? (" " . $thisPick["pPts"]) : "") . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";
       echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . (($thisPick["winner"] != "TIE") ? 

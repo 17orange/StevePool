@@ -545,7 +545,7 @@
       echo "<div class=\"centerIt\" style=\"color:#BF0000;\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
       echo "</div>\n";
     }
-    else if( !$poolLocked && $thisPick["userID"] != $myID && $standingsType == "actual" )
+    else if( !$poolLocked && $thisPick["userID"] != $myID )
     {
       echo "X";
     }
@@ -1014,17 +1014,22 @@
                     var BG = rows[j].cells[checkIndex].firstElementChild.firstElementChild;
                     var txt = BG.nextElementSibling.rows[0].cells[0].firstElementChild<?php echo ($logosHidden ? ".firstElementChild" : ""); ?>;
                     var wasRight = (BG.style.backgroundColor == "rgb(0, 170, 0)");
+                    var wasWrong = (BG.style.backgroundColor == "rgb(255, 0, 0)");
                     var nowRight = (txt.innerHTML.slice(0, winner.length) == ((winner == "NONE") ? "TIE " : winner));
                     BG.style.backgroundColor = (nowRight ? "#00AA00": "#FF0000");
                     txt.style.color = (nowRight ? "#007500": "#AF0000");
                     // update their scores if we need to
-                    if( wasRight != nowRight<?php echo (($_SESSION["showPicksWeek"] == 22) ? " && checkIndex != 16" : ""); ?> )
+                    if( ((wasRight != nowRight) || (!wasWrong && !wasRight)) <?php echo (($_SESSION["showPicksWeek"] == 22) ? " && checkIndex != 16" : ""); ?> )
                     {
                       var score = parseInt(txt.innerHTML.slice(txt.innerHTML.indexOf(" ") + 1)) * (nowRight ? 1 : -1);
-                      var pts = rows[j].cells[rows[j].cells.length - 3];
-                      pts.innerHTML = parseInt(pts.innerHTML) + score;
-                      var max = rows[j].cells[rows[j].cells.length - 2];
-                      max.innerHTML = parseInt(max.innerHTML) + score;
+                      if( nowRight || wasRight ) {
+                        var pts = rows[j].cells[rows[j].cells.length - 3];
+                        pts.innerHTML = parseInt(pts.innerHTML) + score;
+                      }
+                      if( !nowRight || wasWrong ) {
+                        var max = rows[j].cells[rows[j].cells.length - 2];
+                        max.innerHTML = parseInt(max.innerHTML) + score;
+                      }
                     }
 <?php
   if( $_SESSION["showPicksWeek"] == 22 )
@@ -1088,7 +1093,15 @@
           }
 
           function FixAdvance()
-          {            
+          {
+<?php
+  if( !$poolLocked ) {
+?>
+            // pool isn't locked yet, so skip all this nonsense
+            return; 
+<?php
+  }
+?>
             // fix the advance column
             var i1 = 0;
             var rows = document.getElementById("reloadableTable").rows;            

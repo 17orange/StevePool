@@ -49,18 +49,12 @@
           $showSuccess = !$showFailure;
         }
       }
-
-      // if they saved their picks, wipe the cache
-      if( $showSuccess )
-      {
-        $memcache->flush();
-      }
     }
   }
   else if( isset($_POST["picksType"]) && isset($_POST["game1"]) && $_POST["picksType"] == "wildCard" )
   {
     // make sure these are valid game ids
-    $query = "select weekNumber from Game where gameID in (-1";
+    $query = "select distinct(weekNumber) as weekNumber from Game where gameID in (-1";
     $winners = array();
     for( $i=1; $i<5; $i++ )
     {
@@ -102,7 +96,7 @@
   else if( isset($_POST["picksType"]) && isset($_POST["game1"]) && $_POST["picksType"] == "divisional" )
   {
     // make sure these are valid game ids
-    $query = "select weekNumber from Game where gameID in (-1";
+    $query = "select distinct(weekNumber) as weekNumber from Game where gameID in (-1";
     $winners = array();
     for( $i=1; $i<5; $i++ )
     {
@@ -144,7 +138,7 @@
   else if( isset($_POST["picksType"]) && isset($_POST["game1"]) && $_POST["picksType"] == "conference" )
   {
     // make sure these are valid game ids
-    $query = "select weekNumber from Game where gameID in (-1";
+    $query = "select distinct(weekNumber) as weekNumber from Game where gameID in (-1";
     $winners = array();
     for( $i=1; $i<5; $i++ )
     {
@@ -234,5 +228,11 @@
 
     // let them know it worked
     $showSuccess = true;
+  }
+
+  // if they saved their picks, wipe the cache
+  if( $showSuccess )
+  {
+    $memcache->flush();
   }
 ?>

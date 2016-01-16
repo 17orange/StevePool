@@ -31,6 +31,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <title>Steve's NFL Pool</title>
+    <link href="includes/favicon.ico" rel="icon" type="image/x-icon">
     <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
     <link href="includes/stevePool.css" rel="stylesheet" type="text/css">

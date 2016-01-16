@@ -256,6 +256,16 @@
     $pickBank[$j]["sPts"] = $ytd;
   }
 
+  // if any of the games have an unknown team, make it TBD
+  for( $i=0; $i<count($games); $i++ ) {
+    if( $games[$i]["homeTeam"] == "" ) {
+      $games[$i]["homeTeam"] = "TBD";
+    }
+    if( $games[$i]["awayTeam"] == "" ) {
+      $games[$i]["awayTeam"] = "TBD";
+    }
+  } 
+
   // start the new table
 ?>
         <tr>
@@ -281,13 +291,13 @@
     echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "\">\n";
     echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'" . $games[$i]["awayTeam"] . "');\">\n";
     echo "                <td class=\"posTop\" style=\"background-color:" . 
-        (($games[$i]["leader"] != "TBD" && ($games[$i]["leader"] == $games[$i]["awayTeam"])) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+        (($games[$i]["awayTeam"] != "TBD" && ($games[$i]["leader"] == $games[$i]["awayTeam"])) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
         $games[$i]["awayTeam"] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . 
         "\"/></div></div></td>\n";
     echo "              </tr>\n";
     echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'" . $games[$i]["homeTeam"] . "');\">\n";
     echo "                <td class=\"posOther\" style=\"background-color:" . 
-        (($games[$i]["leader"] != "TBD" && ($games[$i]["leader"] == $games[$i]["homeTeam"])) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+        (($games[$i]["homeTeam"] != "TBD" && ($games[$i]["leader"] == $games[$i]["homeTeam"])) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
         $games[$i]["homeTeam"] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . 
         "\"/></div></div></td>\n";
     echo "              </tr>\n";
@@ -384,17 +394,21 @@
       }
 
       // factor it into the max
-      $started = (($games[$ind]["status"] != 1) && ($games[$ind]["status"] != 19));
-      $possibleMax += ((isset($eliminatedTeams[$thePick])) ||       // team eliminated
-                       ($started && ($thePick["winner"] == "")))    // they missed it
-                      ? 0 : $pointVals[$ind];
-      $displayScore += ($thePick == $games[$ind]["leader"]) ? $pointVals[$ind] : 0;
-      $correctPicks += ($thePick == $games[$ind]["leader"]) ? 1 : 0;
+      if( $poolLocked || ($thisPick["userID"] == $myID)) {
+        $started = (($games[$ind]["status"] != 1) && ($games[$ind]["status"] != 19));
+        $possibleMax += ((isset($eliminatedTeams[$thePick])) ||       // team eliminated
+                         ($started && ($thePick["winner"] == "")))    // they missed it
+                        ? 0 : $pointVals[$ind];
+        $displayScore += (($thePick != "") && ($thePick == $games[$ind]["leader"])) ? $pointVals[$ind] : 0;
+        $correctPicks += (($thePick != "") && ($thePick == $games[$ind]["leader"])) ? 1 : 0;
+      } else {
+        $possibleMax += $pointVals[$ind];
+      }
     }
 
     // see if that ends this person's picks
     echo "          <td class=\"lightBackgroundTable\">" . (($thisPick["tieBreaker"] == 0) ? "--" : 
-        (($games[0]["status"] == 1 && $thisPick["userID"] != $myID) ? "X" : $thisPick["tieBreaker"])) . "</td>\n";
+        (($games[0]["isLocked"] == 0 && $thisPick["userID"] != $myID) ? "X" : $thisPick["tieBreaker"])) . "</td>\n";
     echo "          <td class=\"lightBackgroundTable\">" . $displayScore . "</td>\n";
     echo "          <td class=\"lightBackgroundTable\">" . $possibleMax . "</td>\n";
     echo "          <td class=\"lightBackgroundTable\">" . $correctPicks . "</td>\n";

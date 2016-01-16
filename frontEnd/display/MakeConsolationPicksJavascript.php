@@ -1,6 +1,6 @@
     <script type="text/javascript">
-      var emptyImg = "includes/nfl.png";
 <?php
+  echo "      var emptyImg = \"icons/" . $result["season"] . "/nfl.png\";\n";
   // fill in the seed data
   $afcSeed1 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
                         " and weekNumber=19 order by gameID limit 0,1" );
@@ -89,7 +89,7 @@
           document.getElementById(pickID).style.color = "#007500";
           document.getElementById(opponentID).style.color = "#BF0000";
           document.getElementById(targetID + '_IMG').src = document.getElementById(pickID + '_IMG').src;
-          CleanPick(pickID.substring(0,3) + 'Div2', false);
+          CleanPick(pickID.substring(0,3) + 'Div2', true);
         }
         else if( pickID.substring(1,6) == 'fcDiv' )
         {
@@ -218,12 +218,26 @@
           document.getElementById(id.substring(0,3) + "CCA").style.color = "#D9DCE3";
           document.getElementById(id.substring(0,3) + "CCH").style.color = "#D9DCE3";
           document.getElementById(id.substring(0,3) + "CC").value = "";
-          if( wipeWinners )
+          if( wipeWinners && id.substring(1, 7) == "fcDiv1" )
           {
             document.getElementById(id.substring(0,3) + "CCA").innerHTML = "";
             document.getElementById(id.substring(0,3) + "CCH").innerHTML = "@ ";
             document.getElementById(id.substring(0,3) + "CCA_IMG").src = emptyImg;
             document.getElementById(id.substring(0,3) + "CCH_IMG").src = emptyImg;
+          }
+          else if( wipeWinners && id.substring(1, 7) == "fcDiv2" )
+          {
+            var check1 = document.getElementById(id.substring(0,7) + "A").innerHTML;
+            var check2 = document.getElementById(id.substring(0,7) + "H").innerHTML.substring(2);
+            var awayTest = document.getElementById(id.substring(0,3) + "CCA").innerHTML;
+            var homeTest = document.getElementById(id.substring(0,3) + "CCH").innerHTML.substring(2);
+            if( awayTest == check1 || awayTest == check2 ) {
+              document.getElementById(id.substring(0,3) + "CCA").innerHTML = "";
+              document.getElementById(id.substring(0,3) + "CCA_IMG").src = emptyImg;
+            } else if( homeTest == check1 || homeTest == check2 ) {
+              document.getElementById(id.substring(0,3) + "CCH").innerHTML = "@ ";
+              document.getElementById(id.substring(0,3) + "CCH_IMG").src = emptyImg;
+            }
           }
         }
         if( id.substring(1, 6) == "fcDiv" || id.substring(1, 5) == "fcCC" )

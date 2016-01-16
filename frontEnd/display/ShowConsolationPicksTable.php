@@ -180,19 +180,19 @@
 
       if( (($games[$ind]["status"] == 2) || ($games[$ind]["status"] == 3)) && $thePick != $games[$ind]["leader"] )
       {
-        $eliminatedTeams[$thePick] = 19;
+        $eliminatedTeams[$thePick] = $games[$ind]["status"];
       }
 
       // factor it into the max
       $started = (($games[$ind]["status"] != 1) && ($games[$ind]["status"] != 19));
-      $possibleMax += ((isset($eliminatedTeams[$thePick])) ||       // team eliminated
-                       ($started && ($thePick["winner"] == "")))    // they missed it
+      $possibleMax += ((isset($eliminatedTeams[$thePick]) && ($eliminatedTeams[$thePick]== 3)) || // team eliminated
+                       ($started && ($thePick["winner"] == "")))                                    // they missed it
                       ? 0 : $pointVals[$ind];
     }
 
     // see if that ends this person's picks
     echo "          <td class=\"lightBackgroundTable\">" . (($thisPick["tieBreaker"] == 0) ? "--" : 
-        (($games[0]["status"] == 1 && $thisPick["userID"] != $myID) ? "X" : $thisPick["tieBreaker"])) . "</td>\n";
+        (($games[0]["isLocked"] == 0 && $thisPick["userID"] != $myID) ? "X" : $thisPick["tieBreaker"])) . "</td>\n";
     echo "          <td class=\"lightBackgroundTable\">" . $thisPick["cPts"] . "</td>\n";
     echo "          <td class=\"lightBackgroundTable\">" . $possibleMax . "</td>\n";
     echo "          <td class=\"lightBackgroundTable\">" . $thisPick["picksCorrect"] . "</td>\n";
@@ -227,11 +227,13 @@
       echo "<div class=\"cellShadeOuter\">\n";
       echo "<div class=\"cellShadeBG\"" . 
           ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
-          (" style=\"background-color:#" . (($teamID == $gameData["leader"]) ? "00AA00": "FF0000"))) . ";\"></div>\n";
+          (" style=\"background-color:#" . (($teamID == $gameData["leader"]) ? "00AA00" : 
+          ((($gameData["status"] <= 3 && $gameData["leader"] != '') || ($eliminatedTeams[$teamID] == 3)) ? "FF0000" : "FFFF00")))) . ";\"></div>\n";
       $span = "<span" . 
           ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
-          (" style=\"color:#" . (($teamID == $gameData["leader"]) ? "007500": "BF0000") . ";\"")) . ">" . 
-          $teamID . " " . $points . "</span>";
+          (" style=\"color:#" . (($teamID == $gameData["leader"]) ? "007500" : 
+          ((($gameData["status"] <= 3 && $gameData["leader"] != "") || ($eliminatedTeams[$teamID] == 3)) ? "BF0000" : "888800")) . ";" . 
+          (($gameData["status"] == 2) ? " font-style:italic;" : "") . "\"")) . ">" . $teamID . " " . $points . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";
       echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($teamID, $_SESSION["showPicksSeason"]) . "\"/></div></td></tr></table>";

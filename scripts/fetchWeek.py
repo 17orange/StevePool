@@ -242,6 +242,9 @@ def GrabWeekGames(week, season):
 		timeLeft = fullPage[time:timeEnd]
 		if( timeLeft[0:38] == '<span class="down-yardline">#{posdisp}' ):
 			timeLeft = homeTimes[homeTeam]
+		# what in the world?  12/20/15, BUF@WAS
+		if( timeLeft[:10] == "QSuspended" ):
+			timeLeft = "Q2" + timeLeft[10:]
 
 		# get the nfl id
 		share = fullPage.find('<div id="share-', time) + 23
@@ -285,53 +288,78 @@ def GrabWeekGames(week, season):
 			dbInfo = cur.fetchall()[0]
 			analyzePage = urllib.urlopen("http://www.cbssports.com/nfl/gametracker/live/" + dbInfo[1]).read()
 			preHalftime = ((timeLeft == "Halftime") or ((timeLeft[:1] == "Q") and (int(timeLeft[1:2]) < 3)))
-
+			
 			# away rushing yardage
 			aStart = analyzePage.find('id="away-netydsrushing"')
 			aStart = analyzePage.find('>', aStart) + 1
 			aEnd = analyzePage.find('<', aStart)
-			awayRushYds = int(analyzePage[aStart:aEnd])
+			if ParseInt(analyzePage[aStart:aEnd]):
+				awayRushYds = int(analyzePage[aStart:aEnd])
+			else:
+				awayRushYds = "null"
 
 			# home rushing yardage
 			aStart = analyzePage.find('id="home-netydsrushing"', aEnd)
 			aStart = analyzePage.find('>', aStart) + 1
 			aEnd = analyzePage.find('<', aStart)
-			homeRushYds = int(analyzePage[aStart:aEnd])
+			if ParseInt(analyzePage[aStart:aEnd]):
+				homeRushYds = int(analyzePage[aStart:aEnd])
+			else:
+				homeRushYds = "null"
 
 			# away passing yardage
 			aStart = analyzePage.find('id="away-netydspassing"', aEnd)
 			aStart = analyzePage.find('>', aStart) + 1
 			aEnd = analyzePage.find('<', aStart)
-			awayPassYds = int(analyzePage[aStart:aEnd])
+			if ParseInt(analyzePage[aStart:aEnd]):
+				awayPassYds = int(analyzePage[aStart:aEnd])
+			else:
+				awayPassYds = "null"
 
 			# home passing yardage
 			aStart = analyzePage.find('id="home-netydspassing"', aEnd)
 			aStart = analyzePage.find('>', aStart) + 1
 			aEnd = analyzePage.find('<', aStart)
-			homePassYds = int(analyzePage[aStart:aEnd])
+			if ParseInt(analyzePage[aStart:aEnd]):
+				homePassYds = int(analyzePage[aStart:aEnd])
+			else:
+				homePassYds = "null"
 
 			# away TDs
 			aStart = analyzePage.find('id="away-tds"', aEnd)
 			aStart = analyzePage.find('>', aStart) + 1
 			aEnd = analyzePage.find('<', aStart)
-			awayTDs = int(analyzePage[aStart:aEnd])
+			if ParseInt(analyzePage[aStart:aEnd]):
+				awayTDs = int(analyzePage[aStart:aEnd])
+			else:
+				awayTDs = "null"
 
 			# home TDs
 			aStart = analyzePage.find('id="home-tds"', aEnd)
 			aStart = analyzePage.find('>', aStart) + 1
 			aEnd = analyzePage.find('<', aStart)
-			homeTDs = int(analyzePage[aStart:aEnd])
+			if ParseInt(analyzePage[aStart:aEnd]):
+				homeTDs = int(analyzePage[aStart:aEnd])
+			else:
+				homeTDs = "null"
 
 			# enter these numbers into the db
-			#print str(dbInfo[0]) + " => " + str(preHalftime)
-			yardQuery = "update Game set awayRushYds=" + str(awayRushYds) + ", awayPassYds=" + str(awayPassYds) + ", awayTDs=" + str(awayTDs) + ", homeRushYds=" + str(homeRushYds) + ", homePassYds=" + str(homePassYds) + ", homeTDs=" + str(homeTDs)
-			if preHalftime:
-				yardQuery = yardQuery + ", awayRushYds2Q=" + str(awayRushYds) + ", awayPassYds2Q=" + str(awayPassYds) + ", awayTDs2Q=" + str(awayTDs) + ", homeRushYds2Q=" + str(homeRushYds) + ", homePassYds2Q=" + str(homePassYds) + ", homeTDs2Q=" + str(homeTDs)
-			yardQuery = yardQuery + " where gameID=" + str(dbInfo[0]);
-			cur.execute(yardQuery)
+			if awayRushYds != "null" and awayPassYds != "null" and awayTDs != "null" and homeRushYds != "null" and homePassYds != "null" and homeTDs != "null":
+				yardQuery = "update Game set awayRushYds=" + str(awayRushYds) + ", awayPassYds=" + str(awayPassYds) + ", awayTDs=" + str(awayTDs) + ", homeRushYds=" + str(homeRushYds) + ", homePassYds=" + str(homePassYds) + ", homeTDs=" + str(homeTDs)
+				if preHalftime:
+					yardQuery = yardQuery + ", awayRushYds2Q=" + str(awayRushYds) + ", awayPassYds2Q=" + str(awayPassYds) + ", awayTDs2Q=" + str(awayTDs) + ", homeRushYds2Q=" + str(homeRushYds) + ", homePassYds2Q=" + str(homePassYds) + ", homeTDs2Q=" + str(homeTDs)
+				yardQuery = yardQuery + " where gameID=" + str(dbInfo[0]);
+				cur.execute(yardQuery)
 
 		# next game
 		start = next
+
+def ParseInt(s):
+	try:
+		int(s)
+		return True
+	except ValueError:
+		return False
 
 # see whether this is the main guy or guy
 if __name__ == "__main__":
@@ -360,7 +388,7 @@ if __name__ == "__main__":
 	# if we've finished up this day, move to the next one
 	crontabTime = "* * * * *"
 	if allDone:
-		cur.execute("select coalesce(min(gameTime), '1982-11-08 12:00:00'), coalesce(min(weekNumber), 29) from Game where status != " + str(statsUtil.FINAL))
+		cur.execute("select coalesce(min(gameTime), '1982-11-08 12:00:00'), coalesce(min(weekNumber), 29) from Game where status != " + str(statsUtil.FINAL) + " and status != 19")
 		gameTime = cur.fetchall()
 		cur.execute("update Constants set value='" + str(gameTime[0][1]) + "' where name='fetchWeek'")
 		pyTime = datetime.datetime(int(gameTime[0][0][0:4]), int(gameTime[0][0][5:7]), int(gameTime[0][0][8:10]), int(gameTime[0][0][11:13]), int(gameTime[0][0][14:16]), int(gameTime[0][0][17:19]))

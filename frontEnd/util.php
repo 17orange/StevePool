@@ -87,11 +87,11 @@
 
   function formatTime($pick)
   {
-    if( $pick["status"] == 3 )
+    if( isset($pick["status"]) && $pick["status"] == 3 )
     {
       return "FINAL<br>" . $pick["awayTeam"] . " " . $pick["awayScore"] . "<br>" . $pick["homeTeam"] . " " . $pick["homeScore"];
     }
-    else if( $pick["status"] == 2 )
+    else if( isset($pick["status"]) && $pick["status"] == 2 )
     {
       return "LIVE<br>" . $pick["awayTeam"] . " " . $pick["awayScore"] . "<br>" . $pick["homeTeam"] . " " . $pick["homeScore"];
     }

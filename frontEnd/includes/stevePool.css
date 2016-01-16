@@ -329,6 +329,17 @@ a.wash:link, a.wash:visited, a.wash:hover, a.wash:active {
   width: 20%;
 }
 
+.mpMobilePickType {
+  border: 2px solid #314972;
+  background-color: #D9DCE3;
+  border-bottom-style: none;
+  color: #0A1F42;
+}
+
+.mpMobileWipeTop {
+  border-top-style: none;
+}
+
 .mpMobileGameInfoLocked {
   border: 3px solid #314972;
   border-left-style: none;

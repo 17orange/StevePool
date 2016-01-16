@@ -68,7 +68,8 @@
     if( $result["weekNumber"] >= 18 && $poolResults["inPlayoffs"] == "Y" )
     {
       $outOfPlayoffs = RunQuery( "select prevWeek1, prevWeek2, prevWeek3 from PlayoffResult join Session using (userID) where sessionID=" . 
-                                 $_SESSION["spsID"] . " and weekNumber=22");
+                                 $_SESSION["spsID"] . " and weekNumber=22 and season=(select value " . 
+                                "from Constants where name='fetchSeason')" );
     }
 
     // they're not in the pool for this season

@@ -12,7 +12,7 @@ cur = db.cursor()
 # define the update function
 def updateStats(week, season):
 	# reset everyone's stats for this week
-	cur.execute("update WeekResult inner join (select userID, weekNumber, sum(if((winner=homeTeam and homeScore>awayScore) or (winner=awayTeam and awayScore>homeScore), Pick.points, 0)) as points from Game join Pick using (gameID) where weekNumber=" + week + " and season=" + season + " group by userID) as PS using (userID, weekNumber) set WeekResult.points=PS.points")
+	cur.execute("update WeekResult inner join (select userID, weekNumber, season, sum(if((winner=homeTeam and homeScore>awayScore) or (winner=awayTeam and awayScore>homeScore), Pick.points, 0)) as points from Game join Pick using (gameID) where weekNumber=" + week + " and season=" + season + " group by userID) as PS using (userID, weekNumber, season) set WeekResult.points=PS.points")
 
 	# assign this week's winner if it's over
 	cur.execute("select sum(status<" + str(FINAL) + ") from Game where season=" + season + " and weekNumber=" + week)
@@ -88,6 +88,11 @@ def updateStats(week, season):
 			else:
 				winnerIDs.append( player[0] )
 
+		# see if we ran out of people (should only be at the beginning of the season)
+		if winnerCount < 5:
+			for winner in winnerIDs:
+				cur.execute("update SeasonResult set inPlayoffs='R' where season=" + season + " and userID=" + str(winner))
+
 	# set the byes, then add in the wild cards
 	cur.execute("select distinct(confID) from SeasonResult join Division using(divID) where season=" + season )
 	conferences = cur.fetchall()
@@ -109,6 +114,11 @@ def updateStats(week, season):
 			else:
 				winnerIDs.append( player[0] )
 		
+		# see if we ran out of people (should only be at the beginning of the season)
+		if winnerCount < 10:
+			for winner in winnerIDs:
+				cur.execute("update SeasonResult set firstRoundBye='R' where season=" + season + " and userID=" + str(winner))
+
 		# now grab the wild cards who HAVENT qualified yet
 		cur.execute("select count(*) from SeasonResult join Division using (divID) where season=" + season + " and confID=" + str(conf[0]) + " and inPlayoffs='Y' " )
 		#cur.execute("select count(*) from SeasonResult join Division using (divID) where season=" + season + " and confID=" + str(conf[0]) + " and inPlayoffs in ('Y', 'R')" )
@@ -130,6 +140,11 @@ def updateStats(week, season):
 			else:
 				winnerIDs.append( player[0] )
 
+		# see if we ran out of people (should only be at the beginning of the season)
+		if winnerCount < 30:
+			for winner in winnerIDs:
+				cur.execute("update SeasonResult set inPlayoffs='R' where season=" + season + " and userID=" + str(winner))
+
 	# see if the regular season is final
 	cur.execute("select sum(status<" + str(FINAL) + ") from Game where season=" + season + " and weekNumber=" + week)
 	num = cur.fetchall()
@@ -145,7 +160,7 @@ def updateStats(week, season):
 		cur.execute("insert into PlayoffResult (userID, season, weekNumber, advances) select userID, season, 19, 'R' from SeasonResult where season=" + str(season) + " and inPlayoffs='Y'")
 		cur.execute("insert into PlayoffResult (userID, season, weekNumber, advances) select userID, season, 20, 'R' from SeasonResult where season=" + str(season) + " and inPlayoffs='Y'")
 		cur.execute("insert into PlayoffResult (userID, season, weekNumber, advances) select userID, season, 22, 'R' from SeasonResult where season=" + str(season) + " and inPlayoffs='Y'")
-		cur.execute("insert into Pick (userID, gameID, points) select userID, gameID, 1 from PlayoffResult join Game using (weekNumber, season) where weekNumber=18 order by gameTime desc")
+		cur.execute("insert into Pick (userID, gameID, points) select userID, gameID, 1 from PlayoffResult join Game using (weekNumber, season) where weekNumber=18 and season=" + str(season) + " order by gameTime desc")
                 cur.execute("update Pick set points=2 where gameID=(select gameID from Game where weekNumber=18 and season=" + str(season) + " order by gameTime desc limit 1,1)")
                 cur.execute("update Pick set points=3 where gameID=(select gameID from Game where weekNumber=18 and season=" + str(season) + " order by gameTime desc limit 2,1)")
                 cur.execute("update Pick set points=4 where gameID=(select gameID from Game where weekNumber=18 and season=" + str(season) + " order by gameTime desc limit 3,1)")
@@ -155,7 +170,7 @@ def updateStats(week, season):
 # define the update function
 def updatePlayoffStats(week, season):
 	# reset playoff pool stats for this week
-	cur.execute("update PlayoffResult inner join (select userID, weekNumber, sum(if(status=1 or status=19, 0, if(type='winner', if((winner=homeTeam and homeScore>awayScore) or (winner=awayTeam and awayScore>homeScore), Pick.points, 0),if(type='winner3Q', if((winner=homeTeam and homeScore3Q>awayScore3Q) or (winner=awayTeam and awayScore3Q>homeScore3Q) or (winner='TIE' and homeScore3Q=awayScore3Q), Pick.points, 0),if(type='winner2Q', if((winner=homeTeam and homeScore2Q>awayScore2Q) or (winner=awayTeam and awayScore2Q>homeScore2Q) or (winner='TIE' and homeScore2Q=awayScore2Q), Pick.points, 0),if(type='winner1Q', if((winner=homeTeam and homeScore1Q>awayScore1Q) or (winner=awayTeam and awayScore1Q>homeScore1Q) or (winner='TIE' and homeScore1Q=awayScore1Q), Pick.points, 0),if(type='passYds', if((winner=homeTeam and homePassYds>awayPassYds) or (winner=awayTeam and awayPassYds>homePassYds) or (winner='TIE' and homePassYds=awayPassYds), Pick.points, 0),if(type='passYds2Q', if((winner=homeTeam and homePassYds2Q>awayPassYds2Q) or (winner=awayTeam and awayPassYds2Q>homePassYds2Q) or (winner='TIE' and homePassYds2Q=awayPassYds2Q), Pick.points, 0),if(type='rushYds', if((winner=homeTeam and homeRushYds>awayRushYds) or (winner=awayTeam and awayRushYds>homeRushYds) or (winner='TIE' and homeRushYds=awayRushYds), Pick.points, 0),if(type='rushYds2Q', if((winner=homeTeam and homeRushYds2Q>awayRushYds2Q) or (winner=awayTeam and awayRushYds2Q>homeRushYds2Q) or (winner='TIE' and homeRushYds2Q=awayRushYds2Q), Pick.points, 0),if(type='TDs', if((winner=homeTeam and homeTDs>awayTDs) or (winner=awayTeam and awayTDs>homeTDs) or (winner='TIE' and homeTDs=awayTDs), Pick.points, 0),if(type='TDs2Q', if((winner=homeTeam and homeTDs2Q>awayTDs2Q) or (winner=awayTeam and awayTDs2Q>homeTDs2Q) or (winner='TIE' and homeTDs2Q=awayTDs2Q), Pick.points, 0),0)))))))))))) as points from Game join Pick using (gameID) where weekNumber=" + week + " and season=" + season + " group by userID) as PS using (userID, weekNumber) set PlayoffResult.points=PS.points")
+	cur.execute("update PlayoffResult inner join (select userID, weekNumber, season, sum(if(status=1 or status=19, 0, if(type='winner', if((winner=homeTeam and homeScore>awayScore) or (winner=awayTeam and awayScore>homeScore), Pick.points, 0),if(type='winner3Q', if((winner=homeTeam and homeScore3Q>awayScore3Q) or (winner=awayTeam and awayScore3Q>homeScore3Q) or (winner='TIE' and homeScore3Q=awayScore3Q), Pick.points, 0),if(type='winner2Q', if((winner=homeTeam and homeScore2Q>awayScore2Q) or (winner=awayTeam and awayScore2Q>homeScore2Q) or (winner='TIE' and homeScore2Q=awayScore2Q), Pick.points, 0),if(type='winner1Q', if((winner=homeTeam and homeScore1Q>awayScore1Q) or (winner=awayTeam and awayScore1Q>homeScore1Q) or (winner='TIE' and homeScore1Q=awayScore1Q), Pick.points, 0),if(type='passYds', if((winner=homeTeam and homePassYds>awayPassYds) or (winner=awayTeam and awayPassYds>homePassYds) or (winner='TIE' and homePassYds=awayPassYds), Pick.points, 0),if(type='passYds2Q', if((winner=homeTeam and homePassYds2Q>awayPassYds2Q) or (winner=awayTeam and awayPassYds2Q>homePassYds2Q) or (winner='TIE' and homePassYds2Q=awayPassYds2Q), Pick.points, 0),if(type='rushYds', if((winner=homeTeam and homeRushYds>awayRushYds) or (winner=awayTeam and awayRushYds>homeRushYds) or (winner='TIE' and homeRushYds=awayRushYds), Pick.points, 0),if(type='rushYds2Q', if((winner=homeTeam and homeRushYds2Q>awayRushYds2Q) or (winner=awayTeam and awayRushYds2Q>homeRushYds2Q) or (winner='TIE' and homeRushYds2Q=awayRushYds2Q), Pick.points, 0),if(type='TDs', if((winner=homeTeam and homeTDs>awayTDs) or (winner=awayTeam and awayTDs>homeTDs) or (winner='TIE' and homeTDs=awayTDs), Pick.points, 0),if(type='TDs2Q', if((winner=homeTeam and homeTDs2Q>awayTDs2Q) or (winner=awayTeam and awayTDs2Q>homeTDs2Q) or (winner='TIE' and homeTDs2Q=awayTDs2Q), Pick.points, 0),0)))))))))))) as points from Game join Pick using (gameID) where weekNumber=" + week + " and season=" + season + " group by userID) as PS using (userID, weekNumber, season) set PlayoffResult.points=PS.points")
 
 	# update wild card stats
 	if( week == "18" ):

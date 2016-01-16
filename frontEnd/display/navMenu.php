@@ -39,6 +39,9 @@
       {
         echo "          <tr><td class='noBorder'>" . $lockResults[0]["num"] . " game" . (($lockResults[0]["num"] == 1) ? " is" : "s are") . 
             " locked!</td></tr>\n";
+        if( $results["weekNumber"] >= 18 ) {
+          echo "          <tr><td class='noBorder'>Consolation Pool is locked!</td></tr>\n";
+        }
       }
 
       $lockResults = RunQuery( "select count(*) as num, date_Format(lockTime, if(lockTime<date_add(now(), interval 1 week), '%l:%i%p %W', " . 
@@ -48,6 +51,11 @@
       {
         echo "          <tr><td class='noBorder'>" . $thisLock["num"] . " game" . (($thisLock["num"] == 1) ? "" : "s") . " lock" . 
             (($thisLock["num"] == 1) ? "s" : "") . " at " . $thisLock["lockStr"] . "</td></tr>\n";
+        if( $results["weekNumber"] == 18 ) {
+          echo "          <tr><td class='noBorder'>Consolation Pool locks at " . $lockResults[0]["lockStr"] . "</td></tr>\n";
+        } else if( $results["weekNumber"] > 18 ) {
+          echo "          <tr><td class='noBorder'>Consolation Pool is locked!</td></tr>\n";
+        }
       }
     }
   }
