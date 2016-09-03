@@ -37,6 +37,9 @@ select {
   position: relative;
   color: #D9DCE3;
 }
+.mainHeaderMobile {
+  height: 80px;
+}
 
 .mainTitle {
   position: absolute;
@@ -45,6 +48,10 @@ select {
   left: -20px;
   top: 82px;
   font-size: 50px;
+}
+.mainTitleMobile {
+  top: 30px;
+  font-size: 40px;
 }
 
 .mainSubtitle {
@@ -55,6 +62,13 @@ select {
   top: 168px;
   font-size: 25px;
 }
+.mainSubtitleMobile {
+  text-align: left;
+  width: auto;
+  left: 20px;
+  top: 5px;
+  font-size: 20px;
+}
 
 .loggedInInfo {
   position: absolute;
@@ -63,6 +77,10 @@ select {
   left: -20px;
   top: 28px;
   font-size: 25px;
+}
+.loggedInInfoMobile {
+  top: 5px;
+  font-size: 20px;
 }
 
 .navMenuDiv {
@@ -125,6 +143,10 @@ select {
   border: 5px solid #6E809F;
   border-radius: 10px;
 }
+.navButtonActiveMobile {
+  padding: 6px 15px;
+  font-size: 20px;
+}
 
 .navButton {
   padding: 10px 25px;
@@ -133,6 +155,10 @@ select {
   color: #6E809F;
   border: 5px solid #0A1F42;
   border-radius: 10px;
+}
+.navButtonMobile {
+  padding: 6px 15px;
+  font-size: 20px;
 }
 
 .navButton:hover {
@@ -419,6 +445,10 @@ td {
   border: 0;
 }
 
+.noMouse {
+  pointer-events: none;
+}
+
 .cellShadeOuter {
   width: 100%;
   height: 100%;
@@ -468,9 +498,16 @@ td {
   margin-left: 20px;
   font-size: 20px;
 }
+.deadlineInfoMobile {
+  display: none;
+  font-size: 16px;
+}
 
 .poolLogo {
   vertical-align: middle;
+}
+.poolLogoMobile {
+  display: none;
 }
 
 .fjalla {
@@ -479,4 +516,15 @@ td {
 
 .montserrat {
   font-family: 'Montserrat', sans-serif;
+}
+
+.zipzip {
+  width:50%;
+  display:inline-block;
+}
+
+.innerMobileTable {
+  width:100%;
+  //font-size:18px;
+  pointer-events:none;
 }

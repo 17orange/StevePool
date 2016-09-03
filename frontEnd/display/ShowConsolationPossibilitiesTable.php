@@ -100,11 +100,17 @@
                          " and season=" . $_SESSION["showPicksSeason"] );
     $myPicks = $myPicks[0];
     $columns = array("wc1AFC", "wc2AFC", "wc1NFC", "wc2NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl");
+    $eliminatedTeams = array();
     for( $i=0; $i<11; $i++ )
     {
-      if( $games[$gameIDtoIndex[$minGameID + $i]]["status"] != "3" )
+      $thisGame = $games[$gameIDtoIndex[$minGameID + $i]];
+      if( $thisGame["status"] != "3" )
       {
-        $_SESSION["forcedWinners"][$minGameID + $i] = (($standingsType == "best") ? "" : "NOT_") . $myPicks[$columns[$i]];
+        if( !isset($eliminatedTeams[$myPicks[$columns[$i]]]) ) {
+          $_SESSION["forcedWinners"][$minGameID + $i] = (($standingsType == "best") ? "" : "NOT_") . $myPicks[$columns[$i]];
+        }
+      } else {
+        $eliminatedTeams[(($thisGame["homeScore"] > $thisGame["awayScore"]) ? $thisGame["awayTeam"] : $thisGame["homeTeam"])] = true;
       }
     }
   }

@@ -100,4 +100,20 @@
       return strftime("%a<br>%b %e<br>%l:%M%p", strtotime($pick["gameTime"]));
     }
   }
+
+  function formatTimeMobile($pick)
+  {
+    if( isset($pick["status"]) && $pick["status"] == 3 )
+    {
+      return "FINAL<br>" . $pick["awayTeam"] . " " . $pick["awayScore"] . " - " . $pick["homeTeam"] . " " . $pick["homeScore"];
+    }
+    else if( isset($pick["status"]) && $pick["status"] == 2 )
+    {
+      return "LIVE<br>" . $pick["awayTeam"] . " " . $pick["awayScore"] . " - " . $pick["homeTeam"] . " " . $pick["homeScore"];
+    }
+    else
+    {
+      return strftime("%a %b %e<br>%l:%M%p", strtotime($pick["gameTime"]));
+    }
+  }
 ?>

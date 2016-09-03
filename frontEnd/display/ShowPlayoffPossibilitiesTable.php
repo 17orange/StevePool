@@ -580,7 +580,7 @@
     }
 
     // factor it into the max
-    $possibleMax += (($thisPick["isFinal"] && ($thisPick["winner"] != $thisPick["leader"])) ||      // final and theyre wrong
+    $possibleMax += ((($thisPick["gStatus"] != 1) && ($thisPick["winner"] != $thisPick["leader"])) ||      // final and theyre wrong
                      ($poolLocked && ($thisPick["winner"] == "")))                                  // they missed it
                     ? 0 : $thisPick["pPts"];
 
@@ -620,7 +620,7 @@
   echo "        </tr>\n";
 ?>
         <script type="text/javascript">
-          var mostRecentSort;
+          var mostRecentSort = "points";
 
           var sorting = false;
           function SortTable(arg)
@@ -961,6 +961,10 @@
             }
             recalculating = true;
 
+/*
+            mostRecentSort = "weekPts";
+            ReloadPage("force&forcedWinnerGameID=" + gameID + "&forcedWinner=" + winner );
+/**/
             var i1 = 0;
             var rows = document.getElementById("reloadableTable").rows;
             var checkIndex = -1;            
@@ -1051,6 +1055,7 @@
             }
 
             SortTable("points");
+/**/
 
             // tell them it's safe
             recalculating = false;
@@ -1136,4 +1141,7 @@
               }
             }
           }
+
+          // default sort
+          SortTable(mostRecentSort);
         </script>

@@ -451,10 +451,11 @@
       echo "<div class=\"cellShadeOuter\">\n";
       echo "<div class=\"cellShadeBG\"" . ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "" : 
           (" style=\"background-color:#" . (($thisPick["winner"] == $thisPick["leader"]) ? "00AA00" : 
-          (($thisPick["leader"] == "TIE") ? "FFFF00" : "FF0000")) . ";\"")) . "></div>\n";
+          (($thisPick["leader"] == "TIE" && $thisPick["gStatus"] != 3) ? "FFFF00" : "FF0000")) . ";\"")) . "></div>\n";
       $span = "<span style=\"color:#" . 
           ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "0A1F42" : 
-          (($thisPick["winner"] == $thisPick["leader"]) ? "007500": (($thisPick["leader"] == "TIE") ? "888800" : "BF0000"))) . ";" . 
+          (($thisPick["winner"] == $thisPick["leader"]) ? "007500": 
+          (($thisPick["leader"] == "TIE" && $thisPick["gStatus"] != 3) ? "888800" : "BF0000"))) . ";" . 
           (($thisPick["gStatus"] == 2) ? " font-style:italic;" : "") . "\">" . 
           $thisPick["winner"] . (($thisPick["pPts"] > 0) ? (" " . $thisPick["pPts"]) : "") . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
@@ -518,10 +519,12 @@
   echo "        </tr>\n";
 ?>
         <script type="text/javascript">
+          var mostRecentSort = "points";
           function SortTable(arg)
           {
             var i1 = 0;
             var rows = document.getElementById("reloadableTable").rows;
+            mostRecentSort = arg;
             while( i1 < rows.length )
             {
               // skip non-data rows
@@ -619,6 +622,7 @@
                     rows[maxIndex].style.color = swap;
                     // fix the row so it highlights me
                     rows[j].className = (rows[j].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
+                    rows[maxIndex].className = (rows[maxIndex].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
                   }
                 }
 
@@ -715,6 +719,7 @@
                       rows[maxInnerIndex].style.color = swap;
                       // fix the row so it highlights me
                       rows[k].className = (rows[k].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
+                      rows[maxIndex].className = (rows[maxIndex].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
                     }
                   }
                 }
@@ -743,6 +748,7 @@
               {
                 // tack on the new elements
                 document.getElementById("reloadableTable").innerHTML = xmlhttp.responseText;
+                SortTable(mostRecentSort);
 <?php
   if( $_SESSION["showPicksWeek"] == 22 )
   {
@@ -767,6 +773,7 @@
             xmlhttp.send();
           }
 
+          SortTable(mostRecentSort);
 <?php
   if( $_SESSION["showPicksWeek"] == 22 )
   {

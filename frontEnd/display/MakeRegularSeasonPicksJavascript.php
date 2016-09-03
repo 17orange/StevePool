@@ -262,6 +262,10 @@
         }
 
         document.getElementById("saveRosterButton").disabled = !canSave;
+
+        // test the warning system
+        $(".warningZone").html(showWarning ? "Picks not saved!" : "&nbsp;");
+        $("#mainTable").css("background", showWarning ? "#af0000" : "none");
       }
 
       function ToggleSaveButtonMobile()
@@ -275,7 +279,8 @@
           if( testElem.innerHTML.indexOf("<img") != -1 )
           {
             // find where in the array this game is located
-            var thisTeam = testElem.innerHTML.substr(0, testElem.innerHTML.indexOf("<br>"));
+            var thisTeam = $(testElem).find("td:nth-child(1)").html();
+            thisTeam = thisTeam.substr(0, thisTeam.indexOf("<br>"));
             for( var k=1; k<17; k++ )
             {
               var thisHome = document.getElementById("homeTeam" + k)
@@ -292,6 +297,10 @@
         }
 
         document.getElementById("saveRosterButton").disabled = !canSave;
+
+        // test the warning system
+        $(".warningZone").html(showWarning ? "Picks not saved!" : "&nbsp;");
+        $("#mainTable").css("background", showWarning ? "#af0000" : "none");
       }
 
       function NumbersOnly()
@@ -403,16 +412,88 @@
       {
         for( var i=1; i<17; i++ )
         {
-          SetWinnerMobile(i, true);
+          if( document.getElementById("mp3_" + i).className.indexOf("mpLockedSelection") == -1 )
+          {
+            var swap = (document.getElementById("mp2_" + i).innerHTML == "") ? 2 : 
+                        ((document.getElementById("mp1_" + i).innerHTML == "") ? 1 : 0);
+            for( var j=1; j<4 && swap > 0; j++ )
+            {
+              var destElem = document.getElementById("mp" + j + "_" + i);
+              var srcElem = document.getElementById("mp" + (j + swap) + "_" + i);
+              destElem.innerHTML = srcElem.innerHTML;
+              srcElem.innerHTML = "";
+
+              // blank the old value if it was away team
+              if( destElem.innerHTML.indexOf("<img") != -1 )
+              {
+                var str = $(destElem).find("td:nth-child(1)").html();
+                str = str.substr(0, str.indexOf("<br>") + 4) + "&nbsp;";
+                $(destElem).find("td:nth-child(1)").html(str);
+              }
+              // add the point value if we're on the pick row
+              if( j == 3 )
+              {
+                var str = $(destElem).find("td:nth-child(1)").html();
+                str = str.substr(0, str.indexOf("<br>") + 4) + (17 - i);
+                $(destElem).find("td:nth-child(1)").html(str);
+              }
+            }
+            document.getElementById("mp1_" + i).className = "mobileCell mpImgTD mpMobileAwayTeam";
+            document.getElementById("mp2_" + i).className = "mobileCell mpMobileGameInfo";
+            document.getElementById("mp3_" + i).className = "mobileCell mpImgTD mpValidSelection";
+            document.getElementById("mp4_" + i).className = "mobileCell noBorder";
+            document.getElementById("mp5_" + i).className = "mobileCell noBorder";
+          }
         }
+
+        // put the warning up
+        showWarning = true;
+
+        ToggleSaveButtonMobile();
       }
 
       function PickAllAwayTeamsMobile()
       {
         for( var i=1; i<17; i++ )
         {
-          SetWinnerMobile(i, false);
+          if( document.getElementById("mp3_" + i).className.indexOf("mpLockedSelection") == -1 )
+          {
+            var swap = (document.getElementById("mp4_" + i).innerHTML == "") ? 2 : 
+                        ((document.getElementById("mp5_" + i).innerHTML == "") ? 1 : 0);
+            for( var j=5; j>2 && swap > 0; j-- )
+            {
+              var destElem = document.getElementById("mp" + j + "_" + i);
+              var srcElem = document.getElementById("mp" + (j - swap) + "_" + i);
+              destElem.innerHTML = srcElem.innerHTML;
+              srcElem.innerHTML = "";
+
+              // blank the old value if it was home team
+              if( destElem.innerHTML.indexOf("<img") != -1 )
+              {
+                var str = $(destElem).find("td:nth-child(1)").html();
+                str = str.substr(0, str.indexOf("<br>") + 4) + "&nbsp;";
+                $(destElem).find("td:nth-child(1)").html(str);
+              }
+              // add the point value if we're on the pick row
+              if( j == 3 )
+              {
+                var str = $(destElem).find("td:nth-child(1)").html();
+                str = str.substr(0, str.indexOf("<br>") + 4) + (17 - i);
+                $(destElem).find("td:nth-child(1)").html(str);
+              }
+            }
+            document.getElementById("mp5_" + i).className = "mobileCell mpImgTD mpMobileHomeTeam";
+            document.getElementById("mp4_" + i).className = "mobileCell mpMobileGameInfo";
+            document.getElementById("mp3_" + i).className = "mobileCell mpImgTD mpValidSelection";
+            document.getElementById("mp2_" + i).className = "mobileCell noBorder";
+            document.getElementById("mp1_" + i).className = "mobileCell noBorder";
+          }
         }
+
+        // put the warning up
+        showWarning = true;
+
+        ToggleSaveButtonMobile();
       }
 
       function SetWinnerMobile(row, homeTeam)
@@ -561,6 +642,252 @@
         // put the warning up
         showWarning = true;
 
+        ToggleSaveButtonMobile();
+      }
+
+      function PrintPicks() {
+        var originalGuts = document.body.innerHTML;
+        var newGuts = document.getElementById("PrintWorksheet").innerHTML;
+        document.body.innerHTML = newGuts;
+        window.print();
+        document.body.innerHTML = originalGuts;
+      }
+
+      //this will hold reference to the tr we have dragged and its helper
+      var dropZone = {};
+
+      function MobileContentLoaded() {
+        // fix the table height to fit everything on screen
+        var tableHeight = $(window).height() - $("#mobilePicksTable").offset().top;
+        $("#mobilePicksTable").css({"height":(tableHeight + "px"), "width":($("#mobilePicksTable").parent().width() - 20)});
+        $(".mobileCell").css({"width":"20%", "font-size":((tableHeight * 1.0 / 72.0) + "px")});
+        $(".teamLogo").css({"max-height":((tableHeight * 1.0 / 24.0) + "px"),"max-width":((tableHeight * 1.0 / 18.0) + "px")});
+        $("#mobilePicksTable .mobileRow").draggable({
+          helper:"clone",
+          start: TPdragStart,
+          drag: TPdragDrag,
+          stop: TPdragStop,
+          cancel: 'td.noBorder'
+        });
+        $(".mpLockedSelection").parents("tr").draggable("destroy");
+        showWarning = false;
+        $(window).on("beforeunload", function() {
+          if( showWarning ) {
+            return "Are you sure? You didn't finish the form!";
+          }
+        });
+      }
+
+      function TPdragStart(event, ui) {
+        dropZone.table = this;
+        dropZone.helper = ui.helper;
+
+        // grab the position
+        var currY = -1;
+        for( var i=1; i<17; i++ )
+        {
+          var targetHole = $("#mp3_" + i);
+          var targOff = targetHole.offset();
+          var targH = targetHole.height();
+          if( targOff.top <= event.pageY && event.pageY <= (targOff.top + targH) )
+          {
+            currY = i;
+          }
+        }
+        if( currY == -1 ) {
+          return false;
+        }
+        for( var i=1; i<6; i++ )
+        {
+          var targetHole = $("#mp" + i + "_" + currY);
+          var targOff = targetHole.offset();
+          var targW = targetHole.width();
+          if( targOff.left <= event.pageX && event.pageX <= (targOff.left + targW) )
+          {
+            if( targetHole.hasClass("noBorder") ) {
+              return false;
+            } else {
+              dropZone.currX = i;
+              dropZone.currY = currY;
+            }
+          }
+        }
+        $(dropZone.helper).children(".noBorder").css({"display":"none"});
+        $(dropZone.helper).children("td").attr("id", "");
+        $(dropZone.helper).css({"z-index":10000,
+                                "width":(($(this).width() * 0.6) + "px"),
+                                "margin-left":((($("#mp2_" + currY).hasClass("noBorder") 
+                                                 ? 2 
+                                                 : ($("#mp1_" + currY).hasClass("noBorder") ? 1 : 0))
+                                               * $("#mp3_" + currY).outerWidth()) + "px")});
+        $(dropZone.table).css("visibility", "hidden");
+      }
+
+      function TPdragDrag(event, ui) {
+        // grab the position
+        var currX = -1;
+        var currY = -1;
+        var updateDragger = false;
+        for( var i=1; i<17; i++ )
+        {
+          var targetHole = $("#mp3_" + i);
+          var targOff = targetHole.offset();
+          var targH = targetHole.height();
+          if( targOff.top <= event.pageY && event.pageY <= (targOff.top + targH) && !targetHole.hasClass("mpLockedSelection") )
+          {
+            currY = i;
+          }
+        }
+        for( var i=1; i<6; i++ )
+        {
+          var targetHole = $("#mp" + i + "_8");
+          var targOff = targetHole.offset();
+          var targW = targetHole.width();
+          if( targOff.left <= event.pageX && event.pageX <= (targOff.left + targW) )
+          {
+            currX = i;
+          }
+        }
+        // it's changed vertically
+        if( currY > 0 && currY != dropZone.currY ) {
+          // swap them
+          var delta = ((dropZone.currY)<currY) ? 1 : -1;
+          for( var j=dropZone.currY; j * delta < currY * delta; ) {
+            var target = j + delta;
+            while( $("#mp3_" + target).hasClass("mpLockedSelection") ) {
+              target += delta;
+            }
+            for( var i=1; i<6; i++ ) {
+              var temp = $("#mp" + i + "_" + j).html() + "";
+              var tempClass = $("#mp" + i + "_" + j).attr("class");
+              $("#mp" + i + "_" + j).html($("#mp" + i + "_" + target).html() + "");
+              $("#mp" + i + "_" + j).attr("class", $("#mp" + i + "_" + target).attr("class"));
+              $("#mp" + i + "_" + target).html(temp + "");
+              $("#mp" + i + "_" + target).attr("class", tempClass);
+            }
+            if($("#mp3_" + j).hasClass("mpValidSelection")) {
+              var str = $("#mp3_" + j + " td:nth-child(1)").html();
+              str = str.substr(0, str.indexOf("<br>") + 4) + (17 - j);
+              $("#mp3_" + j + " td:nth-child(1)").html(str);
+            }
+            j = target;
+          }
+
+          if($("#mp3_" + currY).hasClass("mpValidSelection")) {
+            var str = $("#mp3_" + currY + " td:nth-child(1)").html();
+            str = str.substr(0, str.indexOf("<br>") + 4) + (17 - currY);
+            $("#mp3_" + currY + " td:nth-child(1)").html(str);
+          }
+
+          // fix the visibility
+          $(dropZone.table).css("visibility", "visible");
+          dropZone.table = $("#mp3_" + currY).parents("tr:first");
+          $(dropZone.table).css("visibility", "hidden");
+
+          dropZone.currY = currY;
+          updateDragger = true;
+        }
+        // see if it has room to change horizontally
+        if( currX > dropZone.currX && !($('#mp5_' + dropZone.currY).hasClass("noBorder")) ) {
+          currX = dropZone.currX;
+        } else if( currX < dropZone.currX && !($('#mp1_' + dropZone.currY).hasClass("noBorder")) ) {
+          currX = dropZone.currX;
+        }
+        // it's changed horizontally
+        if( currX > 0 && currX != dropZone.currX ) {
+          while( currX < dropZone.currX ) {
+            if( $("#mp1_" + dropZone.currY).hasClass("noBorder") ) {
+              var temp = $("#mp1_" + dropZone.currY).html();
+              var tempClass = $("#mp1_" + dropZone.currY).attr("class");
+              for( var i=1; i<5; i++ ) {
+                $("#mp" + i + "_" + dropZone.currY).html($("#mp" + (i + 1) + "_" + dropZone.currY).html());
+                $("#mp" + i + "_" + dropZone.currY).attr("class", $("#mp" + (i + 1) + "_" + dropZone.currY).attr("class"));
+                if(i==3) {
+                  if($("#mp1_" + dropZone.currY).hasClass("noBorder")) {
+                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpInvalidSelection");
+                  } else {
+                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpValidSelection");
+                    var str = $("#mp3_" + dropZone.currY + " td:nth-child(1)").html();
+                    str = str.substr(0, str.indexOf("<br>") + 4) + (17 - dropZone.currY);
+                    $("#mp3_" + dropZone.currY + " td:nth-child(1)").html(str);
+                  }
+                } else if(i==2) {
+                  if($("#mp1_" + dropZone.currY).hasClass("noBorder")) {
+                    $("#mp2_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpMobileAwayTeam");
+                    var str = $("#mp2_" + dropZone.currY + " td:nth-child(1)").html();
+                    str = str.substr(0, str.indexOf("<br>") + 4) + "&nbsp;";
+                    $("#mp2_" + dropZone.currY + " td:nth-child(1)").html(str);
+                  } else {
+                    $("#mp2_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpMobileGameInfo");
+                  }
+                }
+              }
+              $("#mp5_" + dropZone.currY).html(temp);
+              $("#mp5_" + dropZone.currY).attr("class", tempClass);
+            }
+            dropZone.currX--;
+          }
+          while( currX > dropZone.currX ) {
+            if( $("#mp5_" + dropZone.currY).hasClass("noBorder") ) {
+              var temp = $("#mp5_" + dropZone.currY).html();
+              var tempClass = $("#mp5_" + dropZone.currY).attr("class");
+              for( var i=5; i>1; i-- ) {
+                $("#mp" + i + "_" + dropZone.currY).html($("#mp" + (i - 1) + "_" + dropZone.currY).html());
+                $("#mp" + i + "_" + dropZone.currY).attr("class", $("#mp" + (i - 1) + "_" + dropZone.currY).attr("class"));
+                if(i==3) {
+                  if($("#mp5_" + dropZone.currY).hasClass("noBorder")) {
+                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpInvalidSelection");
+                  } else {
+                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpValidSelection");
+                    var str = $("#mp3_" + dropZone.currY + " td:nth-child(1)").html();
+                    str = str.substr(0, str.indexOf("<br>") + 4) + (17 - dropZone.currY);
+                    $("#mp3_" + dropZone.currY + " td:nth-child(1)").html(str);
+                  }
+                } else if(i==4) {
+                  if($("#mp5_" + dropZone.currY).hasClass("noBorder")) {
+                    $("#mp4_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpMobileHomeTeam");
+                    var str = $("#mp4_" + dropZone.currY + " td:nth-child(1)").html();
+                    str = str.substr(0, str.indexOf("<br>") + 4) + "&nbsp;";
+                    $("#mp4_" + dropZone.currY + " td:nth-child(1)").html(str);
+                  } else {
+                    $("#mp4_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpMobileGameInfo");
+                  }
+                }
+              }
+              $("#mp1_" + dropZone.currY).html(temp);
+              $("#mp1_" + dropZone.currY).attr("class", tempClass);
+            }
+            dropZone.currX++;
+          }
+          updateDragger = true;
+        }
+        if( updateDragger ) {
+          // update the dragger
+          var index1 = -1;
+          var index2 = 1;
+          var targetArr = $(dropZone.helper).find(".mobileCell");
+          $.each( targetArr, function(index, value) {
+            if( index1 == -1 && !($(value).hasClass("noBorder"))) {
+              index1 = index;
+            }
+          } );
+          while( $('#mp' + index2 + '_' + dropZone.currY).hasClass("noBorder") ) {
+            index2++;
+          }
+          $.each( targetArr, function(index, value) {
+            if( index >= index1 && index < (index1 + 3) ) {
+              $(value).attr("class", $('#mp' + (index2 + index - index1) + '_' + dropZone.currY).attr("class"));
+              $(value).html($('#mp' + (index2 + index - index1) + '_' + dropZone.currY).html());
+            }
+          } );
+
+          // put the warning up
+          showWarning = true;
+        }
+      }
+
+      function TPdragStop(event, ui) {
+        $(dropZone.table).css("visibility", "visible");
         ToggleSaveButtonMobile();
       }
     </script>

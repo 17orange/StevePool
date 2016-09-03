@@ -178,7 +178,8 @@
       }
       ShowPick($thePick, $gameToDisplay, $pointVals[$ind], $isMe, $poolLocked, $eliminatedTeams);
 
-      if( (($games[$ind]["status"] == 2) || ($games[$ind]["status"] == 3)) && $thePick != $games[$ind]["leader"] )
+      if( (($games[$ind]["status"] == 2) || ($games[$ind]["status"] == 3)) && 
+          ($thePick != $games[$ind]["leader"]) && !isset($eliminatedTeams[$thePick]) )
       {
         $eliminatedTeams[$thePick] = $games[$ind]["status"];
       }
