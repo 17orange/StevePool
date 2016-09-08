@@ -12,8 +12,8 @@ if (isset($_SESSION["LAST_ACTIVITY"]) && (time() - $_SESSION["LAST_ACTIVITY"] > 
 $_SESSION["LAST_ACTIVITY"] = time(); // update last activity time stamp
 
 // see if they punched in the right password
-if( isset($_POST["SPusername"]) && isset($_POST["SPpassword"]) && 
-    $_POST["SPusername"] == "4dm!n" && $_POST["SPpassword"] == '$P3!CH3R' )
+if( isset($_POST["SPusername"]) && isset($_POST["SPpassword"]) &&  $_POST["SPusername"] == "4dm!n" && hash("sha512", $_POST["SPpassword"]) ==
+    '3ae7c456c5e1f484760cd23b7ba673da3da52c7a5e493788fc4b6cf045ec3c7ae7be66f4c70e78dfeab04ecefc48de000a6e617b28c9f87e0ec29dcafae0a58f' )
 {
   session_regenerate_id();
   $_SESSION["SPgoodLogin"] = session_id();

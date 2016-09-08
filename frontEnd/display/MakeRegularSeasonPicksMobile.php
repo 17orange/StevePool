@@ -48,8 +48,7 @@
   // grab the teams on bye
   $byes = array();
   $byeCount = 0;
-  $byeResults = RunQuery( "select teamID from Team join Game on (teamID = homeTeam or teamID = awayTeam) where teamID not in (" . 
-                          $playedTeams . ") and weekNumber=1 and season=" . $result["season"]);
+  $byeResults = RunQuery( "select teamID from Team where teamID not in (" . $playedTeams . ") and isActive='Y' ");
   foreach( $byeResults as $thisBye )
   {
     $byes[count($byes)] = $thisBye["teamID"];

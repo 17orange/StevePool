@@ -27,7 +27,8 @@ create table User (userID int unsigned not null primary key auto_increment,
 
 create table Team (teamID char(3) not null primary key, 
                    city varchar(36) not null, 
-                   nickname varchar(36) not null);
+                   nickname varchar(36) not null,
+                   isActive enum('Y','N') not null default 'Y');
 
 create table Game (gameID int unsigned not null primary key auto_increment, 
                    season smallint not null, 

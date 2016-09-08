@@ -53,7 +53,7 @@
       $byes = array();
       $byeData = runQuery( "select teamID from Team where teamID not in (select homeTeam from Game where season=" . $thisSeason . 
                            " and weekNumber=" . $_SESSION["picksWeek"] . ") and teamID not in (select awayTeam from Game " . 
-                           "where season=" . $thisSeason . " and weekNumber=" . $_SESSION["picksWeek"] . ")" );
+                           "where season=" . $thisSeason . " and weekNumber=" . $_SESSION["picksWeek"] . ") and isActive='Y' " );
       while( ($thisBye = mysqli_fetch_assoc( $byeData )) != null )
       {
         $byes[count($byes)] = $thisBye["teamID"];
