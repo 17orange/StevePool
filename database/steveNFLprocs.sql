@@ -224,18 +224,25 @@ create procedure SaveWildCardPicks( in _sessID    int unsigned ,
                                     in _tieBreak2 smallint     ,
                                     in _tieBreak3 smallint     ,
                                     in _tieBreak4 smallint     ,
-                                    in _pick4    char(3)      ,
-                                    in _pick3    char(3)      ,
-                                    in _pick2    char(3)      ,
-                                    in _pick1    char(3)      )
+                                    in _pick4     char(3)      ,
+                                    in _pts4      smallint     ,
+                                    in _pick3     char(3)      ,
+                                    in _pts3      smallint     ,
+                                    in _pick2     char(3)      ,
+                                    in _pts2      smallint     ,
+                                    in _pick1     char(3)      ,
+                                    in _pts1      smallint     )
 begin
   # make sure theyve sent in the correct number of valid picks
   declare _week tinyint unsigned default 18;
+  declare _numPts tinyint unsigned default 0;
+  declare _neededPts tinyint unsigned default 20;
   declare _numPicks tinyint unsigned default 0;
   declare _numGames tinyint unsigned default 0;
   declare _numGamesNeeded tinyint unsigned default 0;
   declare _numGamesMissed tinyint unsigned default 0;
   declare _userID int unsigned default 0;
+  select _pts4 + _pts3 + _pts2 + _pts1 into _numPts;
   select if(_pick4!='',1,0) + if(_pick3!='',1,0) + if(_pick2!='',1,0) + if(_pick1!='',1,0) into _numPicks;
   select count(*) into _numGames from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason') and (homeTeam in 
@@ -247,18 +254,18 @@ begin
          (select value from Constants where name='fetchSeason');
 
   # make sure everything is set up correct-like
-  if _numGames = _numGamesNeeded and _numPicks = _numGames and _numGamesMissed = 0 then
+  if _numGames = _numGamesNeeded and _numPicks = _numGames and _numGamesMissed = 0 and _numPts = _neededPts then
     # save the winners they picked
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick4, points=4 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick4, points=_pts4 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick4 or awayTeam=_pick4);
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick3, points=3 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick3, points=_pts3
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick3 or awayTeam=_pick3);
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick2, points=2 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick2, points=_pts2 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick2 or awayTeam=_pick2);
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick1, points=1 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick1, points=_pts1 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick1 or awayTeam=_pick1);
     update PlayoffResult join Session using (userID) set tieBreaker1=_tieBreak1, tieBreaker2=_tieBreak2, 
@@ -278,17 +285,24 @@ create procedure SaveDivisionalPicks( in _sessID    int unsigned ,
                                       in _tieBreak3 smallint     ,
                                       in _tieBreak4 smallint     ,
                                       in _pick4     char(3)      ,
+                                      in _pts4      smallint     ,
                                       in _pick3     char(3)      ,
+                                      in _pts3      smallint     ,
                                       in _pick2     char(3)      ,
-                                      in _pick1     char(3)      )
+                                      in _pts2      smallint     ,
+                                      in _pick1     char(3)      ,
+                                      in _pts1      smallint     )
 begin
   # make sure theyve sent in the correct number of valid picks
   declare _week tinyint unsigned default 19;
+  declare _numPts tinyint unsigned default 0;
+  declare _neededPts tinyint unsigned default 20;
   declare _numPicks tinyint unsigned default 0;
   declare _numGames tinyint unsigned default 0;
   declare _numGamesNeeded tinyint unsigned default 0;
   declare _numGamesMissed tinyint unsigned default 0;
   declare _userID int unsigned default 0;
+  select _pts4 + _pts3 + _pts2 + _pts1 into _numPts;
   select if(_pick4!='',1,0) + if(_pick3!='',1,0) + if(_pick2!='',1,0) + if(_pick1!='',1,0) into _numPicks;
   select count(*) into _numGames from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason') and (homeTeam in 
@@ -300,18 +314,18 @@ begin
          (select value from Constants where name='fetchSeason');
 
   # make sure everything is set up correct-like
-  if _numGames = _numGamesNeeded and _numPicks = _numGames and _numGamesMissed = 0 then
+  if _numGames = _numGamesNeeded and _numPicks = _numGames and _numGamesMissed = 0 and _numPts = _neededPts then
     # save the winners they picked
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick4, points=4 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick4, points=_pts4 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick4 or awayTeam=_pick4);
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick3, points=3 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick3, points=_pts3 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick3 or awayTeam=_pick3);
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick2, points=2 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick2, points=_pts2 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick2 or awayTeam=_pick2);
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick1, points=1 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick1, points=_pts1 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick1 or awayTeam=_pick1);
     update PlayoffResult join Session using (userID) set tieBreaker1=_tieBreak1, tieBreaker2=_tieBreak2, 
@@ -332,51 +346,58 @@ create procedure SaveConferencePicks( in _sessID    int unsigned ,
                                       in _tieBreak4 smallint     ,
                                       in _game4     int unsigned ,
                                       in _pick4     char(3)      ,
+                                      in _pts4      smallint     ,
                                       in _type4     char(8)      ,
                                       in _game3     int unsigned ,
                                       in _pick3     char(3)      ,
+                                      in _pts3      smallint     ,
                                       in _type3     char(8)      ,
                                       in _game2     int unsigned ,
                                       in _pick2     char(3)      ,
+                                      in _pts2      smallint     ,
                                       in _type2     char(8)      ,
                                       in _game1     int unsigned ,
                                       in _pick1     char(3)      ,
+                                      in _pts1      smallint     ,
                                       in _type1     char(8)      )
 begin
   # make sure theyve sent in the correct number of valid picks
   declare _week tinyint unsigned default 20;
+  declare _numPts tinyint unsigned default 0;
+  declare _neededPts tinyint unsigned default 20;
   declare _numPicks tinyint unsigned default 0;
   declare _numHalfs tinyint unsigned default 0;
   declare _numGames tinyint unsigned default 0;
   declare _numGamesNeeded tinyint unsigned default 0;
   declare _numGamesMissed tinyint unsigned default 0;
   declare _userID int unsigned default 0;
+  select _pts1 + _pts2 + _pts3 + _pts4 into _numPts;
   select if(_pick4!='' and _type4='winner',1,0) + if(_pick3!='' and _type3='winner',1,0) + 
          if(_pick2!='' and _type2='winner',1,0) + if(_pick1!='' and _type1='winner',1,0) into _numPicks;
   select if(_pick4!='' and _type4='winner2Q',1,0) + if(_pick3!='' and _type3='winner2Q',1,0) + 
          if(_pick2!='' and _type2='winner2Q',1,0) + if(_pick1!='' and _type1='winner2Q',1,0) into _numHalfs;
   select count(*) into _numGames from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason') and (homeTeam in 
-         (_pick4, _pick3, _pick2, _pick1) or awayTeam in (_pick4, _pick3, _pick2, _pick1));
+         (_pick1, _pick2, _pick3, _pick4) or awayTeam in (_pick1, _pick2, _pick3, _pick4));
   select count(*) into _numGamesMissed from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason') and (homeTeam not in 
-         (_pick4, _pick3, _pick2, _pick1) and awayTeam not in (_pick4, _pick3, _pick2, _pick1));
+         (_pick1, _pick2, _pick3, _pick4) and awayTeam not in (_pick1, _pick2, _pick3, _pick4));
   select count(*) into _numGamesNeeded from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason');
 
   # make sure everything is set up correct-like
-  if _numGames = _numGamesNeeded and _numPicks = _numGames and _numHalfs = _numPicks and _numGamesMissed = 0 then
+  if _numGames = _numGamesNeeded and _numPicks = _numGames and _numHalfs = _numPicks and _numGamesMissed = 0 and _numPts = _neededPts then
     # save the winners they picked
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick4, points=4 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick4, points=_pts4 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and gameID=_game4 and type=_type4;
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick3, points=3 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick3, points=_pts3 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and gameID=_game3 and type=_type3;
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick2, points=2 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick2, points=_pts2 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and gameID=_game2 and type=_type2;
-    update Pick join Session using (userID) join Game using (gameID) set winner=_pick1, points=1 
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick1, points=_pts1 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and gameID=_game1 and type=_type1;
     update PlayoffResult join Session using (userID) set tieBreaker1=_tieBreak1, tieBreaker2=_tieBreak2, 

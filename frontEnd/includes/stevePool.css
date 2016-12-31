@@ -134,6 +134,18 @@ select {
   border-spacing: 0;
   padding: 5px;
 }
+@media only screen and (max-width: 1023px) {
+  .gameScoreTable {
+    width: 100%;
+    border-spacing: 0;
+    padding: 5px;
+    font-size:8.25px;
+  }
+
+  .pickText {
+    font-size:9px;
+  }
+}
 
 .navButtonActive {
   padding: 10px 25px;
@@ -227,6 +239,11 @@ a.wash:link, a.wash:visited, a.wash:hover, a.wash:active {
   filter: alpha(opacity=100);
   margin-left: auto;
   margin-right: auto;
+  pointer-events:none;
+}
+
+.imgDiv.mouseEnabled {
+  pointer-events:auto;
 }
 
 .teamLogo {
@@ -256,6 +273,33 @@ a.wash:link, a.wash:visited, a.wash:hover, a.wash:active {
   border-top-style: none;
   background-color: #6E809F;
   color: #0A1F42;
+}
+
+.mpSBCaption {
+  border: 2px solid #314972;
+  border-bottom-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+  height:38px;
+  position:absolute;
+  top:-45px;
+  left:-2px;
+  width:100%; 
+  border-bottom:4px solid #314972;
+  pointer-events:none;
+}
+
+.mpValidSelection .mpSBCaption {
+  border-bottom:4px solid #007500;
+}
+
+@media only screen and (max-width: 1023px) {
+  .mpSBCaption {
+    font-size:12px;
+    height:32px;
+    top:-39px;
+  }
 }
 
 .mpAwayTeam {
@@ -308,6 +352,36 @@ a.wash:link, a.wash:visited, a.wash:hover, a.wash:active {
   width: 20%;
 }
 
+.mpWCDivAwayTeamLocked {
+  border: 3px solid #314972;
+  border-right-style: none;
+  background-color: #6E809F;
+  color: #0A1F42;
+}
+
+.mpWCDivHomeTeamLocked {
+  border: 3px solid #314972;
+  border-left-style: none;
+  background-color: #6E809F;
+  color: #0A1F42;
+}
+
+.mpWCDivAwayTeam {
+  border: 2px solid #314972;
+  border-right-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+}
+
+.mpWCDivHomeTeam {
+  border: 2px solid #314972;
+  border-left-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
+  color: #0A1F42;
+}
+
 .mpLockedSelection {
   border: 5px solid #314972;
   background-color: #6E809F;
@@ -342,6 +416,15 @@ a.wash:link, a.wash:visited, a.wash:hover, a.wash:active {
   border-bottom-style: none;
   border-top-style: none;
   background-color: #6E809F;
+  color: #0A1F42;
+}
+
+.mpWCDivGameInfo {
+  border: 2px solid #314972;
+  border-left-style: none;
+  border-right-style: none;
+  cursor: pointer;
+  background-color: #D9DCE3;
   color: #0A1F42;
 }
 
@@ -527,4 +610,55 @@ td {
   width:100%;
   //font-size:18px;
   pointer-events:none;
+}
+
+.pointSlider {
+  width:100%;
+  position:relative;
+  height:2.5em;
+  background-color:#d9dce3;
+  font-size:14px;
+}
+
+.ui-slider-handle {
+//  background-color:#d9dce3;
+  outline:none;
+  width:10em;
+  position:absolute;
+  margin-left:-5.5em;
+  margin-top:-1.5em;
+  text-decoration:none;
+  color:#0A1F42;
+}
+
+.sliderTD {
+  width:100%; 
+  position:relative;
+  background:#AF0000;
+  border:2px solid #d9dce3;
+}
+
+.sliderGood {
+  position:absolute;
+  background:#007500;
+  height:2.5em;
+}
+
+.sliderDummy {
+  width:5.5em;
+  height:2.5em;
+  font-size:14px;
+  background:#007500;
+  position:absolute;
+}
+
+.sliderReal {
+  font-size:14px;
+  margin-left:5.5em;
+}
+
+.handleGuts {
+  display:inline-table;
+  width:5em;
+  margin-left:-4.5em;
 }

@@ -119,7 +119,7 @@
     else if( $result["weekNumber"] < 20 )
     {
       // people with byes
-      if( $poolResults["firstRoundBye"] == "Y" and $result["weekNumber"] == 18 )
+      if( $poolResults["firstRoundBye"] == "Y" && $result["weekNumber"] == 18 )
       {
         echo "      <div style=\"height:100px;\"></div>\n";
         echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">You have earned a first round bye!  Enjoy the week off!</div>\n";

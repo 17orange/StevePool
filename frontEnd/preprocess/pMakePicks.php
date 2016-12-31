@@ -61,7 +61,6 @@
       if( isset($_POST["game" . $i]) )
       {
         $query .= "," . mysqli_real_escape_string($link, $_POST["game" . $i]);
-        $winners[$_POST["pts" . $i]] = $_POST["winner" . $i];
       }
     }
     $query .= ")";
@@ -82,7 +81,8 @@
                    ",'" . $_SERVER["REMOTE_ADDR"] . "'," . $tieBreak1 . "," . $tieBreak2 . "," . $tieBreak3 . "," . $tieBreak4;
       for( $i=4; $i>0; $i-- )
       {
-        $saveQuery .= ",'" . (isset($winners[$i]) ? mysqli_real_escape_string($link, $winners[$i]) : "") . "'";
+        $saveQuery .= ",'" . mysqli_real_escape_string($link, $_POST["winner" . $i]) . "', " . 
+                      mysqli_real_escape_string($link, $_POST["pts" . $i]);
       }
       $saveQuery .= ")";
 
@@ -103,7 +103,6 @@
       if( isset($_POST["game" . $i]) )
       {
         $query .= "," . mysqli_real_escape_string($link, $_POST["game" . $i]);
-        $winners[$_POST["pts" . $i]] = $_POST["winner" . $i];
       }
     }
     $query .= ")";
@@ -124,7 +123,8 @@
                    ",'" . $_SERVER["REMOTE_ADDR"] . "'," . $tieBreak1 . "," . $tieBreak2 . "," . $tieBreak3 . "," . $tieBreak4;
       for( $i=4; $i>0; $i-- )
       {
-        $saveQuery .= ",'" . (isset($winners[$i]) ? mysqli_real_escape_string($link, $winners[$i]) : "") . "'";
+        $saveQuery .= ",'" . mysqli_real_escape_string($link, $_POST["winner" . $i]) . "', " . 
+                      mysqli_real_escape_string($link, $_POST["pts" . $i]);
       }
       $saveQuery .= ")";
 
@@ -145,9 +145,6 @@
       if( isset($_POST["game" . $i]) )
       {
         $query .= "," . mysqli_real_escape_string($link, $_POST["game" . $i]);
-        $winners["id" . $_POST["pts" . $i]] = $_POST["game" . $i];
-        $winners[$_POST["pts" . $i]] = $_POST["winner" . $i];
-        $winners["type" . $_POST["pts" . $i]] = $_POST["pickType" . $i];
       }
     }
     $query .= ")";
@@ -168,9 +165,10 @@
                    ",'" . $_SERVER["REMOTE_ADDR"] . "'," . $tieBreak1 . "," . $tieBreak2 . "," . $tieBreak3 . "," . $tieBreak4;
       for( $i=4; $i>0; $i-- )
       {
-        $saveQuery .= "," . (isset($winners["id" . $i]) ? mysqli_real_escape_string($link, $winners["id" . $i]) : "");
-        $saveQuery .= ",'" . (isset($winners[$i]) ? mysqli_real_escape_string($link, $winners[$i]) : "") . "'";
-        $saveQuery .= ",'" . (isset($winners["type" . $i]) ? mysqli_real_escape_string($link, $winners["type" . $i]) : "") . "'";
+        $saveQuery .= "," . (isset($_POST["game" . $i]) ? mysqli_real_escape_string($link, $_POST["game" . $i]) : "");
+        $saveQuery .= ",'" . (isset($_POST["winner" . $i]) ? mysqli_real_escape_string($link, $_POST["winner" . $i]) : "") . "'";
+        $saveQuery .= ",'" . (isset($_POST["pts" . $i]) ? mysqli_real_escape_string($link, $_POST["pts" . $i]) : "") . "'";
+        $saveQuery .= ",'" . (isset($_POST["pickType" . $i]) ? mysqli_real_escape_string($link, $_POST["pickType" . $i]) : "") . "'";
       }
       $saveQuery .= ")";
 

@@ -6,18 +6,10 @@
         }
       });
 
-      var illegalPointValues = [<?php
-  $showComma = false;
-  $pickResults = RunQuery( "select points from Pick join Game using (gameID) join Session using (userID) " . 
-                           "where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . $result["weekNumber"] . 
-                           " and season=" . $result["season"] . " and lockTime < now()", false );
-  foreach( $pickResults as $row ) {
-    echo ($showComma ? "," : "") . $row["points"];
-    $showComma = true;
-  }
-?>];
+      var illegalPointValues = [];
       var currentMousePos = {x:-1, y:-1};
       var currentOffset = {x:0, y:0};
+      var tries = 0;
       $(document).mousemove(function(event) {
         // update the position
         currentMousePos.x = event.pageX;
@@ -27,76 +19,17 @@
         if( currentDragPos != -1 )
         {
           // move the dragger
-          $("#dragger").css( {left: currentMousePos.x + currentOffset.x, top: currentMousePos.y + currentOffset.y} );
+          $("#dragger").css( {left: currentMousePos.x + currentOffset.x} );
 
-          // see which horizontal position it is now in
-          var newDragPos = currentDragPos;
           var dragOff = $("#dragger").offset();
-          var dragCenter = dragOff.left + ($("#dragger").width() / 2);
-          for( var i=1; i<5; i++ )
-          {
-            var targOff = $("#mp3_" + i).offset();
-            if( i != currentDragPos && !($("#mp3_" + i).hasClass("mpLockedSelection")) && 
-                targOff.left <= dragCenter && dragCenter <= (targOff.left + $("#mp1_" + i).width()) )
-            {
-              newDragPos = i;
-              i = 5;
-            }
-          }
-
-          // see if it has changed horizontal position
-          if( newDragPos != currentDragPos )
-          {
-            // swap these positions
-            for( var i=1; i<6; i++ )
-            {
-              var newElem = document.getElementById("mp" + i + "_" + newDragPos);
-              var oldElem = document.getElementById("mp" + i + "_" + currentDragPos);
-              var dragElem = document.getElementById("drag" + i);
-
-              // innerHTML
-              var temp = newElem.innerHTML;
-              newElem.innerHTML = oldElem.innerHTML;
-              oldElem.innerHTML = temp;
-
-              // swap point values
-              if( newElem.innerHTML.indexOf("<img") != -1 )
-              {
-                var spPos = newElem.innerHTML.indexOf(" ") + 1;
-                var brPos = newElem.innerHTML.indexOf("<br>");
-                newElem.innerHTML = newElem.innerHTML.substr(0, spPos) + (5 - newDragPos) + newElem.innerHTML.substr(brPos);
-              }
-              if( oldElem.innerHTML.indexOf("<img") != -1 )
-              {
-                var spPos = oldElem.innerHTML.indexOf(" ") + 1;
-                var brPos = oldElem.innerHTML.indexOf("<br>");
-                oldElem.innerHTML = oldElem.innerHTML.substr(0, spPos) + (5 - currentDragPos) + oldElem.innerHTML.substr(brPos);
-              }
-              if( dragElem.innerHTML.indexOf("<img") != -1 )
-              {
-                var spPos = dragElem.innerHTML.indexOf(" ") + 1;
-                var brPos = dragElem.innerHTML.indexOf("<br>");
-                dragElem.innerHTML = dragElem.innerHTML.substr(0, spPos) + (5 - newDragPos) + dragElem.innerHTML.substr(brPos);
-              }
-
-              // className
-              temp = newElem.className;
-              newElem.className = oldElem.className;
-              oldElem.className = temp;
-            }
-
-            // update the index number
-            currentDragPos = newDragPos;
-          }
-
-          // see if theyve adjusted it vertically
+          // see if theyve adjusted it horizontally
           var newDragSelection = currentDragSelection;
-          dragCenter = dragOff.top + ($("#dragger").height() / 2);
+          dragCenter = dragOff.left + ($("#dragger").width() / 2);
           for( var i=2; i<5; i++ )
           {
-            var targOff = $("#mp" + (6 - i) + "_0").offset();
+            var targOff = $("#mp" + (6 - i) + "_" + currentDragPos).offset();
             if( i != currentDragSelection && 
-                targOff.top <= dragCenter && dragCenter <= (targOff.top + $("#mp" + i + "_0").height()) )
+                targOff.left <= dragCenter && dragCenter <= (targOff.left + $("#mp" + (6 - i) + "_" + currentDragPos).width()) )
             {
               newDragSelection = i;
               i = 5;
@@ -110,33 +43,28 @@
             if( currentDragSelection != 3 || document.getElementById("drag" + currentDragSelection).innerHTML.substr(0,3) == "TIE")
             {
               var currStr = document.getElementById("drag" + currentDragSelection).innerHTML;
-              var spacePos = currStr.indexOf(" ");
+              var spacePos = currStr.indexOf(" ") + 1;
               var brPos = currStr.indexOf("<br>");
-              document.getElementById("drag" + currentDragSelection).innerHTML = currStr.substr(0, spacePos) + currStr.substr(brPos);
+              document.getElementById("drag" + currentDragSelection).innerHTML = currStr.substr(0, spacePos) + ((brPos > 0) ? currStr.substr(brPos) : "");
             }
 
             // update the selection number
             currentDragSelection = newDragSelection;
 
             // fix these class names
-            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mpImgTD mpValidSelection" : "mpImgTD mpAwayTeam";
+            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mpImgTD mpValidSelection" : "mpImgTD mpWCDivAwayTeam";
             if( document.getElementById("drag3").innerHTML.substr(0,3) == "TIE" )
             {
-              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpValidSelection" : "mpGameInfo";
+              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpValidSelection" : "mpWCDivGameInfo";
             }
             else
             {
-              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpInvalidSelection" : "mpGameInfo";
+              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpInvalidSelection" : "mpWCDivGameInfo";
             }
-            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mpImgTD mpValidSelection" : "mpImgTD mpHomeTeam";
+            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mpImgTD mpValidSelection" : "mpImgTD mpWCDivHomeTeam";
 
-            // assign the new point value
-            if( currentDragSelection != 3 || document.getElementById("drag" + currentDragSelection).innerHTML.substr(0,3) == "TIE")
-            {
-              var currStr = document.getElementById("drag" + currentDragSelection).innerHTML;
-              var brPos = currStr.indexOf("<br>");
-              document.getElementById("drag" + currentDragSelection).innerHTML = currStr.substr(0, brPos) + " " + (5 - currentDragPos) + currStr.substr(brPos);
-            }
+            // update the slider handle
+            adjustSliders(null,null);
           }
         }
       });      
@@ -146,6 +74,11 @@
         // see if we're dragging something
         if( currentDragPos != -1 )
         {
+          var fontSize = parseFloat($("#sliderHandle" + currentDragPos).parents("a").css("font-size"));
+          var upperLimit = (fontSize * -1.25) - 5;
+          var standardLimit = (fontSize * -6.25) - 7.5;
+          var lowerLimit = (fontSize * -11.25) - 10;
+
           // save it to the current position
           for( var i=1; i<6; i++ )
           {
@@ -166,6 +99,8 @@
           currentDragPos = -1;
           currentDragSelection = -1;
           $("#dragger").css( {width: 0, height: 0, top:-1000} );
+
+          showWarning = true;
 
           // see whether it's able to be saved yet
           ToggleSaveButton();
@@ -189,11 +124,11 @@
                                  ? 3 
                                  : 2); 
         var srcOff = $("#mp1_" + column).offset();
-        $("#dragger").css( {left: srcOff.left, top: (srcOff.top + ((currentDragSelection==4) 
-                                                                  ? (-$("#mp1_" + column).height()) 
+        $("#dragger").css( {top: srcOff.top, left: srcOff.left + ((currentDragSelection==4) 
+                                                                  ? (-$("#mp1_" + column).width()) 
                                                                   : ((currentDragSelection==2)
-                                                                    ? $("#mp1_" + column).height()
-                                                                    : 0)) )} );
+                                                                    ? $("#mp1_" + column).width()
+                                                                    : 0))} );
         currentOffset.x = $("#dragger").offset().left - currentMousePos.x;
         currentOffset.y = $("#dragger").offset().top - currentMousePos.y;
 
@@ -228,24 +163,22 @@
           srcElem.className = "noBorder";
         }
         $("#dragger").css( {width: topWidth} );
-
-        // mouse move to see if we need to apply the tie
       }
 
       function ToggleSaveButton()
       {
-        var canSave = true;
+        var canSave = (document.getElementById("pointsLeft").innerHTML == "0 points remaining");
         for( var i=1; i<5 && canSave; i++ )
         {
           var testElem = document.getElementById("mp3_" + i);
-          canSave = (testElem.className.indexOf("mpLockedSelection") != -1) || ((testElem.innerHTML.indexOf("<img") != -1) && 
+          var thisTeam = testElem.innerHTML.substr(0, testElem.innerHTML.indexOf(" "));
+          canSave = (testElem.className.indexOf("mpLockedSelection") != -1) || (((thisTeam == "TIE") || (testElem.innerHTML.indexOf("<img") != -1)) && 
                      (testElem.className.indexOf("mpInvalidSelection") == -1));
 
           // adjust the teams they're saving
-          if( testElem.innerHTML.indexOf("<img") != -1 )
+          if( testElem.innerHTML.indexOf("<img") != -1 || thisTeam == "TIE" )
           {
             // find where in the array this game is located
-            var thisTeam = testElem.innerHTML.substr(0, testElem.innerHTML.indexOf(" "));
             var lookTeam = thisTeam;
             if( thisTeam == "TIE" )
             {
@@ -255,7 +188,7 @@
                 var teamHTML = document.getElementById("mp" + k + "_" + i).innerHTML;
                 if( teamHTML.indexOf("<img") != -1 )
                 {
-                  lookTeam = teamHTML.substr(0, teamHTML.indexOf("<br>"));
+                  lookTeam = teamHTML.substr(0, teamHTML.indexOf("<br>") - 1);
                 }
               }
             }
@@ -264,12 +197,12 @@
             var lookType = "";
             for( var k=1; k<4 && lookType == ""; k++ )
             {
-              var typeHTML = document.getElementById("mp" + k + "_" + i).innerHTML;
-              if( typeHTML.indexOf("class=\"mpAwayTeam\">Final</div>") != -1 )
+              var typeHTML = document.getElementById("typeLabel" + i).innerHTML;
+              if( typeHTML.indexOf("Final") != -1 )
               {
                 lookType = "winner";
               }
-              else if( typeHTML.indexOf("class=\"mpAwayTeam\">Halftime</div>") != -1 )
+              else if( typeHTML.indexOf("Half") != -1 )
               {
                 lookType = "winner2Q";
               }
@@ -284,9 +217,8 @@
               if( thisHome != null && thisAway != null && thisType == lookType &&
                   ((thisHome.value == lookTeam) || (thisAway.value == lookTeam)) )
               {
-                // set its winner and point value
+                // set its winner
                 document.getElementById("winner" + k).value = thisTeam;
-                document.getElementById("pts" + k).value = 5 - i;
                 k = 5;
               }
             }
@@ -299,6 +231,12 @@
         }
 
         document.getElementById("saveRosterButton").disabled = !canSave;
+
+        // test the warning system
+        if( showWarning ) {
+          $(".warningZone").html(showWarning ? "Picks not saved!" : "&nbsp;");
+          $("#mainTable").css("background", showWarning ? "#af0000" : "none");
+        }
       }
 
       function ToggleSaveButtonMobile()
@@ -385,6 +323,9 @@
           }
         }
         element.value = string;
+
+        // put the warning up
+        showWarning = true;
       }
 
       function PickAllHomeTeams()
@@ -740,11 +681,98 @@
 
         ToggleSaveButtonMobile();
       }
+
+      function adjustSliders(event, ui) {
+        var pointsLeft = 20;
+        var total = 20;
+        $(".pointSlider").each( function() {
+          total -= ($(this).slider("value") ? $(this).slider("value") : 1);
+          pointsLeft -= $(this).slider("value");
+        } );
+        $(".pointSlider").each( function() {
+          var max = ($(this).slider("value") ? $(this).slider("value") : 1) + total;
+          if( max > 17 ) {
+            max = 17;
+          }
+          if( max < 1 ) {
+            max = 1;
+          }
+          $(this).slider("option", "max", max);
+          $(this).slider("value", $(this).slider("value"));
+          fixCaption({"target":$(this)}, {"value":$(this).slider("value")});
+          $(this).css({"width":((max * 100 / 17) + "%")});
+        } );
+        $('#pointsLeft').html(pointsLeft + " point" + ((pointsLeft == 1) ? "" : "s") + " remaining");
+
+        showWarning = (event != null);
+
+        ToggleSaveButton();
+      }
+
+      function fixHandles() {
+        $(".pointSlider").each( function() {
+          fixCaption({"target":$(this)}, {"value":$(this).slider("value")});
+        } );    
+      }
+
+      function fixCaption(event, ui) {
+        var index = $(event.target).attr("id").charAt(6);
+        $("#pts" + index).attr("value", ui.value);
+        $(event.target).find(".sliderGood").css({"width":((ui.value * 100 / $(event.target).slider("option", "max")) + "%")});
+        var targetPick = ((typeof currentDragPos == "undefined") || (currentDragPos != index)) ? document.getElementById("mp3_" + index) : document.getElementById("drag" + currentDragSelection);
+        var selection = $(targetPick);
+        if( selection.hasClass("mpValidSelection") ) {
+          var spPos = selection.html().indexOf(" ") + 1;
+          var brPos = selection.html().indexOf("<br>");
+          selection.html(selection.html().substr(0, spPos) + ui.value + ((brPos > 0) ? selection.html().substr(brPos) : ""));
+        }
+        $(event.target).find(".handleGuts").removeClass("mpValidSelection mpInvalidSelection mpImgTD noBorder").addClass((ui.value == 0) ? "mpInvalidSelection" : targetPick.className).html(targetPick.innerHTML);
+        if( $(event.target).find(".handleGuts").find("img").length == 0 ) {
+          $(event.target).find(".handleGuts").html("TIE " + ui.value + "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"icons/2016/nfl.png\" draggable=\"false\" ondragstart=\"return false;\" ontouchstart=\"return false;\"></div>");
+        }
+      }
+
+      //this will hold reference to the tr we have dragged and its helper
+      var dropZone = {};
+      function MobileContentLoaded() {
+        $(".mobileRow").draggable({
+          helper:"clone",
+          start: TPdragStart,
+          drag: TPdragDrag,
+          stop: TPdragStop,
+          cancel: 'td.noBorder'
+        });
+        showWarning = false;
+        $(window).on("beforeunload", function() {
+          if( showWarning ) {
+            return "Are you sure? You didn't finish the form!";
+          }
+        });
+        <?php for($i=1; $i<5; $i++ ) { ?>
+          $("#slider<?php echo $i; ?>").slider({ 
+            value:$("#pts<?php echo $i; ?>").attr("value"), min:0, max:17, slide:fixCaption, stop:adjustSliders });
+          $("#sliderHandle<?php echo $i; ?>").find("div").css({"min-width":"68px","height":"65px"});
+          $("#slider<?php echo $i; ?>").find(".ui-slider-handle").append($("#sliderHandle<?php echo $i; ?>"));
+        <?php } ?>
+        adjustSliders(null, null);
+        document.getElementById("saveRosterButton").disabled = true;
+      }
+
+      function TPdragStart(event, ui) {
+      }
+
+      function TPdragDrag(event, ui) {
+      }
+
+      function TPdragStop(event, ui) {
+      }
     </script>
     <table id="dragger" class="dragTable montserrat">
-      <tr style="height:96px"><td class="noBorder" id="drag1"></td></tr>
-      <tr style="height:96px"><td class="noBorder" id="drag2"></td></tr>
-      <tr style="height:96px"><td class="noBorder" id="drag3"></td></tr>
-      <tr style="height:96px"><td class="noBorder" id="drag4"></td></tr>
-      <tr style="height:96px"><td class="noBorder" id="drag5"></td></tr>
+      <tr style="height:75px">
+        <td style="min-width:68px" class="noBorder" id="drag1"></td>
+        <td style="min-width:68px" class="noBorder" id="drag2"></td>
+        <td style="min-width:68px" class="noBorder" id="drag3"></td>
+        <td style="min-width:68px" class="noBorder" id="drag4"></td>
+        <td style="min-width:68px" class="noBorder" id="drag5"></td>
+      </tr>
     </table>

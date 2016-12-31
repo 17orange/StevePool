@@ -15,224 +15,248 @@
   }
 ?>
       <span>Making Picks for Conference Championship</span>
-      <button class="bigButton" onClick="PickAllHomeTeamsMobile()">All Home Teams</button>
-      <button class="bigButton" onClick="PickAllAwayTeamsMobile()">All Away Teams</button>
       <br/>
       <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
-        <tr><td class="noBorder" colspan=6>&nbsp;</td></tr>
         <tr>
-          <td class="noBorder" colspan=2>&nbsp;</td>
-          <td class="noBorder" colspan=1 style="text-align:center; font-size: 30px;">Winner</td>
-          <td class="noBorder" colspan=2>&nbsp;</td>
-        </tr>
-        <tr><td class="noBorder" colspan=5>&nbsp;</td></tr>
+          <td class="noBorder">
+            <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px">
+              <tr><td class="noBorder" colspan=8>&nbsp;</td></tr>
+              <tr>
+                <td class="noBorder" colspan=8 style="text-align:center; font-size: 20px;"><table style="width:100%"><tr>
+                  <td class="noBorder warningZone" style="font-size: 20px">&nbsp;</td>
+                  <td class="noBorder" style="text-align:center; font-size: 20px;">Conference Championship Games</td>
+                  <td class="noBorder warningZone" style="font-size: 20px">&nbsp;</td>
+                </tr></table></td>
+              </tr>
+              <tr><td class="noBorder" colspan=8 id="pointsLeft"></td></tr>
+              <tr><td class="noBorder" colspan=8>&nbsp;</td></tr>
 <?php
   // grab their picks for this week
   $pickResults = RunQuery( "select gameID, points, winner, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
                            "status, timeLeft, homeScore, awayScore, type from Pick join Game using (gameID) " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . 
-                           $result["weekNumber"] . " and season=" . $result["season"], false );
+                           $result["weekNumber"] . " and season=" . $result["season"] . " order by gameTime, type desc", false );
   $picks = array();
   foreach( $pickResults as $thisPick )
   {
-    $picks[5 - $thisPick["points"]] = $thisPick;
+    $picks[1 + count($picks)] = $thisPick;
   }
 
-  // fill in the rows
-  $saveButtonEnabled = true;
-  for($i=1; $i<5; $i++)
+  // slider guts
+  echo "              <tr style=\"display:none\"><td>\n";
+  for($i=0; $i<5; $i++)
   {
-    // show the pick type header
-    echo "        <tr style=\"font-size:24px;\" class=\"montserrat\">\n";
-    $offset = (isset($picks[$i]) && ($picks[$i]["winner"] == $picks[$i]["homeTeam"])) ? 1 : 
-              ((isset($picks[$i]) && ($picks[$i]["winner"] == $picks[$i]["awayTeam"])) ? 3 : 2);
-    for( $j=1; $j<4; $j++ ) {
-      echo "          <td id=\"mpH" . $j . "_" . $i . "\" class=\"" . (($offset == $j) ? "mpMobilePickType" : "noBorder") . "\" colspan=\"" . 
-          (($offset == $j) ? "3" : 1) . "\">" . (($offset == $j) ? (($picks[$i]["type"] == "winner") ? "Final" : "Halftime") : "") . "</td>\n";
-    }
-    echo "        </tr>\n";
-    echo "        <tr style=\"height:75px; font-size:24px;\" class=\"montserrat\">\n";
+    echo "<div id=\"sliderHandle" . $i . "\">";
+    echo "<div class=\"handleGuts\"></div>\n";
+    echo "</div>";
+  }
+  echo "              </td></tr>\n";
+?>
+  <tr>
+    <td class="noBorder" colspan="2">&nbsp;</td>
+    <td class="noBorder" style="min-width:68px">&nbsp;</td>
+    <td class="noBorder" style="min-width:68px">&nbsp;</td>
+    <td class="noBorder" style="min-width:78px; font-size:20px">Winner</td>
+    <td class="noBorder" style="min-width:68px">&nbsp;</td>
+    <td class="noBorder" style="min-width:68px">&nbsp;</td>
+    <td class="noBorder" colspan="2" style="min-width:68px; font-size:20px">Confidence Points</td>
+  </tr>
+<?php
+  for($i=1; $i<5; $i++) {
+?>
+  <tr style="height:75px" class="montserrat mobileRow">
+<?php
+    // fill in type
+    echo "                <td class=\"noBorder\" id=\"typeLabel" . $i . "\">" . (($picks[$i]["type"] == "winner2Q") ? "Half" : "Final") . "</td>\n";
+    echo "                <td class=\"noBorder\">&nbsp;</td>\n";
 
-    // fill in the first element
+    // fill in first box
     $style = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["homeTeam"])) 
-             ? " class=\"noBorder mpMobileBGText mpMobileWipeTop\" style=\"text-align: right;\"" 
-             : " class=\"mpImgTD mpMobileAwayTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . " mpMobileWipeTop\"";
-    $drag = (isset($picks[$i]) && ($picks[$i]["winner"] == $picks[$i]["homeTeam"]) && ($picks[$i]["canChange"] != 0)) 
-            ? " onClick=\"SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), false);\"" 
-            : "";
+             ? " class=\"noBorder\"" 
+             : " class=\"mpImgTD mpWCDivAwayTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . "\"";
+    $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(1, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["homeTeam"])) 
-            ? (5 - $i)
-            : ($picks[$i]["awayTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            ? ""
+            : ($picks[$i]["awayTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>");
-    echo "          <td id=\"mp1_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
+    echo "                <td id=\"mp1_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
 
-    // fill in the second element
+    // fill in second box
     $style = (!isset($picks[$i]) || ($picks[$i]["winner"] == $picks[$i]["awayTeam"])) 
-             ? " class=\"noBorder mpMobileBGText mpMobileWipeTop\"" 
+             ? " class=\"noBorder\"" 
              : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
-               ? " class=\"mpMobileGameInfo" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . " mpMobileWipeTop\"" 
-               : " class=\"mpImgTD mpMobileAwayTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . " mpMobileWipeTop\"");
-    $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0) && 
-             (($picks[$i]["winner"] == "") || (($picks[$i]["type"] != "winner") && ($picks[$i]["winner"] == "TIE")))) 
-            ? " onClick=\"SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), false);\"" 
-            : "";
+               ? " class=\"mpWCDivGameInfo" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . "\"" 
+               : " class=\"mpImgTD mpWCDivAwayTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . "\"");
+    $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(2, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] == $picks[$i]["awayTeam"])) 
-            ? "--->"
+            ? ""
             : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
-              ? ((($picks[$i]["canChange"] == 1) 
-                ? ("<button onClick=\"MoveRowMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), -1);\" " .
-                   "class=\"bigButton\">Move Up</button><br>") 
-                : "") . 
-              (($picks[$i]["type"] == "winner") 
-                ? formatTime($picks[$i]) 
-                : ("<br><button class=\"bigButton\" onClick=\"SetWinnerMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), 'TIE');" . 
-                   " return false;\">TIE</button><br>")) . 
-              (($picks[$i]["canChange"] == 1) 
-                ? ("<br><button onClick=\"MoveRowMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), 1);\" " .
-                   "class=\"bigButton\">Move Down</button>") 
-                : ""))
-              : ($picks[$i]["awayTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              ? (($picks[$i]["type"] == "winner2Q") ? "TIE " : formatTime($picks[$i]))
+              : ($picks[$i]["awayTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>"));
-    echo "          <td id=\"mp2_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
+    echo "                <td id=\"mp2_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
 
-    // fill in the third element
+    // fill in third box
     $style = (!isset($picks[$i]) || ($picks[$i]["canChange"] == 0))
              ? " class=\"mpImgTD mpLockedSelection\""
-             : ((($picks[$i]["winner"] == $picks[$i]["awayTeam"]) || ($picks[$i]["winner"] == $picks[$i]["homeTeam"]) || 
-                (($picks[$i]["type"] != "winner") && ($picks[$i]["winner"] == "TIE")))
+             : ((($picks[$i]["winner"] == $picks[$i]["awayTeam"]) || ($picks[$i]["winner"] == $picks[$i]["homeTeam"]) || ($picks[$i]["type"] == "winner2Q"))
                ? " class=\"mpImgTD mpValidSelection\"" 
                : " class=\"mpImgTD mpInvalidSelection\"" );
     if( $saveButtonEnabled )
     {
       $saveButtonEnabled = ($style == " class=\"mpInvalidSelection\"");
     }
-    $text = (!isset($picks[$i])
+    $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(3, " . $i . ");\"" : "";
+    $text = !isset($picks[$i])
             ? "Bye Week"
             : (($picks[$i]["winner"] == $picks[$i]["awayTeam"])
-              ? ($picks[$i]["awayTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              ? ($picks[$i]["awayTeam"] . " " . $picks[$i]["points"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>")
               : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
-                ? ($picks[$i]["homeTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+                ? ($picks[$i]["homeTeam"] . " " . $picks[$i]["points"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                    getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>")
-                : ((($picks[$i]["canChange"] == 1) 
-                    ? ("<button onClick=\"MoveRowMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), -1);\" " .
-                       "class=\"bigButton\">Move Up</button><br>") 
-                    : "") . 
-                  (($picks[$i]["type"] == "winner") 
-                    ? formatTime($picks[$i]) 
-                    : ("<br><button class=\"bigButton\" onClick=\"SetWinnerMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), 'TIE');" . 
-                       " return false;\">TIE</button><br>")) . 
-                  (($picks[$i]["canChange"] == 1) 
-                    ? ("<br><button onClick=\"MoveRowMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), 1);\" " .
-                       "class=\"bigButton\">Move Down</button>") 
-                    : "")))));
-    echo "          <td id=\"mp3_" . $i . "\"" . $style . ">" . $text . "</td>\n";
+                : (($picks[$i]["type"] == "winner2Q") ? ("TIE " . $picks[$i]["points"]) : formatTime($picks[$i]))));
+    echo "                <td id=\"mp3_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
 
-    // fill in the fourth element
+    // fill in fourth box
     $style = (!isset($picks[$i]) || ($picks[$i]["winner"] == $picks[$i]["homeTeam"])) 
-             ? " class=\"noBorder mpMobileBGText mpMobileWipeTop\"" 
+             ? " class=\"noBorder\"" 
              : (($picks[$i]["winner"] == $picks[$i]["awayTeam"]) 
-               ? " class=\"mpMobileGameInfo" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . " mpMobileWipeTop\"" 
-               : " class=\"mpImgTD mpMobileHomeTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . " mpMobileWipeTop\"");
-    $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0) && 
-             (($picks[$i]["winner"] == "") || (($picks[$i]["type"] != "winner") && ($picks[$i]["winner"] == "TIE")))) 
-            ? " onClick=\"SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), true);\"" 
-            : "";
+               ? " class=\"mpWCDivGameInfo" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . "\"" 
+               : " class=\"mpImgTD mpWCDivHomeTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . "\"");
+    $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(4, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] == $picks[$i]["homeTeam"])) 
-            ? "<---"
+            ? ""
             : (($picks[$i]["winner"] == $picks[$i]["awayTeam"]) 
-              ? ((($picks[$i]["canChange"] == 1) 
-                ? ("<button onClick=\"MoveRowMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), -1);\" " .
-                   "class=\"bigButton\">Move Up</button><br>") 
-                : "") . 
-              (($picks[$i]["type"] == "winner") 
-                ? formatTime($picks[$i]) 
-                : ("<br><button class=\"bigButton\" onClick=\"SetWinnerMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), 'TIE');" . 
-                   " return false;\">TIE</button><br>")) . 
-              (($picks[$i]["canChange"] == 1) 
-                ? ("<br><button onClick=\"MoveRowMobile(parentElement.id.slice(parentElement.id.indexOf('_') + 1), 1);\" " .
-                   "class=\"bigButton\">Move Down</button>") 
-                : ""))
-              : ($picks[$i]["homeTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              ? (($picks[$i]["type"] == "winner2Q") ? "TIE " : formatTime($picks[$i])) 
+              : ($picks[$i]["homeTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>"));
-    echo "          <td id=\"mp4_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
+    echo "                <td id=\"mp4_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
 
-    // fill in the fifth element
+    // fill in the fifth row
     $style = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["awayTeam"])) 
-             ? " class=\"noBorder mpMobileBGText\" style=\"text-align:left;\"" 
-             : " class=\"mpImgTD mpMobileHomeTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . " mpMobileWipeTop\"";
-    $drag = (isset($picks[$i]) && ($picks[$i]["winner"] == $picks[$i]["awayTeam"]) && ($picks[$i]["canChange"] != 0)) 
-            ? " onClick=\"SetWinnerMobile(this.id.slice(this.id.indexOf('_') + 1), true);\"" 
-            : "";
+             ? " class=\"noBorder\"" 
+             : " class=\"mpImgTD mpWCDivHomeTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . "\"";
+    $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(5, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["awayTeam"])) 
-            ? (5 - $i)
-            : ($picks[$i]["homeTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            ? ""
+            : ($picks[$i]["homeTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>");
-    echo "          <td id=\"mp5_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
-
-    echo "        </tr>\n";
+    echo "                <td id=\"mp5_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
+?>
+    <td class="noBorder" style="width:100%;">
+      <table style="width:100%; font-size: 30px;"><tr>
+        <td class="noBorder" style="min-width:32px;text-align:right">0</td>
+        <td class="noBorder" style="min-width:5px">&nbsp;</td>
+        <td class="noBorder sliderTD">
+          <div class="sliderDummy"></div>
+          <div class="sliderReal"><div class="pointSlider" id="slider<?php echo $i; ?>"><div class="sliderGood"></div></div></div>
+        </td>
+        <td class="noBorder" style="min-width:5px">&nbsp;</td>
+        <td class="noBorder" style="width:50px">17</td>
+      </tr></table>
+    </td>
+    <td class="noBorder" colspan=1 style="display:none; text-align:center; font-size: 20px;"><?php echo $picks[$i]["points"]?> points</td>
+  </tr>
+<?php
   }
 ?>
-              <tr><td class="noBorder" colspan=5>&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="noBorder">
+            <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
+              <tr><td class="noBorder" colspan=15>&nbsp;</td></tr>
               <tr>
-                <td class="noBorder" colspan=5 style="text-align:center; font-size:30px;">Tiebreakers</td>
+                <td class="noBorder" colspan=15 style="text-align:center; font-size:20px;">Tiebreakers</td>
               </tr>
-              <tr style="height:20px"><td class="noBorder">&nbsp;</td></tr>
+              <tr style="height:20px"><td class="noBorder" colspan=15>&nbsp;</td></tr>
 <?php
   $games = RunQuery( "select homeTeam, awayTeam from Game where weekNumber=" . $result["weekNumber"] . 
                      " and season=" . $result["season"] . " order by gameTime desc" );
   $tieBreakers = RunQuery( "select tieBreaker1, tieBreaker2, tieBreaker3, tieBreaker4 from PlayoffResult " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . 
                            " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"] );
-  $count = 1;
-  $halftimeTBs = "";
+  $count = 0;
+  echo "              <tr>\n";
   foreach( $games as $thisGame )
   {
-    echo "              <tr>\n";
-    echo "                <td class=\"noBorder\">&nbsp;</td>\n"; 
-    echo "                <td class=\"noBorder\" style=\"font-size:30px;\">" . $thisGame["awayTeam"] . 
-        "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .  getIcon($thisGame["awayTeam"], $result["season"]) . 
-        "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td>\n";
-    echo "                <td class=\"noBorder\" style=\"font-size:40px;\">@</td>\n";
-    echo "                <td class=\"noBorder\" style=\"font-size:30px;\">" . $thisGame["homeTeam"] . 
-        "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($thisGame["homeTeam"], $result["season"]) . 
-        "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td>\n";
-    echo "                <td class=\"noBorder\">&nbsp;</td>\n"; 
-    echo "              </tr>\n";
-    echo "              <tr>\n";
-    echo "                <td class=\"noBorder\" colspan=5>\n";
-    echo "                  <span style=\"font-size:30px;\">Combined final score</span>\n";
-    echo "                  <input id=\"tieBreak" . $count . "\" name=\"tieBreak" . $count . "\" type=\"text\" maxlength=\"3\" " . 
-        "onKeyUp=\"NumbersOnly('tieBreak" . $count . "'); ToggleSaveButtonMobile();\" value=\"" . $tieBreakers[0]["tieBreaker" . $count] . 
-        "\" style=\"width:60px; font-size:30px;\" />\n";  
-    echo "              </tr>\n";
-    echo "              <tr style=\"height:30px\"><td class=\"noBorder\">&nbsp;</td></tr>\n";
-
-    $halftimeTBs .= "              <tr>\n";
-    $halftimeTBs .= "                <td class=\"noBorder\">&nbsp;</td>\n"; 
-    $halftimeTBs .= "                <td class=\"noBorder\" style=\"font-size:30px;\">" . $thisGame["awayTeam"] . 
-                    "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .  getIcon($thisGame["awayTeam"], $result["season"]) . 
-                    "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td>\n";
-    $halftimeTBs .= "                <td class=\"noBorder\" style=\"font-size:40px;\">@</td>\n";
-    $halftimeTBs .= "                <td class=\"noBorder\" style=\"font-size:30px;\">" . $thisGame["homeTeam"] . 
-                    "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($thisGame["homeTeam"], $result["season"]) . 
-                    "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td>\n";
-    $halftimeTBs .= "                <td class=\"noBorder\">&nbsp;</td>\n"; 
-    $halftimeTBs .= "              </tr>\n";
-    $halftimeTBs .= "              <tr>\n";
-    $halftimeTBs .= "                <td class=\"noBorder\" colspan=5>\n";
-    $halftimeTBs .= "                  <span style=\"font-size:30px;\">Combined halftime score</span>\n";
-    $halftimeTBs .= "                  <input id=\"tieBreak" . ($count + 2) . "\" name=\"tieBreak" . $count . "\" type=\"text\" " . 
-                    "maxlength=\"3\" onKeyUp=\"NumbersOnly('tieBreak" . ($count + 2) . "'); ToggleSaveButtonMobile();\" value=\"" . 
-                    $tieBreakers[0]["tieBreaker" . ($count + 2)] . "\" style=\"width:60px; font-size:30px;\" />\n";  
-    $halftimeTBs .= "              </tr>\n";
-    $halftimeTBs .= "              <tr style=\"height:30px\"><td class=\"noBorder\">&nbsp;</td></tr>\n";
+    if( $count ) {
+      echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
+    }
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $thisGame["awayTeam"] . "</td>\n";
+    echo "                <td class=\"noBorder\" style=\"width:3.125%\">&nbsp;</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $thisGame["homeTeam"] . "</td>\n";
     $count++;
   }
-  echo $halftimeTBs;
+  foreach( $games as $thisGame )
+  {
+    echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $thisGame["awayTeam"] . "</td>\n";
+    echo "                <td class=\"noBorder\" style=\"width:3.125%\">&nbsp;</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $thisGame["homeTeam"] . "</td>\n";
+    $count++;
+  }
+  echo "              </tr>\n";
+
+  $count = 0;
+  echo "              <tr>\n";
+  foreach( $games as $thisGame )
+  {
+    if( $count ) {
+      echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
+    }
+    echo "                <td class=\"noBorder\"><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .  
+        getIcon($thisGame["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:40px;\">@</td>\n";
+    echo "                <td class=\"noBorder\"><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+        getIcon($thisGame["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td>\n";
+    $count++;
+  }
+  foreach( $games as $thisGame )
+  {
+    echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
+    echo "                <td class=\"noBorder\"><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .  
+        getIcon($thisGame["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:40px;\">@</td>\n";
+    echo "                <td class=\"noBorder\"><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+        getIcon($thisGame["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td>\n";
+    $count++;
+  }
+  echo "              </tr>\n";
+
+  $count = 1;
+  echo "              <tr>\n";
+  foreach( $games as $thisGame )
+  {
+    if( $count > 1 ) {
+      echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
+    }
+    echo "                <td class=\"noBorder\" colspan=3>\n";
+    echo "                  <span>Combined final score</span>\n";
+    echo "                  <input id=\"tieBreak" . $count . "\" name=\"tieBreak" . $count . "\" type=\"text\" maxlength=\"3\" " . 
+        "onKeyUp=\"NumbersOnly('tieBreak" . $count . "'); ToggleSaveButton();\" value=\"" . $tieBreakers[0]["tieBreaker" . $count] . 
+        "\" style=\"width:35px;\" />\n";
+    $count++;
+  }
+  foreach( $games as $thisGame )
+  {
+    echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
+    echo "                <td class=\"noBorder\" colspan=3>\n";
+    echo "                  <span>Combined halftime score</span>\n";
+    echo "                  <input id=\"tieBreak" . $count . "\" name=\"tieBreak" . $count . "\" type=\"text\" maxlength=\"3\" " . 
+        "onKeyUp=\"NumbersOnly('tieBreak" . $count . "'); ToggleSaveButton();\" value=\"" . $tieBreakers[0]["tieBreaker" . $count] . 
+        "\" style=\"width:35px;\" />\n";
+    $count++;
+  }
+  echo "              </tr>\n";
 ?>
+            </table>
+          </td>
+        </tr>
         <tr style="height:75px;">
-          <td class="noBorder" colspan="5">
+          <td class="noBorder" colspan="2">
             <form action="." method="post" id="makePicksForm">
               <input type="hidden" id="windowScrollPos" name="windowScrollPos" value="0">
 <?php
@@ -249,14 +273,16 @@
           $picks[$i]["homeTeam"] . "\">\n";
       echo "              <input type=\"hidden\" id=\"awayTeam" . $i . "\" name=\"awayTeam" . $i . "\" value=\"" . 
           $picks[$i]["awayTeam"] . "\">\n";
-      echo "              <input type=\"hidden\" id=\"pts" . $i . "\" name=\"pts" . $i . "\" value=\"" . (5 - $i) . "\">\n";
-      echo "              <input type=\"hidden\" id=\"winner" . $i . "\" name=\"winner" . $i . "\" value=\"\">\n";
+      echo "              <input type=\"hidden\" id=\"pts" . $i . "\" name=\"pts" . $i . "\" value=\"" . 
+          $picks[$i]["points"] . "\">\n";
+      echo "              <input type=\"hidden\" id=\"winner" . $i . "\" name=\"winner" . $i . "\" value=\"" . 
+          $picks[$i]["winner"] . "\">\n";
       echo "              <input type=\"hidden\" id=\"tb" . $i . "\" name=\"tb" . $i . "\" value=\"\">\n";
     }
   }
 ?>
-              <button id="saveRosterButton" style="font-size:48px;" class="bigButton" onclick="document.getElementById('windowScrollPos').value = $(window).scrollTop(); showWarning = false; document.getElementById('makePicksForm').submit();"<?php 
-  echo $saveButtonEnabled ? "" : " disabled"; ?>>Save Picks</button>
+                    <button id="saveRosterButton" onclick="document.getElementById('windowScrollPos').value = $(window).scrollTop(); showWarning = false; document.getElementById('makePicksForm').submit();"<?php 
+  echo $saveButtonEnabled ? "" : " disabled"; ?> style="font-size:20px;">Save Picks</button>
             </form>
           </td>
         </tr>

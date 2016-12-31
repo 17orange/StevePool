@@ -6,16 +6,7 @@
         }
       });
 
-      var illegalPointValues = [<?php
-  $showComma = false;
-  $pickResults = RunQuery( "select points from Pick join Game using (gameID) join Session using (userID) " . 
-                           "where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . $result["weekNumber"] . 
-                           " and season=" . $result["season"] . " and lockTime < now()", false );
-  foreach( $pickResults as $row ) {
-    echo ($showComma ? "," : "") . $row["points"];
-    $showComma = true;
-  }
-?>];
+      var illegalPointValues = [];
       var currentMousePos = {x:-1, y:-1};
       var currentOffset = {x:0, y:0};
       var pointVals = {2:9, 3:8, 4:7, 5:5, 6:3, 7:5, 8:3, 9:2, 10:1};
@@ -28,7 +19,7 @@
         if( currentDragPos != -1 )
         {
           // move the dragger
-          $("#dragger").css( {left: currentMousePos.x + currentOffset.x, top: currentMousePos.y + currentOffset.y} );
+          $("#dragger").css( {top: currentMousePos.y + currentOffset.y} );
           // see which horizontal position it is now in
           var newDragPos = currentDragPos;
           var dragOff = $("#dragger").offset();
@@ -55,7 +46,7 @@
             if( currentDragSelection != 3 || document.getElementById("drag" + currentDragSelection).innerHTML.substr(0,3) == "TIE")
             {
               var currStr = document.getElementById("drag" + currentDragSelection).innerHTML;
-              var spacePos = currStr.indexOf(" ");
+              var spacePos = currStr.indexOf(" ") + 1;
               var brPos = currStr.indexOf("<br>");
               document.getElementById("drag" + currentDragSelection).innerHTML = currStr.substr(0, spacePos) + currStr.substr(brPos);
             }
@@ -64,16 +55,16 @@
             currentDragSelection = newDragSelection;
 
             // fix these class names
-            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mpImgTD mpValidSelection" : "mpImgTD mpAwayTeam";
+            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mobileRow mpImgTD mpValidSelection" : "mobileRow mpImgTD mpAwayTeam";
             if( document.getElementById("drag3").innerHTML.substr(0,3) == "TIE" )
             {
-              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpValidSelection" : "mpGameInfo";
+              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mobileRow mpValidSelection" : "mobileRow mpGameInfo";
             }
             else
             {
-              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpInvalidSelection" : "mpGameInfo";
+              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mobileRow mpInvalidSelection" : "mobileRow mpGameInfo";
             }
-            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mpImgTD mpValidSelection" : "mpImgTD mpHomeTeam";
+            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mobileRow mpImgTD mpValidSelection" : "mobileRow mpImgTD mpHomeTeam";
 
             // assign the new point value
             if( currentDragPos > 1 && (currentDragSelection != 3 || document.getElementById("drag" + currentDragSelection).innerHTML.substr(0,3) == "TIE"))
@@ -111,6 +102,9 @@
           currentDragPos = -1;
           currentDragSelection = -1;
           $("#dragger").css( {width: 0, height: 0, top:-1000} );
+
+          // show warning
+          showWarning = true;
 
           // see whether it's able to be saved yet
           ToggleSaveButton();
@@ -170,11 +164,9 @@
 
           // className
           targetElem.className = srcElem.className;
-          srcElem.className = "noBorder";
+          srcElem.className = "mobileRow noBorder";
         }
         $("#dragger").css( {width: topWidth} );
-
-        // mouse move to see if we need to apply the tie
       }
 
       function ToggleSaveButton()
@@ -201,7 +193,13 @@
           canSave &= (document.getElementById("tieBreak").value != "0");
         }
 
+        $(".mobileRow").draggable("enable");
+        $(".mobileRow.noBorder").draggable("disable");
         document.getElementById("saveRosterButton").disabled = !canSave;
+
+        // test the warning system
+        $(".warningZone").html(showWarning ? "Picks not saved!" : "&nbsp;");
+        $("#mainTable").css("background", showWarning ? "#af0000" : "none");
       }
 
       function ToggleSaveButtonMobile()
@@ -250,6 +248,7 @@
           }
         }
         element.value = string;
+        showWarning = true;
       }
 
       function PickAllHomeTeams()
@@ -533,11 +532,40 @@
 
         ToggleSaveButtonMobile();
       }
+      //this will hold reference to the tr we have dragged and its helper
+      var dropZone = {};
+      function MobileContentLoaded() {
+        $(".mobileRow").draggable({
+          helper:"clone",
+          start: TPdragStart,
+          drag: TPdragDrag,
+          stop: TPdragStop,
+          cancel: 'td.noBorder'
+        });
+        showWarning = false;
+        $(window).on("beforeunload", function() {
+          if( showWarning ) {
+            return "Are you sure? You didn't finish the form!";
+          }
+        });
+        document.getElementById("saveRosterButton").disabled = true;
+        $(".mobileRow").draggable("enable");
+        $(".mobileRow.noBorder").draggable("disable");
+      }
+
+      function TPdragStart(event, ui) {
+      }
+
+      function TPdragDrag(event, ui) {
+      }
+
+      function TPdragStop(event, ui) {
+      }
     </script>
     <table id="dragger" class="dragTable montserrat">
-      <tr style="height:96px"><td class="noBorder" id="drag1"></td></tr>
-      <tr style="height:96px"><td class="noBorder" id="drag2"></td></tr>
-      <tr style="height:96px"><td class="noBorder" id="drag3"></td></tr>
-      <tr style="height:96px"><td class="noBorder" id="drag4"></td></tr>
-      <tr style="height:96px"><td class="noBorder" id="drag5"></td></tr>
+      <tr style="height:96px"><td class="mobileRow noBorder" id="drag1"></td></tr>
+      <tr style="height:96px"><td class="mobileRow noBorder" id="drag2"></td></tr>
+      <tr style="height:96px"><td class="mobileRow noBorder" id="drag3"></td></tr>
+      <tr style="height:96px"><td class="mobileRow noBorder" id="drag4"></td></tr>
+      <tr style="height:96px"><td class="mobileRow noBorder" id="drag5"></td></tr>
     </table>

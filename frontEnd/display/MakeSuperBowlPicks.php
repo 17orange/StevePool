@@ -1,17 +1,11 @@
       <span>Making Picks for Super Bowl</span>
-<?php
-  // grab the two teams
-  $superBowlTeams = RunQuery( "select awayTeam as AFC, homeTeam as NFC from Game where weekNumber=" . 
-                              $result["weekNumber"] . " and season=" . $result["season"] );
-?>
-      <button onClick="PickAllAwayTeams()">All <?php echo $superBowlTeams[0]["AFC"]; ?></button>
-      <button onClick="PickAllHomeTeams()">All <?php echo $superBowlTeams[0]["NFC"]; ?></button>
       <br/>
       <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
         <tr><td class="noBorder" colspan=11>&nbsp;</td></tr>
         <tr>
-          <td class="noBorder" colspan=2>&nbsp;</td>
-          <td class="noBorder" colspan=9 style="text-align:center; font-size: 20px;">Confidence Points</td>
+          <td class="noBorder warningZone" style="font-size: 20px" colspan=3>&nbsp;</td>
+          <td class="noBorder" colspan=6 style="text-align:center; font-size: 20px;">Confidence Points</td>
+          <td class="noBorder warningZone" style="font-size: 20px" colspan=3>&nbsp;</td>
         </tr>
         <tr><td class="noBorder" colspan=11>&nbsp;</td></tr>
         <tr>
@@ -47,8 +41,7 @@
   {
     $caption = array("", "Super Bowl<br>Winner", "Leader<br>3Q", "Leader<br>2Q", "Leader<br>1Q", "Pass Yds<br>Final", 
                      "Pass Yds<br>2Q", "Rush Yds<br>Final", "Rush Yds<br>2Q", "TDs<br>Final", "TDs<br>2Q");
-    $innerHTML = "<div style=\"height:38px; position:absolute; top:-45px; left:-2px; width:100%; " . 
-                 "border-bottom:4px solid #314972;\" class=\"mpAwayTeam\">" . $caption[$captionNum] . "</div>";
+    $innerHTML = "<div class=\"mpSBCaption\">" . $caption[$captionNum] . "</div>";
     return $innerHTML;
   }
 
@@ -62,7 +55,7 @@
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? (" onMouseDown=\"startDrag(1, " . $i . ");\"") : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["homeTeam"])) 
             ? ""
-            : ($picks[$i]["awayTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            : ($picks[$i]["awayTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>" . 
                makeTypeBlock($i));
     echo "          <td id=\"mp1_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
@@ -85,7 +78,7 @@
               ? (($picks[$i]["type"] != "winner") 
                 ? ("TIE <br><img style=\"position:absolute; height:0px; width:0px;\" src=\"" . getIcon("", $result["season"]) . "\">") 
                 : formatTime($picks[$i]))
-              : ($picks[$i]["awayTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              : ($picks[$i]["awayTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>" . 
                  makeTypeBlock($i)));
     echo "          <td id=\"mp2_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
@@ -103,7 +96,7 @@
                : " class=\"mpImgTD mpLockedSelection\"") 
              : ((($picks[$i]["winner"] == $picks[$i]["awayTeam"]) || 
                  ($picks[$i]["winner"] == $picks[$i]["homeTeam"]) || 
-                 ($picks[$i]["winner"] == "TIE"))
+                 ($i > 1))
                ? " class=\"mpImgTD mpValidSelection\"" 
                : " class=\"mpImgTD mpInvalidSelection\"" );
     if( $saveButtonEnabled )
@@ -114,11 +107,11 @@
     $text = ($i==0) 
             ? "My Pick" 
             : (($picks[$i]["winner"] == $picks[$i]["awayTeam"])
-              ? ($picks[$i]["awayTeam"] . ($i>1 ? (" " . $picks[$i]["points"]) : "") . "<br><div class=\"imgDiv\">" . 
+              ? ($picks[$i]["awayTeam"] . " " . ($i>1 ? $picks[$i]["points"] : "") . "<br><div class=\"imgDiv\">" . 
                  "<img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" " . 
                  "ondragstart=\"return false;\" /></div>" . makeTypeBlock($i))
               : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
-                ? ($picks[$i]["homeTeam"] . ($i>1 ? (" " . $picks[$i]["points"]) : "") . "<br><div class=\"imgDiv\">" . 
+                ? ($picks[$i]["homeTeam"] . " " . ($i>1 ? $picks[$i]["points"] : "") . "<br><div class=\"imgDiv\">" . 
                    "<img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" " . 
                    "ondragstart=\"return false;\" /></div>")
                 : (($picks[$i]["type"] != "winner") 
@@ -161,7 +154,7 @@
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(5, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["awayTeam"])) 
             ? ""
-            : ($picks[$i]["homeTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            : ($picks[$i]["homeTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>");
     echo "          <td id=\"mp5_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
   }
@@ -189,11 +182,11 @@
 ?>
               <br/>
               <span>Combined Super Bowl score</span>
-              <input id="tieBreak" name="tieBreak" type="text" maxlength="3" onKeyUp="NumbersOnly(); ToggleSaveButton();" value="<?php
+              <input id="tieBreak" name="tieBreak" type="text" maxlength="3" onKeyUp="NumbersOnly('tieBreak'); ToggleSaveButton();" value="<?php
   echo $TBresult[0]["tieBreaker1"];
 ?>" style="width:35px;" />
               <br/><br/>
-              <button id="saveRosterButton" onclick="document.getElementById('windowScrollPos').value = $(window).scrollTop(); document.getElementById('makePicksForm').submit();"<?php 
+              <button id="saveRosterButton" onclick="document.getElementById('windowScrollPos').value = $(window).scrollTop(); showWarning = false; document.getElementById('makePicksForm').submit();"<?php 
   echo $saveButtonEnabled ? "" : " disabled"; ?> style="font-size:20px;">Save Picks</button>
             </form>
           </td>
@@ -222,6 +215,7 @@
         {
           // tack on the new elements
           document.getElementById("mainTable").innerHTML = xmlhttp.responseText;
+          MobileContentLoaded();
         }
       }
 

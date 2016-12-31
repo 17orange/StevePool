@@ -191,7 +191,7 @@
       echo "<div class=\"cellShadeBG\" style=\"background-color:#FF0000;\"></div>\n";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\"><span class=\"blankIt\">MIS 19</span><br>";
       echo "<div class=\"imgDiv blankIt\"><img class=\"teamLogo\" src=\"" . getIcon("BUF", $_SESSION["showPicksSeason"]) . "\"/></div>";
-      echo "<div class=\"centerIt\" style=\"color:#BF0000;\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
+      echo "<div class=\"centerIt pickText\" style=\"color:#BF0000;\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
       echo "</div>\n";
     }
     else if( $thisPick["status"] == 1 && $thisPick["userID"] != $myID && $standingsType == "actual" )
@@ -204,7 +204,7 @@
       echo "<div class=\"cellShadeBG\" style=\"background-color:#" . (($thisPick["winner"] == $thisPick["leader"]) ? "00AA00" : 
           (($thisPick["inFuture"] == 1) ? "D9DCE3" : ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) 
           ? "FFFF00" : "FF0000"))) . ";\"></div>\n";
-      $span = "<span style=\"color:#" . 
+      $span = "<span class=\"pickText\" style=\"color:#" . 
           (($thisPick["winner"] == $thisPick["leader"]) ? "007500" : (($thisPick["inFuture"] == 1) ? "0A1F42" : 
           ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) ? "888800" : "BF0000"))) . ";" . 
           ((!$thisPick["inFuture"] && !$thisPick["isFinal"]) ? " font-style:italic;" : "") . "\">" . $thisPick["winner"] . 
