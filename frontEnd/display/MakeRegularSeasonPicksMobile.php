@@ -65,7 +65,7 @@
              : " class=\"mobileCell mpImgTD mpMobileAwayTeam" . (($picks[$i]["canChange"] == 0) ? "Locked" : "") . "\"";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["homeTeam"])) 
             ? ""
-            : ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $picks[$i]["awayTeam"] . 
+            : ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $teamAliases[$picks[$i]["awayTeam"]] . 
                "<br>&nbsp;</td><td class=\"noBorder\" style=\"width:60%\"><div class=\"imgDiv\">" . 
                "<img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["awayTeam"], $result["season"]) . 
                "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td></tr></table>");
@@ -81,7 +81,7 @@
             ? ""
             : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
               ? formatTimeMobile($picks[$i]) 
-              : ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $picks[$i]["awayTeam"] . 
+              : ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $teamAliases[$picks[$i]["awayTeam"]] . 
                  "<br>&nbsp;</td><td class=\"noBorder\" style=\"width:60%\"><div class=\"imgDiv\">" . 
                  "<img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["awayTeam"], $result["season"]) . 
                  "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td></tr></table>"));
@@ -115,12 +115,12 @@
             : (!isset($picks[$i])
               ? "Bye Week"
               : (($picks[$i]["winner"] == $picks[$i]["awayTeam"])
-                ? ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $picks[$i]["awayTeam"] . 
+                ? ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $teamAliases[$picks[$i]["awayTeam"]] . 
                    "<br>" . $picks[$i]["points"] . "</td><td class=\"noBorder\" style=\"width:60%\">" . 
                    "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["awayTeam"], $result["season"]) . 
                    "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td></tr></table>")
                 : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
-                  ? ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $picks[$i]["homeTeam"] . 
+                  ? ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $teamAliases[$picks[$i]["homeTeam"]] . 
                      "<br>" . $picks[$i]["points"] . "</td><td class=\"noBorder\" style=\"width:60%\">" . 
                      "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["homeTeam"], $result["season"]) . 
                      "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td></tr></table>")
@@ -137,7 +137,7 @@
             ? ""
             : (($picks[$i]["winner"] == $picks[$i]["awayTeam"]) 
               ? formatTimeMobile($picks[$i]) 
-              : ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $picks[$i]["homeTeam"] . 
+              : ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $teamAliases[$picks[$i]["homeTeam"]] . 
                  "<br>&nbsp;</td><td class=\"noBorder\" style=\"width:60%\"><div class=\"imgDiv\">" . 
                  "<img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["homeTeam"], $result["season"]) . 
                  "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td></tr></table>"));
@@ -160,7 +160,7 @@
     $drag = ""; //(isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(5, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["awayTeam"])) 
             ? ""
-            : ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $picks[$i]["homeTeam"] . 
+            : ("<table class=\"innerMobileTable\"><tr><td class=\"noBorder\" style=\"width:40%\">" . $teamAliases[$picks[$i]["homeTeam"]] . 
                "<br>&nbsp;</td><td class=\"noBorder\" style=\"width:60%\"><div class=\"imgDiv\">" . 
                "<img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["homeTeam"], $result["season"]) . 
                "\" draggable=\"false\" ondragstart=\"return false;\" /></div></td></tr></table>");

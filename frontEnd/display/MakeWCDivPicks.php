@@ -56,7 +56,7 @@
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(1, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["homeTeam"])) 
             ? ""
-            : ($picks[$i]["awayTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            : ($teamAliases[$picks[$i]["awayTeam"]] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>");
     echo "                <td id=\"mp1_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
 
@@ -71,7 +71,7 @@
             ? ""
             : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
               ? formatTime($picks[$i]) 
-              : ($picks[$i]["awayTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              : ($teamAliases[$picks[$i]["awayTeam"]] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>"));
     echo "                <td id=\"mp2_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
 
@@ -89,10 +89,10 @@
     $text = !isset($picks[$i])
             ? "Bye Week"
             : (($picks[$i]["winner"] == $picks[$i]["awayTeam"])
-              ? ($picks[$i]["awayTeam"] . " " . (5 - $i) . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              ? ($teamAliases[$picks[$i]["awayTeam"]] . " " . (5 - $i) . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>")
               : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
-                ? ($picks[$i]["homeTeam"] . " " . (5 - $i) . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+                ? ($teamAliases[$picks[$i]["homeTeam"]] . " " . (5 - $i) . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                    getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>")
                 : formatTime($picks[$i])));
     echo "                <td id=\"mp3_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
@@ -108,7 +108,7 @@
             ? ""
             : (($picks[$i]["winner"] == $picks[$i]["awayTeam"]) 
               ? formatTime($picks[$i]) 
-              : ($picks[$i]["homeTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              : ($teamAliases[$picks[$i]["homeTeam"]] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>"));
     echo "                <td id=\"mp4_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
 
@@ -119,7 +119,7 @@
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(5, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["awayTeam"])) 
             ? ""
-            : ($picks[$i]["homeTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            : ($teamAliases[$picks[$i]["homeTeam"]] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>");
     echo "                <td id=\"mp5_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
 ?>
@@ -164,9 +164,9 @@
     if( $count ) {
       echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
     }
-    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $thisGame["awayTeam"] . "</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $teamAliases[$thisGame["awayTeam"]] . "</td>\n";
     echo "                <td class=\"noBorder\" style=\"width:3.125%\">&nbsp;</td>\n";
-    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $thisGame["homeTeam"] . "</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $teamAliases[$thisGame["homeTeam"]] . "</td>\n";
     $count++;
   }
   echo "              </tr>\n";

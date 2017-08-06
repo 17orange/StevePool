@@ -125,11 +125,11 @@
             (($i==(count($games) - 1)) ? " border-right:none;" : "") . "\">\n";
         echo "            <table class=\"gameScoreTable\">\n";
         echo "              <tr>\n";
-        echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+        echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
         echo "                <td class=\"gsTL\">" . $games[$i]["awayScore"] . "</td>\n";
         echo "              </tr>\n";
         echo "              <tr>\n";
-        echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+        echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
         echo "                <td class=\"gsBL\">" . $games[$i]["homeScore"] . "</td>\n";
         echo "              </tr>\n";
         echo "              <tr>\n";
@@ -207,7 +207,7 @@
       $span = "<span class=\"pickText\" style=\"color:#" . 
           (($thisPick["winner"] == $thisPick["leader"]) ? "007500" : (($thisPick["inFuture"] == 1) ? "0A1F42" : 
           ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) ? "888800" : "BF0000"))) . ";" . 
-          ((!$thisPick["inFuture"] && !$thisPick["isFinal"]) ? " font-style:italic;" : "") . "\">" . $thisPick["winner"] . 
+          ((!$thisPick["inFuture"] && !$thisPick["isFinal"]) ? " font-style:italic;" : "") . "\">" . $teamAliases[$thisPick["winner"]] . 
           " " . $thisPick["pPts"] . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? "<div class=\"blankIt\">" : "") . $span . "<br>";
       echo "<div class=\"imgDiv\"><img class=\"teamLogo" . ($logosHidden ? " blankIt" : "") . "\" src=\"" . 

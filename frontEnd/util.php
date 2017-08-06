@@ -68,6 +68,13 @@
     setcookie("spsID", $_SESSION["spsID"], time() + 3600 * 24 * 30, "/", $_SERVER["SERVER_NAME"]);
   }
 
+  // get the aliases and map them correctly
+  $teamAliases = array("TIE" => "TIE");
+  $results = RunQuery( "select teamID, alias from Team");
+  foreach( $results as $thisTeam ) {
+    $teamAliases[$thisTeam["teamID"]] = $thisTeam["alias"];
+  }
+
   function getIcon($team, $season)
   {
     if( $team == "" || $team == "TBD")

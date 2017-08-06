@@ -256,7 +256,7 @@
         echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'" . $games[$i]["awayTeam"] . "');\">\n";
         echo "                <td class=\"posTop\" style=\"background-color:" . 
             (($games[$i]["awayScore"] > $games[$i]["homeScore"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-            $games[$i]["awayTeam"] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . 
+            $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . 
             "\"/></div></div></td>\n";
         echo "              </tr>\n";
         echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'NONE');\">\n";
@@ -266,7 +266,7 @@
         echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'" . $games[$i]["homeTeam"] . "');\">\n";
         echo "                <td class=\"posOther\" style=\"background-color:" . 
             (($games[$i]["awayScore"] < $games[$i]["homeScore"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-            $games[$i]["homeTeam"] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . 
+            $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . 
             "\"/></div></div></td>\n";
         echo "              </tr>\n";
         echo "              <tr>\n";
@@ -384,7 +384,7 @@
       {
         echo "<div class=\"cellShadeOuter\">\n";
         echo "<div class=\"cellShadeBG\" style=\"background-color:#" . ($green ? "00AA00": "FF0000") . ";\"></div>\n";
-        $span = "<span style=\"color:#" . ($green ? "007500": "AF0000") . ";\">" . $thisPick["winner"] . " " . $thisPick["pPts"] . "</span>";
+        $span = "<span style=\"color:#" . ($green ? "007500": "AF0000") . ";\">" . $teamAliases[$thisPick["winner"]] . " " . $thisPick["pPts"] . "</span>";
         echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";
         echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($thisPick["winner"], $_SESSION["showPicksSeason"]) . "\"/></div>";
@@ -565,6 +565,12 @@
             var i1 = 0;
             var rows = document.getElementById("reloadableTable").rows;
             var checkIndex = -1;
+            var teamAliases = {<?php
+              foreach($teamAliases as $thisID => $thisAlias) {
+                echo $thisID . ":\"" . $thisAlias . "\",";
+              }
+              echo "19:19";
+            ?>};
             while( i1 < rows.length )
             {
               // skip non-data rows
@@ -584,11 +590,11 @@
                       }
                       var aTeam = t.rows[0].cells[0].firstElementChild.innerHTML;
                       aTeam = aTeam.slice(0, aTeam.indexOf("<"));
-                      t.rows[0].cells[0].style.backgroundColor = (winner == aTeam) ? "#409840" : "#D9DCE3";
+                      t.rows[0].cells[0].style.backgroundColor = (teamAliases[winner] == aTeam) ? "#409840" : "#D9DCE3";
                       t.rows[1].cells[0].style.backgroundColor = (winner == "NONE") ? "#409840" : "#D9DCE3";
                       var hTeam = t.rows[2].cells[0].firstElementChild.innerHTML;
                       hTeam = hTeam.slice(0, hTeam.indexOf("<"));
-                      t.rows[2].cells[0].style.backgroundColor = (winner == hTeam) ? "#409840" : "#D9DCE3";
+                      t.rows[2].cells[0].style.backgroundColor = (teamAliases[winner] == hTeam) ? "#409840" : "#D9DCE3";
                     }
                   }
                 }
@@ -612,7 +618,7 @@
                     var BG = rows[j].cells[checkIndex].firstElementChild.firstElementChild;
                     var txt = BG.nextElementSibling.rows[0].cells[0].firstElementChild<?php echo ($logosHidden ? ".firstElementChild" : ""); ?>;
                     var wasRight = (BG.style.backgroundColor == "rgb(0, 170, 0)");
-                    var nowRight = (txt.innerHTML.slice(0, winner.length) == winner);
+                    var nowRight = (txt.innerHTML.slice(0, winner.length) == teamAliases[winner]);
                     BG.style.backgroundColor = (nowRight ? "#00AA00": "#FF0000");
                     txt.style.color = (nowRight ? "#007500": "#AF0000");
                     // update their scores if we need to

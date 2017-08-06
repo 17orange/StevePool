@@ -184,11 +184,11 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\">\n";
             echo "              <tr>\n";
-            echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+            echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
             echo "                <td class=\"gsTL\">" . $games[$i]["awayTDs2Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
-            echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+            echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
             echo "                <td class=\"gsBL\">" . $games[$i]["homeTDs2Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
@@ -199,11 +199,11 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\">\n";
             echo "              <tr>\n";
-            echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+            echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
             echo "                <td class=\"gsTL\">" . $games[$i]["awayTDs"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
-            echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+            echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
             echo "                <td class=\"gsBL\">" . $games[$i]["homeTDs"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
@@ -214,11 +214,11 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\">\n";
             echo "              <tr>\n";
-            echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+            echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
             echo "                <td class=\"gsTL\">" . $games[$i]["awayRushYds2Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
-            echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+            echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
             echo "                <td class=\"gsBL\">" . $games[$i]["homeRushYds2Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
@@ -229,11 +229,11 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\">\n";
             echo "              <tr>\n";
-            echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+            echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
             echo "                <td class=\"gsTL\">" . $games[$i]["awayRushYds"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
-            echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+            echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
             echo "                <td class=\"gsBL\">" . $games[$i]["homeRushYds"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
@@ -244,11 +244,11 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\">\n";
             echo "              <tr>\n";
-            echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+            echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
             echo "                <td class=\"gsTL\">" . $games[$i]["awayPassYds2Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
-            echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+            echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
             echo "                <td class=\"gsBL\">" . $games[$i]["homePassYds2Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
@@ -259,11 +259,11 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\">\n";
             echo "              <tr>\n";
-            echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+            echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
             echo "                <td class=\"gsTL\">" . $games[$i]["awayPassYds"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
-            echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+            echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
             echo "                <td class=\"gsBL\">" . $games[$i]["homePassYds"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
@@ -274,11 +274,11 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\">\n";
             echo "              <tr>\n";
-            echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+            echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
             echo "                <td class=\"gsTL\">" . $games[$i]["awayScore1Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
-            echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+            echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
             echo "                <td class=\"gsBL\">" . $games[$i]["homeScore1Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
@@ -291,11 +291,11 @@
               (($_SESSION["showPicksWeek"] == 20) ? " border-right:none;" : "") . "\">\n";
           echo "            <table class=\"gameScoreTable\">\n";
           echo "              <tr>\n";
-          echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+          echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
           echo "                <td class=\"gsTL\">" . $games[$i]["awayScore2Q"] . "</td>\n";
           echo "              </tr>\n";
           echo "              <tr>\n";
-          echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+          echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
           echo "                <td class=\"gsBL\">" . $games[$i]["homeScore2Q"] . "</td>\n";
           echo "              </tr>\n";
           echo "              <tr>\n";
@@ -313,11 +313,11 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\">\n";
             echo "              <tr>\n";
-            echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+            echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
             echo "                <td class=\"gsTL\">" . $games[$i]["awayScore3Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
-            echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+            echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
             echo "                <td class=\"gsBL\">" . $games[$i]["homeScore3Q"] . "</td>\n";
             echo "              </tr>\n";
             echo "              <tr>\n";
@@ -330,11 +330,11 @@
         echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px; border-right:none;\">\n";
         echo "            <table class=\"gameScoreTable\">\n";
         echo "              <tr>\n";
-        echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+        echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
         echo "                <td class=\"gsTL\">" . $games[$i]["awayScore"] . "</td>\n";
         echo "              </tr>\n";
         echo "              <tr>\n";
-        echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+        echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
         echo "                <td class=\"gsBL\">" . $games[$i]["homeScore"] . "</td>\n";
         echo "              </tr>\n";
         echo "              <tr>\n";
@@ -457,7 +457,7 @@
           (($thisPick["winner"] == $thisPick["leader"]) ? "007500": 
           (($thisPick["leader"] == "TIE" && $thisPick["gStatus"] != 3) ? "888800" : "BF0000"))) . ";" . 
           (($thisPick["gStatus"] == 2) ? " font-style:italic;" : "") . "\">" . 
-          $thisPick["winner"] . (($thisPick["pPts"] > 0) ? (" " . $thisPick["pPts"]) : "") . "</span>";
+          $teamAliases[$thisPick["winner"]] . (($thisPick["pPts"] > 0) ? (" " . $thisPick["pPts"]) : "") . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";
       echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . (($thisPick["winner"] != "TIE") ? 

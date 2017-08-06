@@ -298,13 +298,13 @@
     echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'" . $games[$i]["awayTeam"] . "');\">\n";
     echo "                <td class=\"posTop\" style=\"background-color:" . 
         (($games[$i]["awayTeam"] != "TBD" && ($games[$i]["leader"] == $games[$i]["awayTeam"])) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-        $games[$i]["awayTeam"] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . 
+        $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . 
         "\"/></div></div></td>\n";
     echo "              </tr>\n";
     echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'" . $games[$i]["homeTeam"] . "');\">\n";
     echo "                <td class=\"posOther\" style=\"background-color:" . 
         (($games[$i]["homeTeam"] != "TBD" && ($games[$i]["leader"] == $games[$i]["homeTeam"])) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-        $games[$i]["homeTeam"] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . 
+        $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . 
         "\"/></div></div></td>\n";
     echo "              </tr>\n";
     echo "              <tr>\n";
@@ -425,6 +425,7 @@
 
   function ShowPick($teamID, $gameData, $points, $isMe, $poolLocked, $eliminatedTeams)
   {
+    global $teamAliases;
     $logosHidden = (isset($_SESSION["spHideLogos"]) && $_SESSION["spHideLogos"] == "TRUE");
     echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">";
     if(!$poolLocked && $teamID == "" && (($gameData["status"] == 1) || ($gameData["status"] == 19)) )
@@ -451,7 +452,7 @@
           ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
           (" style=\"background-color:#" . (($teamID == $gameData["leader"]) ? "00AA00": "FF0000"))) . ";\"></div>\n";
       $span = "<span" . ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
-          (" style=\"color:#" . (($teamID == $gameData["leader"]) ? "007500": "BF0000") . ";\"")) . ">" . $teamID . " " . 
+          (" style=\"color:#" . (($teamID == $gameData["leader"]) ? "007500": "BF0000") . ";\"")) . ">" . $teamAliases[$teamID] . " " . 
           $points . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";

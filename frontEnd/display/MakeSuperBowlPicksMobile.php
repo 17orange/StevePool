@@ -71,7 +71,7 @@
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? (" onMouseDown=\"startDrag(1, " . $i . ");\"") : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["homeTeam"])) 
             ? ""
-            : ($picks[$i]["awayTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            : ($teamAliases[$picks[$i]["awayTeam"]] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>" . 
                makeTypeBlock($i));
     echo "          <td id=\"mp1_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
@@ -94,7 +94,7 @@
               ? (($picks[$i]["type"] != "winner") 
                 ? ("TIE <br><img style=\"position:absolute; height:0px; width:0px;\" src=\"" . getIcon("", $result["season"]) . "\">") 
                 : formatTime($picks[$i]))
-              : ($picks[$i]["awayTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              : ($teamAliases[$picks[$i]["awayTeam"]] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>" . 
                  makeTypeBlock($i)));
     echo "          <td id=\"mp2_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
@@ -123,11 +123,11 @@
     $text = ($i==0) 
             ? "My Pick" 
             : (($picks[$i]["winner"] == $picks[$i]["awayTeam"])
-              ? ($picks[$i]["awayTeam"] . " " . ($i>1 ? $picks[$i]["points"] : "") . "<br><div class=\"imgDiv\">" . 
+              ? ($teamAliases[$picks[$i]["awayTeam"]] . " " . ($i>1 ? $picks[$i]["points"] : "") . "<br><div class=\"imgDiv\">" . 
                  "<img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["awayTeam"], $result["season"]) . "\" draggable=\"false\" " . 
                  "ondragstart=\"return false;\" /></div>" . makeTypeBlock($i))
               : (($picks[$i]["winner"] == $picks[$i]["homeTeam"]) 
-                ? ($picks[$i]["homeTeam"] . " " . ($i>1 ? $picks[$i]["points"] : "") . "<br><div class=\"imgDiv\">" . 
+                ? ($teamAliases[$picks[$i]["homeTeam"]] . " " . ($i>1 ? $picks[$i]["points"] : "") . "<br><div class=\"imgDiv\">" . 
                    "<img class=\"teamLogo\" src=\"" . getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" " . 
                    "ondragstart=\"return false;\" /></div>")
                 : (($picks[$i]["type"] != "winner") 
@@ -154,7 +154,7 @@
               ? (($picks[$i]["type"] != "winner") 
                  ? ("TIE <br><img style=\"position:absolute; height:0px; width:0px;\"src=\"" . getIcon("", $result["season"]) . "\">") 
                  : formatTime($picks[$i])) 
-              : ($picks[$i]["homeTeam"] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+              : ($teamAliases[$picks[$i]["homeTeam"]] . "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                  getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>"));
     echo "          <td id=\"mp4_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
   }
@@ -170,7 +170,7 @@
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(5, " . $i . ");\"" : "";
     $text = (!isset($picks[$i]) || ($picks[$i]["winner"] != $picks[$i]["awayTeam"])) 
             ? ""
-            : ($picks[$i]["homeTeam"] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            : ($teamAliases[$picks[$i]["homeTeam"]] . " <br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                getIcon($picks[$i]["homeTeam"], $result["season"]) . "\" draggable=\"false\" ondragstart=\"return false;\" /></div>");
     echo "          <td id=\"mp5_" . $i . "\"" . $style . $drag . ">" . $text . "</td>\n";
   }

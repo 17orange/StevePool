@@ -90,11 +90,11 @@
         (($i==(count($games) - 1)) ? " border-right:none;" : "") . "\">\n";
     echo "            <table class=\"gameScoreTable\">\n";
     echo "              <tr>\n";
-    echo "                <td>" . $games[$i]["awayTeam"] . "</td>\n";
+    echo "                <td>" . $teamAliases[$games[$i]["awayTeam"]] . "</td>\n";
     echo "                <td class=\"gsTL\">" . $games[$i]["awayScore"] . "</td>\n";
     echo "              </tr>\n";
     echo "              <tr>\n";
-    echo "                <td class=\"gsBR\">" . $games[$i]["homeTeam"] . "</td>\n";
+    echo "                <td class=\"gsBR\">" . $teamAliases[$games[$i]["homeTeam"]] . "</td>\n";
     echo "                <td class=\"gsBL\">" . $games[$i]["homeScore"] . "</td>\n";
     echo "              </tr>\n";
     echo "              <tr>\n";
@@ -204,7 +204,7 @@
 
   function ShowPick($teamID, $gameData, $points, $isMe, $poolLocked, $eliminatedTeams)
   {
-    global $logosHidden;
+    global $logosHidden, $teamAliases;
     echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">";
     if(!$poolLocked && $teamID == "" && (($gameData["status"] == 1) || ($gameData["status"] == 19)) )
     {
@@ -234,7 +234,7 @@
           ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
           (" style=\"color:#" . (($teamID == $gameData["leader"]) ? "007500" : 
           ((($gameData["status"] <= 3 && $gameData["leader"] != "") || ($eliminatedTeams[$teamID] == 3)) ? "BF0000" : "888800")) . ";" . 
-          (($gameData["status"] == 2) ? " font-style:italic;" : "") . "\"")) . ">" . $teamID . " " . $points . "</span>";
+          (($gameData["status"] == 2) ? " font-style:italic;" : "") . "\"")) . ">" . $teamAliases[$teamID] . " " . $points . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";
       echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($teamID, $_SESSION["showPicksSeason"]) . "\"/></div></td></tr></table>";

@@ -47,6 +47,12 @@
 
       function MakePick(pickID)
       {
+        var teamAliases = {<?php
+          foreach($teamAliases as $thisID => $thisAlias) {
+            echo $thisAlias . ":\"" . $thisID . "\",";
+          }
+          echo "19:19";
+        ?>};
         var team = document.getElementById(pickID).innerHTML;
         if( pickID.substring(pickID.length - 1) == "H" && pickID != "SBH" )
         {
@@ -194,7 +200,7 @@
         {
           inputTarget = inputTarget.substring(0, 6) + ((inputTarget.substring(6) == "1") ? "2" : "1");
         }
-        document.getElementById(inputTarget).value = team;
+        document.getElementById(inputTarget).value = teamAliases[team];
 
         // clean the visuals
         CombYoBeard();

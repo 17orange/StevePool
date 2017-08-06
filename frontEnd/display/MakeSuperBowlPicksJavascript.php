@@ -171,6 +171,12 @@
 
       function ToggleSaveButton()
       {
+        var teamAliases = {<?php
+          foreach($teamAliases as $thisID => $thisAlias) {
+            echo $thisAlias . ":\"" . $thisID . "\",";
+          }
+          echo "19:19";
+        ?>};
         var canSave = true;
         for( var i=1; i<11 && canSave; i++ )
         {
@@ -182,7 +188,7 @@
           if( testElem.innerHTML.indexOf("<img") != -1 )
           {
             // find where in the array this game is located
-            var thisTeam = testElem.innerHTML.substr(0, testElem.innerHTML.indexOf(" "));
+            var thisTeam = teamAliases[testElem.innerHTML.substr(0, testElem.innerHTML.indexOf(" "))];
 
             // set its winner and point value
             document.getElementById("winner" + i).value = thisTeam;
@@ -204,6 +210,12 @@
 
       function ToggleSaveButtonMobile()
       {
+        var teamAliases = {<?php
+          foreach($teamAliases as $thisID => $thisAlias) {
+            echo $thisAlias . ":\"" . $thisID . "\",";
+          }
+          echo "19:19";
+        ?>};
         var canSave = true;
         for( var i=1; i<11 && canSave; i++ )
         {
@@ -215,7 +227,7 @@
           if( testElem.innerHTML.indexOf("<img") != -1 || testElem.innerHTML.indexOf("TIE") != -1 )
           {
             // find where in the array this game is located
-            var thisTeam = testElem.innerHTML.substr(0, testElem.innerHTML.indexOf("<br>"));
+            var thisTeam = teamAliases[testElem.innerHTML.substr(0, testElem.innerHTML.indexOf("<br>"))];
             if( testElem.innerHTML.indexOf("TIE") != -1 )
             {
               var thisTeam = "TIE";

@@ -236,6 +236,12 @@
 
       function ToggleSaveButton()
       {
+        var teamAliases = {<?php
+          foreach($teamAliases as $thisID => $thisAlias) {
+            echo $thisAlias . ":\"" . $thisID . "\",";
+          }
+          echo "19:19";
+        ?>};
         var canSave = (document.getElementById("tieBreak").value != "") && (document.getElementById("tieBreak").value > 0);
         for( var i=1; i<17 && canSave; i++ )
         {
@@ -245,7 +251,7 @@
           if( testElem.innerHTML.indexOf("<img") != -1 )
           {
             // find where in the array this game is located
-            var thisTeam = testElem.innerHTML.substr(0, testElem.innerHTML.indexOf(" "));
+            var thisTeam = teamAliases[testElem.innerHTML.substr(0, testElem.innerHTML.indexOf(" "))];
             for( var k=1; k<17; k++ )
             {
               var thisHome = document.getElementById("homeTeam" + k)
@@ -270,6 +276,12 @@
 
       function ToggleSaveButtonMobile()
       {
+        var teamAliases = {<?php
+          foreach($teamAliases as $thisID => $thisAlias) {
+            echo $thisAlias . ":\"" . $thisID . "\",";
+          }
+          echo "19:19";
+        ?>};
         var canSave = (document.getElementById("tieBreak").value != "") && (document.getElementById("tieBreak").value > 0);
         for( var i=1; i<17 && canSave; i++ )
         {
@@ -279,7 +291,7 @@
           if( testElem.innerHTML.indexOf("<img") != -1 )
           {
             // find where in the array this game is located
-            var thisTeam = $(testElem).find("td:nth-child(1)").html();
+            var thisTeam = teamAlias[$(testElem).find("td:nth-child(1)").html()];
             thisTeam = thisTeam.substr(0, thisTeam.indexOf("<br>"));
             for( var k=1; k<17; k++ )
             {

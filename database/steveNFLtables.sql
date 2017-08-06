@@ -26,6 +26,7 @@ create table User (userID int unsigned not null primary key auto_increment,
                    email varchar(200) not null unique);
 
 create table Team (teamID char(3) not null primary key, 
+                   alias char(3) not null, 
                    city varchar(36) not null, 
                    nickname varchar(36) not null,
                    isActive enum('Y','N') not null default 'Y');
