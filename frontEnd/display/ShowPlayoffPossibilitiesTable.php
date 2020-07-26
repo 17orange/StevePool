@@ -87,7 +87,7 @@
   if( $_SESSION["showPicksWeek"] == 22 )
   {
     $query .= "if(prevWeek1>=0, if(prevWeek2>=0, if(prevWeek3>=0, " . ($poolLocked ? "0" : "-prevWeek3") . 
-              ", 10 + prevWeek3), 25 + prevWeek2), 40 + prevWeek1) as tb1, ";
+              ", 25 + prevWeek3), 50 + prevWeek2), 75 + prevWeek1) as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb2, ";
     $query .= "if(type='winner', 10, if(type='winner3Q', 9, if(type='winner2Q', 8, if(type='winner1Q', 7, " . 
               "if(type='passYds', 6, if(type='passYds2Q', 5, if(type='rushYds', 4, if(type='rushYds2Q', 3, " . 
@@ -96,7 +96,7 @@
   }
   else if( $_SESSION["showPicksWeek"] == 20 )
   {
-    $query .= "if(prevWeek1>=0, if(prevWeek2>=0, " . ($poolLocked ? "0" : "-prevWeek2") . ", 10 + prevWeek2), 25 + prevWeek1) as tb1, ";
+    $query .= "if(prevWeek1>=0, if(prevWeek2>=0, " . ($poolLocked ? "0" : "-prevWeek2") . ", 25 + prevWeek2), 50 + prevWeek1) as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb2, ";
     $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb3, ";
     $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[1]["homeScore2Q"] + $games[1]["awayScore2Q"]) . ")") : "1") . " as tb4, ";
@@ -109,8 +109,8 @@
   else
   {
     $query .= (($_SESSION["showPicksWeek"] == 18) ? "if(firstRoundBye='Y', 1, 2)" : 
-               ($poolLocked ? "if(prevWeek1>=0, -20, 10 + prevWeek1)" 
-                            : "if(prevWeek1=0, -20, if(prevWeek1>0, -prevWeek1, 10 + prevWeek1))")) . " as tb1, ";
+               ($poolLocked ? "if(prevWeek1>=0, -20, 25 + prevWeek1)"
+                            : "if(prevWeek1=0, -20, if(prevWeek1>0, -prevWeek1, 25 + prevWeek1))")) . " as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[3]["homeScore"] + $games[3]["awayScore"]) . ")") : "1") . " as tb2, ";
     $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[2]["homeScore"] + $games[2]["awayScore"]) . ")") : "1") . " as tb3, ";
     $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb4, ";
@@ -212,7 +212,7 @@
                 $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
-            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs2Q','NONE');\">\n";
+            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs2Q','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
                 (($games[$i]["awayTDs2Q"] == $games[$i]["homeTDs2Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
@@ -235,7 +235,7 @@
                 $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
-            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs','NONE');\">\n";
+            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
                 (($games[$i]["awayTDs"] == $games[$i]["homeTDs"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
@@ -258,7 +258,7 @@
                 $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
-            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds2Q','NONE');\">\n";
+            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds2Q','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
                 (($games[$i]["awayRushYds2Q"] == $games[$i]["homeRushYds2Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
@@ -281,7 +281,7 @@
                 $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
-            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds','NONE');\">\n";
+            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
                 (($games[$i]["awayRushYds"] == $games[$i]["homeRushYds"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
@@ -304,7 +304,7 @@
                 $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
-            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds2Q','NONE');\">\n";
+            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds2Q','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
                 (($games[$i]["awayPassYds2Q"] == $games[$i]["homePassYds2Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
@@ -327,7 +327,7 @@
                 $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
-            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds','NONE');\">\n";
+            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
                 (($games[$i]["awayPassYds"] == $games[$i]["homePassYds"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
@@ -350,7 +350,7 @@
                 $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
-            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score1Q','NONE');\">\n";
+            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score1Q','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
                 (($games[$i]["awayScore1Q"] == $games[$i]["homeScore1Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
@@ -375,7 +375,7 @@
               $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
               getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
           echo "              </tr>\n";
-          echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score2Q','NONE');\">\n";
+          echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score2Q','TIE');\">\n";
           echo "                <td class=\"posOther\" style=\"background-color:" . 
               (($games[$i]["awayScore2Q"] == $games[$i]["homeScore2Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
           echo "              </tr>\n";
@@ -411,7 +411,7 @@
                 $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
-            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score3Q','NONE');\">\n";
+            echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score3Q','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
                 (($games[$i]["awayScore3Q"] == $games[$i]["homeScore3Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
@@ -436,7 +436,7 @@
             $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . 
             "\"/></div></div></td>\n";
         echo "              </tr>\n";
-        echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'NONE');\">\n";
+        echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'TIE');\">\n";
         echo "                <td class=\"posOther\" style=\"background-color:" . 
             (($games[$i]["awayScore"] == $games[$i]["homeScore"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
         echo "              </tr>\n";
@@ -483,6 +483,7 @@
       $eliminated = ($_SESSION["showPicksWeek"] >= 19 && $thisPick["prevWeek1"] < 0) || 
                     ($_SESSION["showPicksWeek"] >= 20 && $thisPick["prevWeek2"] < 0) || 
                     ($_SESSION["showPicksWeek"] == 22 && $thisPick["prevWeek3"] < 0);
+      $baseJK = $jk;
 
       // get their rank if theyre not on a bye
       if( !$hasBye && !$eliminated )
@@ -587,7 +588,7 @@
     if( $_SESSION["showPicksWeek"] < 22 )
     {
       // show their score pick
-      $toggle = ($jk % 4);
+      $toggle = (($jk - $baseJK) % 4);
       $toggle = (($toggle == 1) && ($_SESSION["showPicksWeek"] == 20)) ? 2 : 
                 ((($toggle == 2) && ($_SESSION["showPicksWeek"] == 20)) ? 1 : $toggle);
       $tbName = "tieBreaker" . (4 - ($toggle % 4));
@@ -999,7 +1000,7 @@
                       var aTeam = t.rows[0].cells[0].firstElementChild.innerHTML;
                       aTeam = aTeam.slice(0, aTeam.indexOf("<"));
                       t.rows[0].cells[0].style.backgroundColor = (teamAliases[winner] == aTeam) ? "#409840" : "#D9DCE3";
-                      t.rows[1].cells[0].style.backgroundColor = (winner == "NONE") ? "#409840" : "#D9DCE3";
+                      t.rows[1].cells[0].style.backgroundColor = (winner == "TIE") ? "#409840" : "#D9DCE3";
                       var hTeam = t.rows[2].cells[0].firstElementChild.innerHTML;
                       hTeam = hTeam.slice(0, hTeam.indexOf("<"));
                       t.rows[2].cells[0].style.backgroundColor = (teamAliases[winner] == hTeam) ? "#409840" : "#D9DCE3";
@@ -1027,7 +1028,8 @@
                     var txt = BG.nextElementSibling.rows[0].cells[0].firstElementChild<?php echo ($logosHidden ? ".firstElementChild" : ""); ?>;
                     var wasRight = (BG.style.backgroundColor == "rgb(0, 170, 0)");
                     var wasWrong = (BG.style.backgroundColor == "rgb(255, 0, 0)");
-                    var nowRight = (txt.innerHTML.slice(0, winner.length) == ((winner == "NONE") ? "TIE " : teamAliases[winner]));
+                    var nowRight = (txt.innerHTML.slice(0, teamAliases[winner].length) == teamAliases[winner]);
+                    //var nowRight = (txt.innerHTML.slice(0, teamAliases[winner.length]) == ((winner == "NONE") ? "TIE " : teamAliases[winner]));
                     BG.style.backgroundColor = (nowRight ? "#00AA00": "#FF0000");
                     txt.style.color = (nowRight ? "#007500": "#AF0000");
                     // update their scores if we need to
@@ -1135,7 +1137,7 @@
                   var advance = (rows[j].cells[rows[j].cells.length - 1].innerHTML == "Yes");
                   if( mostRecentSort == "points" )
                   {
-                    advance = (j - i1) < <?php echo ($_SESSION["showPicksWeek"] == 20 ) ? 5 : (($_SESSION["showPicksWeek"] == 19) ? 10 : 20); ?>;
+                    advance = (j - i1) < <?php echo ($_SESSION["showPicksWeek"] == 20 ) ? 5 : (($_SESSION["showPicksWeek"] == 19) ? 10 : (($_SESSION["showPicksSeason"] < 2017) ? 20 : 21)); ?>;
                     rows[j].cells[rows[j].cells.length - 1].innerHTML = (advance ? "Yes" : "No");
                   }
                   rows[j].style.color = (advance ? "#007500": "#AF0000");

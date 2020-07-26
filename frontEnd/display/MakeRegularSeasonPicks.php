@@ -33,7 +33,7 @@
   {
     $picks[17 - $thisPick["points"]] = $thisPick;
     $playedTeams .= ",'" . $thisPick["homeTeam"] . "','" . $thisPick["awayTeam"] . "'";
-    if( $MNFgame == null || $MNFgame["gameTime"] < $thisPick["gameTime"] )
+    if( $MNFgame == null || ($MNFgame["gameTime"] < $thisPick["gameTime"]) || (($MNFgame["gameTime"] == $thisPick["gameTime"]) && ($MNFgame["gameID"] < $thisPick["gameID"])) )
     {
       $MNFgame = $thisPick;
     }
@@ -249,7 +249,7 @@
                         "(select homeTeam from Game where weekNumber=" . $result["weekNumber"] . 
                         " and season=" . $result["season"] . ") and teamID not in (select awayTeam " . 
                         "from Game where weekNumber=" . $result["weekNumber"] . 
-                        " and season=" . $result["season"] . ")" );
+                        " and season=" . $result["season"] . ") and isActive='Y'" );
   if( count($byeTeams) > 0 ) {
 ?>
           <tr><td colspan=3 style="border:3px solid #000000; padding: 5px;">Bye Teams</td></tr>

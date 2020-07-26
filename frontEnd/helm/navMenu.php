@@ -21,6 +21,10 @@
       <input type="submit" value="Manage Entries"<?php echo ($_SESSION["pageName"] == "manageEntries") ? " disabled" : ""; ?>/>
     </form>
     <form action="." method="post">
+      <input type="hidden" name="newPage" value="freezePlayer"/>
+      <input type="submit" value="Freeze Players"<?php echo ($_SESSION["pageName"] == "freezePlayer") ? " disabled" : ""; ?>/>
+    </form>
+    <form action="." method="post">
       <input type="hidden" name="newPage" value="addUser"/>
       <input type="submit" value="Add New User"<?php echo ($_SESSION["pageName"] == "addUser") ? " disabled" : ""; ?>/>
     </form>

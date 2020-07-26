@@ -39,7 +39,7 @@
   {
     $picks[17 - $thisPick["points"]] = $thisPick;
     $playedTeams .= ",'" . $thisPick["homeTeam"] . "','" . $thisPick["awayTeam"] . "'";
-    if( $MNFgame == null || $MNFgame["gameTime"] < $thisPick["gameTime"] )
+    if( $MNFgame == null || ($MNFgame["gameTime"] < $thisPick["gameTime"]) || (($MNFgame["gameTime"] == $thisPick["gameTime"]) && ($MNFgame["gameID"] < $thisPick["gameID"])) )
     {
       $MNFgame = $thisPick;
     }

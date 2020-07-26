@@ -9,7 +9,7 @@
     else
     {
       // grab the games in question, and check what their times were
-      $gameResults = runQuery( "select gameID, lockTime from Game where season=" . $thisSeason . " and weekNumber=" . 
+      $gameResults = runQuery( "select gameID, gameTime, lockTime from Game where season=" . $thisSeason . " and weekNumber=" .
                                $_SESSION["manageGameWeek"] . " order by gameTime asc, gameID asc" );
 
       // make sure none of them changed
@@ -19,9 +19,13 @@
         {
           runQuery( "call ChangeLockTime(" . $row["gameID"] . ", '" . $_POST["lockTime" . $row["gameID"]] . "')" );
         }
+        if( isset($_POST["gameTime" . $row["gameID"]]) && $_POST["gameTime" . $row["gameID"]] != $row["gameTime"] )
+        {
+          runQuery( "call ChangeGameTime(" . $row["gameID"] . ", '" . $_POST["gameTime" . $row["gameID"]] . "')" );
+        }
       }
 
       // check for dupes
-      $gameError = "Lock Times Updated!";
+      $gameError = "Times Updated!";
     }
 ?>

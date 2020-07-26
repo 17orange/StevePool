@@ -2,9 +2,11 @@
   // see what week they need to be setting
   $poolResults = RunQuery( "select inPlayoffs, firstRoundBye from SeasonResult join Session using (userID) where sessionID=" . 
                            $_SESSION["spsID"] . " and season=(select value from Constants where name='fetchSeason')" );
-  $poolResults = $poolResults[0];
+  $poolResults = (count($poolResults) > 0) ? $poolResults[0] : null;
   $gamesStillTBP = 1;
   $result = RunQuery("select weekNumber, season from Game where lockTime >= now() and status!=19 order by weekNumber limit 1", false);
+  $freezeResult = RunQuery("select count(*) as num from FrozenUser join User using (userID) join Session using (userID) " .
+                           "where sessionID=" . $_SESSION["spsID"]);
   if( count( $result ) == 0 )
   {
     $gamesStillTBP = 0;
@@ -77,6 +79,14 @@
     {
       echo "      <div style=\"height:100px;\"></div>\n";
       echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">You have not entered the pool for this season.</div>\n";
+      echo "      <div style=\"height:100px;\"></div>\n";
+    }
+    // their account is frozen
+    else if( isset($freezeResult[0]["num"]) && ($freezeResult[0]["num"] > 0) )
+    {
+      echo "      <div style=\"height:100px;\"></div>\n";
+      echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">Your account has been frozen! Please contact the pool " .
+          "commissioner for more information.</div>\n";
       echo "      <div style=\"height:100px;\"></div>\n";
     }
     // the picks for this week aren't open yet

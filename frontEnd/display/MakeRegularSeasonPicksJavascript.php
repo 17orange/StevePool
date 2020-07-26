@@ -291,8 +291,8 @@
           if( testElem.innerHTML.indexOf("<img") != -1 )
           {
             // find where in the array this game is located
-            var thisTeam = teamAlias[$(testElem).find("td:nth-child(1)").html()];
-            thisTeam = thisTeam.substr(0, thisTeam.indexOf("<br>"));
+            var thisTeam = $(testElem).find("td:nth-child(1)").html();
+            thisTeam = teamAliases[thisTeam.substr(0, thisTeam.indexOf("<br>"))];
             for( var k=1; k<17; k++ )
             {
               var thisHome = document.getElementById("homeTeam" + k)

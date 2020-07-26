@@ -35,7 +35,7 @@
         }
 
         $resultSet = array();
-        while( ($thisRow = mysqli_fetch_assoc($freshResultSet)) != null ) {
+        while( !is_bool($freshResultSet) && ($thisRow = mysqli_fetch_assoc($freshResultSet)) != null ) {
           $resultSet[] = $thisRow;
         }
 
@@ -69,7 +69,7 @@
   }
 
   // get the aliases and map them correctly
-  $teamAliases = array("TIE" => "TIE");
+  $teamAliases = array("TIE" => "TIE", "TBD" => "TBD");
   $results = RunQuery( "select teamID, alias from Team");
   foreach( $results as $thisTeam ) {
     $teamAliases[$thisTeam["teamID"]] = $thisTeam["alias"];
@@ -89,7 +89,7 @@
     $str .= $teamInfo["name"];
 
     $str .= ".svg";
-    return $str;
+    return $str . "?cacheBuster=2";
   }
 
   function formatTime($pick)

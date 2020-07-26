@@ -80,6 +80,11 @@ else
   {
     include "preprocessEditUser.php";
   }
+  // freeze players
+  else if( isset($_POST["adminTask"]) && $_POST["adminTask"] == "freezePlayer" )
+  {
+    include "preprocessFreezePlayers.php";
+  }
   // manage season entrants
   else if( isset($_POST["adminTask"]) && $_POST["adminTask"] == "manageEntries" )
   {
@@ -120,6 +125,11 @@ else
   else if( $_SESSION["pageName"] == "editUser" )
   {
     include "displayEditUser.php";
+  }
+  // logic for freeze players
+  else if( $_SESSION["pageName"] == "freezePlayer" )
+  {
+    include "displayFreezePlayers.php";
   }
   // logic for managing entries
   else if( $_SESSION["pageName"] == "manageEntries" )

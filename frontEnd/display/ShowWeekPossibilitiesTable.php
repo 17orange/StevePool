@@ -259,7 +259,7 @@
             $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . 
             "\"/></div></div></td>\n";
         echo "              </tr>\n";
-        echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'NONE');\">\n";
+        echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'TIE');\">\n";
         echo "                <td class=\"posOther\" style=\"background-color:" . 
             (($games[$i]["awayScore"] == $games[$i]["homeScore"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
         echo "              </tr>\n";
@@ -361,7 +361,7 @@
         echo "<div class=\"cellShadeBG\" style=\"background-color:#00AA00;\"></div>\n";
         echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\"><span class=\"blankIt\">MIS 19</span><br>";
         echo "<div class=\"imgDiv blankIt\"><img class=\"teamLogo\" src=\"" . getIcon("BUF", $_SESSION["showPicksSeason"]) . "\"/></div>";
-        echo "<div class=\"centerIt\" style=\"color:#007500;\">??<br>(" . $nextWager . ")</div></td></tr></table>";
+        echo "<div class=\"centerIt\" style=\"color:#007500;\">X<br>(" . $nextWager . ")</div></td></tr></table>";
         echo "</div>\n";
         $wagerList[$nextWager] = true;
       }
@@ -376,7 +376,7 @@
         echo "<div class=\"cellShadeBG\" style=\"background-color:#FF0000;\"></div>\n";
         echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\"><span class=\"blankIt\">MIS 19</span><br>";
         echo "<div class=\"imgDiv blankIt\"><img class=\"teamLogo\" src=\"" . getIcon("BUF", $_SESSION["showPicksSeason"]) . "\"/></div>";
-        echo "<div class=\"centerIt\" style=\"color:#AF0000;\">??<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
+        echo "<div class=\"centerIt\" style=\"color:#AF0000;\">X<br>(" . $nextWager . ")</div></td></tr></table>";
         echo "</div>\n";
         $wagerList[$nextWager] = true;
       }
@@ -591,7 +591,7 @@
                       var aTeam = t.rows[0].cells[0].firstElementChild.innerHTML;
                       aTeam = aTeam.slice(0, aTeam.indexOf("<"));
                       t.rows[0].cells[0].style.backgroundColor = (teamAliases[winner] == aTeam) ? "#409840" : "#D9DCE3";
-                      t.rows[1].cells[0].style.backgroundColor = (winner == "NONE") ? "#409840" : "#D9DCE3";
+                      t.rows[1].cells[0].style.backgroundColor = (winner == "TIE") ? "#409840" : "#D9DCE3";
                       var hTeam = t.rows[2].cells[0].firstElementChild.innerHTML;
                       hTeam = hTeam.slice(0, hTeam.indexOf("<"));
                       t.rows[2].cells[0].style.backgroundColor = (teamAliases[winner] == hTeam) ? "#409840" : "#D9DCE3";
@@ -618,7 +618,7 @@
                     var BG = rows[j].cells[checkIndex].firstElementChild.firstElementChild;
                     var txt = BG.nextElementSibling.rows[0].cells[0].firstElementChild<?php echo ($logosHidden ? ".firstElementChild" : ""); ?>;
                     var wasRight = (BG.style.backgroundColor == "rgb(0, 170, 0)");
-                    var nowRight = (txt.innerHTML.slice(0, winner.length) == teamAliases[winner]);
+                    var nowRight = (txt.innerHTML.slice(0, teamAliases[winner].length) == teamAliases[winner]);
                     BG.style.backgroundColor = (nowRight ? "#00AA00": "#FF0000");
                     txt.style.color = (nowRight ? "#007500": "#AF0000");
                     // update their scores if we need to

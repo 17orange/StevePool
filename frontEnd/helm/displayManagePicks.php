@@ -27,7 +27,7 @@
       <span>Selected Week</span>
       <select name="selectedWeek">
 <?php
-    for( $i=1; $i<=17 /*22*/; $i++ )
+    for( $i=1; $i<=22; $i++ )
     {
       if( $i != 21 ) {
         echo "        <option value=\"" . $i . "\"" . 

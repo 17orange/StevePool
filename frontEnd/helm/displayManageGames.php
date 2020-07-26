@@ -11,7 +11,7 @@
 <?php
     for( $i=1; $i<18; $i+=1 )
     {
-      echo "      <input type=\"radio\" name=\"manageGameWeek\" value=\"" . $i . "\" " . 
+      echo "      <input type=\"radio\" name=\"manageGameWeek\" value=\"" . $i . "\" " .
            (($_SESSION["manageGameWeek"] == $i) ? "checked " : "") . "/><span>" . $i . "</span><br/>\n";
     }
 ?>
@@ -31,9 +31,9 @@
       <table>
 <?php
     // grab the games in the current week
-    $gameResults = runQuery( "select gameID, gameTime, lockTime, T1.nickname as home, T2.nickname as away " . 
-                             "from Game join Team as T1 on (homeTeam=T1.teamID) join Team as T2 on " . 
-                             "(awayTeam=T2.teamID) where season=" . $thisSeason . " and weekNumber=" . 
+    $gameResults = runQuery( "select gameID, gameTime, lockTime, T1.nickname as home, T2.nickname as away " .
+                             "from Game join Team as T1 on (homeTeam=T1.teamID) join Team as T2 on " .
+                             "(awayTeam=T2.teamID) where season=" . $thisSeason . " and weekNumber=" .
                              $_SESSION["manageGameWeek"] . " order by gameTime asc, gameID asc" );
 
     echo "        <tr>\n";
@@ -47,14 +47,15 @@
     {
       echo "        <tr>\n";
       echo "          <td>" . $row["away"] . " at " . $row["home"] . "</td>\n";
-      echo "          <td>" . $row["gameTime"] . "</td>\n";
-      echo "          <td><input type=\"text\" name=\"lockTime" . $row["gameID"] . "\" value=\"" . 
+      echo "          <td><input type=\"text\" name=\"gameTime" . $row["gameID"] . "\" value=\"" .
+           $row["gameTime"] . "\" /></td>\n";
+      echo "          <td><input type=\"text\" name=\"lockTime" . $row["gameID"] . "\" value=\"" .
            $row["lockTime"] . "\" /></td>\n";
       echo "        </tr>\n";
     }
 ?>
       </table>
-      <input type="submit" value="Update Lock Times" />
+      <input type="submit" value="Update Times" />
     </form>
 <?php
     if( isset($gameError) && $gameError != "" )

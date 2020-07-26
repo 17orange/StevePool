@@ -19,7 +19,7 @@
     $bInfo = mysqli_real_escape_string( $link, $_POST["browserInfo"] );
 
     // test the values they sent
-    $results = RunQuery( "select * from User where username='" . $uname . "' or email='" . $uname . "'" );
+    $results = RunQuery( "select * from User where username='" . $uname . "' or email='" . $uname . "'", false );
 
     // user doesnt exist
     if( count( $results ) == 0 )
@@ -45,7 +45,7 @@
       RunQuery( "call Login(" . $results[0]["userID"] . ",'" . $results[0]["password"] . "','" . $_SERVER['REMOTE_ADDR'] . "','" . $bInfo . "')", false);
 
       // save the session ID for future use
-      $sessionResults = RunQuery( "select sessionID from Session where userID=" . $results[0]["userID"] );
+      $sessionResults = RunQuery( "select sessionID from Session where userID=" . $results[0]["userID"], false );
       mail($results[0]["email"], "Steve's NFL Pool Password Reset", "Click the following link to reset your password for Steve's NFL Pool:  http://bradplusplus.com/stevePool/helpers/passwordReset.php?session=" . $sessionResults[0]["sessionID"], "From: StevePool@bradplusplus.com");
 ?>
       parent.document.getElementById("loginError").innerHTML = "Check your email for the reset link!<br>(Be sure to check in your spam folder too.)";

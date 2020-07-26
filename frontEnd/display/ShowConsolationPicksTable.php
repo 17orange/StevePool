@@ -178,8 +178,12 @@
       }
       ShowPick($thePick, $gameToDisplay, $pointVals[$ind], $isMe, $poolLocked, $eliminatedTeams);
 
-      if( (($games[$ind]["status"] == 2) || ($games[$ind]["status"] == 3)) && 
-          ($thePick != $games[$ind]["leader"]) && !isset($eliminatedTeams[$thePick]) )
+//      if( (($games[$ind]["status"] == 2) || ($games[$ind]["status"] == 3)) &&
+//          (($thePick == $games[$ind]["homeTeam"]) || ($thePick == $games[$ind]["awayTeam"])) &&
+//          ($thePick != $games[$ind]["leader"]) && !isset($eliminatedTeams[$thePick]) )
+// ^-- commented out that to correct crossover (see NO-MIN in 2017 consolation) and enabled this ----v
+      if( (($gameToDisplay["status"] == 2) || ($gameToDisplay["status"] == 3)) &&
+          ($thePick != $gameToDisplay["leader"]) && !isset($eliminatedTeams[$thePick]) )
       {
         $eliminatedTeams[$thePick] = $games[$ind]["status"];
       }

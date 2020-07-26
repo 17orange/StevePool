@@ -65,7 +65,7 @@
   if( $_SESSION["showPicksWeek"] == 22 )
   {
     $query .= "if(prevWeek1>=0, if(prevWeek2>=0, if(prevWeek3>=0, " . ($poolLocked ? "0" : "-prevWeek3") . 
-              ", 10 + prevWeek3), 25 + prevWeek2), 40 + prevWeek1) as tb1, ";
+              ", 25 + prevWeek3), 50 + prevWeek2), 75 + prevWeek1) as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb2, ";
     $query .= "if(type='winner', 10, if(type='winner3Q', 9, if(type='winner2Q', 8, if(type='winner1Q', 7, " . 
               "if(type='passYds', 6, if(type='passYds2Q', 5, if(type='rushYds', 4, if(type='rushYds2Q', 3, " . 
@@ -74,7 +74,7 @@
   }
   else if( $_SESSION["showPicksWeek"] == 20 )
   {
-    $query .= "if(prevWeek1>=0, if(prevWeek2>=0, " . ($poolLocked ? "0" : "-prevWeek2") . ", 10 + prevWeek2), 25 + prevWeek1) as tb1, ";
+    $query .= "if(prevWeek1>=0, if(prevWeek2>=0, " . ($poolLocked ? "0" : "-prevWeek2") . ", 25 + prevWeek2), 50 + prevWeek1) as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb2, ";
     $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb3, ";
     $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[1]["homeScore2Q"] + $games[1]["awayScore2Q"]) . ")") : "1") . " as tb4, ";
@@ -87,8 +87,8 @@
   else
   {
     $query .= (($_SESSION["showPicksWeek"] == 18) ? "if(firstRoundBye='Y', 1, 2)" : 
-               ($poolLocked ? "if(prevWeek1>=0, -20, 10 + prevWeek1)" 
-                            : "if(prevWeek1=0, -20, if(prevWeek1>0, -prevWeek1, 10 + prevWeek1))")) . " as tb1, ";
+               ($poolLocked ? "if(prevWeek1>=0, -20, 25 + prevWeek1)"
+                            : "if(prevWeek1=0, -20, if(prevWeek1>0, -prevWeek1, 25 + prevWeek1))")) . " as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[3]["homeScore"] + $games[3]["awayScore"]) . ")") : "1") . " as tb2, ";
     $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[2]["homeScore"] + $games[2]["awayScore"]) . ")") : "1") . " as tb3, ";
     $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb4, ";
@@ -380,6 +380,7 @@
       $eliminated = ($_SESSION["showPicksWeek"] >= 19 && $thisPick["prevWeek1"] < 0) || 
                     ($_SESSION["showPicksWeek"] >= 20 && $thisPick["prevWeek2"] < 0) || 
                     ($_SESSION["showPicksWeek"] == 22 && $thisPick["prevWeek3"] < 0);
+      $baseJK = $jk;
 
       // get their rank if theyre not on a bye
       if( !$hasBye && !$eliminated )
@@ -485,7 +486,7 @@
     if( $_SESSION["showPicksWeek"] < 22 )
     {
       // show their score pick
-      $toggle = ($jk % 4);
+      $toggle = (($jk - $baseJK) % 4);
       $toggle = (($toggle == 1) && ($_SESSION["showPicksWeek"] == 20)) ? 2 : 
                 ((($toggle == 2) && ($_SESSION["showPicksWeek"] == 20)) ? 1 : $toggle);
       $tbName = "tieBreaker" . (4 - ($toggle % 4));

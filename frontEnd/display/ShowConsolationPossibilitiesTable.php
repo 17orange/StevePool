@@ -242,25 +242,29 @@
     // update the values
     if( $pickBank[$i]["userID"] != $thisUser )
     {
+/*
       // fill in the totals for this guy
       for($j=$startIndex; $j<$i; $j++)
       {
         $pickBank[$j]["wPts"] = $points;
         $pickBank[$j]["sPts"] = $ytd;
       }
+*/
 
       $thisUser = $pickBank[$i]["userID"];
       $startIndex = $i;
-      $points = $pickBank[$i]["wPts"];
-      $ytd = $pickBank[$i]["sPts"];
+//      $points = $pickBank[$i]["wPts"];
+//      $ytd = $pickBank[$i]["sPts"];
     }
   }
+/*
   // fill in the totals for the last guy
   for($j=$startIndex; $j<$i; $j++)
   {
     $pickBank[$j]["wPts"] = $points;
     $pickBank[$j]["sPts"] = $ytd;
   }
+*/
 
   // if any of the games have an unknown team, make it TBD
   for( $i=0; $i<count($games); $i++ ) {
@@ -394,7 +398,9 @@
       }
       ShowPick($thePick, $gameToDisplay, $pointVals[$ind], $isMe, $poolLocked, $eliminatedTeams);
 
-      if( (($games[$ind]["status"] == 2) || ($games[$ind]["status"] == 3)) && $thePick != $games[$ind]["leader"] )
+      $forced = isset($_SESSION["forcedWinners"][$games[$ind]["gameID"]]) &&
+                ($_SESSION["forcedWinners"][$games[$ind]["gameID"]] != "TBD");
+      if( (($games[$ind]["status"] == 2) || ($games[$ind]["status"] == 3) || $forced) && $thePick != $games[$ind]["leader"] )
       {
         $eliminatedTeams[$thePick] = 19;
       }
@@ -449,9 +455,13 @@
     {
       echo "<div class=\"cellShadeOuter\">\n";
       echo "<div class=\"cellShadeBG\"" . 
-          ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
+//          ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" :
+//          (" style=\"background-color:#" . (($teamID == $gameData["leader"]) ? "00AA00": "FF0000"))) . ";\"></div>\n";
+          ((!isset($eliminatedTeams[$teamID]) && in_array($gameData["leader"], ["", "TBD"])) ? "" :
           (" style=\"background-color:#" . (($teamID == $gameData["leader"]) ? "00AA00": "FF0000"))) . ";\"></div>\n";
-      $span = "<span" . ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
+//      $span = "<span" . ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" :
+//          (" style=\"color:#" . (($teamID == $gameData["leader"]) ? "007500": "BF0000") . ";\"")) . ">" . $teamAliases[$teamID] . " " .
+      $span = "<span" . ((!isset($eliminatedTeams[$teamID]) && in_array($gameData["leader"], ["", "TBD"])) ? "" :
           (" style=\"color:#" . (($teamID == $gameData["leader"]) ? "007500": "BF0000") . ";\"")) . ">" . $teamAliases[$teamID] . " " . 
           $points . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 

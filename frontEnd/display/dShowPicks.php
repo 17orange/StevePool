@@ -2,14 +2,16 @@
   // grab the current week and season
   if( !isset($_SESSION["showPicksWeek"]) )
   {
-    $results = RunQuery( "select weekNumber from Game join WeekResult using (weekNumber, season) where status in (1,2,19) order by gameID limit 1" );
+    $results = RunQuery( "select weekNumber from Game join WeekResult using (weekNumber, season) where status in (1,2,19) " .
+                         "or (status >= 3 and date(date_add(now(), interval -56 hour)) <= date(gameTime)) order by gameTime asc limit 1" );
     if( count( $results ) > 0 )
     {
       $_SESSION["showPicksWeek"] = $results[0]["weekNumber"];
     }
     else
     {
-      $results = RunQuery( "select weekNumber from Game join PlayoffResult using (weekNumber, season) where status in (1,2,19) order by gameID limit 1" );
+      $results = RunQuery( "select weekNumber from Game join PlayoffResult using (weekNumber, season) where status in (1,2,19) " .
+                           "or (status >= 3 and date(date_add(now(), interval -56 hour)) <= date(gameTime)) order by gameTime asc limit 1" );
       if( count( $results ) > 0 )
       {
         $_SESSION["showPicksWeek"] = $results[0]["weekNumber"];

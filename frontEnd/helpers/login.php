@@ -19,8 +19,8 @@
     $bInfo = mysqli_real_escape_string( $link, $_POST["browserInfo"] );
 
     // test the values they sent
-    $results = RunQuery( "select * from User where username='" . $uname . "' or email='" . $uname . "'" );
-    $results2 = RunQuery( "select * from User where (username='" . $uname . "' or email='" . $uname . "') and password=md5('" . $pass . "')" );
+    $results = RunQuery( "select * from User where username='" . $uname . "' or email='" . $uname . "'", false );
+    $results2 = RunQuery( "select * from User where (username='" . $uname . "' or email='" . $uname . "') and password=md5('" . $pass . "')", false );
 
     // user doesnt exist
     if( count( $results ) == 0 )

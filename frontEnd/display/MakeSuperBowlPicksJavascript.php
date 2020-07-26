@@ -188,7 +188,8 @@
           if( testElem.innerHTML.indexOf("<img") != -1 )
           {
             // find where in the array this game is located
-            var thisTeam = teamAliases[testElem.innerHTML.substr(0, testElem.innerHTML.indexOf(" "))];
+            var index = (testElem.innerHTML.indexOf(" ") < testElem.innerHTML.indexOf("<br>")) ? testElem.innerHTML.indexOf(" ") : testElem.innerHTML.indexOf("<br>");
+            var thisTeam = teamAliases[testElem.innerHTML.substr(0, index)];
 
             // set its winner and point value
             document.getElementById("winner" + i).value = thisTeam;
