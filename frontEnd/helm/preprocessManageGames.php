@@ -23,6 +23,10 @@
         {
           runQuery( "call ChangeGameTime(" . $row["gameID"] . ", '" . $_POST["gameTime" . $row["gameID"]] . "')" );
         }
+        if( isset($_POST["disaster" . $row["gameID"]]) && $_POST["disaster" . $row["gameID"]] )
+        {
+          runQuery( "call MakeGameDisaster(" . $row["gameID"] . ")" );
+        }
       }
 
       // check for dupes

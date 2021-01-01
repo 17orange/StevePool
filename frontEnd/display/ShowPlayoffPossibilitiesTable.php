@@ -47,7 +47,7 @@
   $gamesLive = 0;
   $firstRefresh = "";
   $results = RunQuery( "select *, if(lockTime>now(), 0, 1) as isLocked from Game where weekNumber=" . $_SESSION["showPicksWeek"] . 
-                       " and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID", false );
+                       " and season=" . $_SESSION["showPicksSeason"] . " order by tieBreakOrder, gameTime, gameID", false );
   foreach( $results as $thisGame )
   {
     $games[count($games)] = $thisGame;
@@ -125,7 +125,7 @@
   $query .= "from SeasonResult join PlayoffResult using (userID, season) join User using (userID) join Game " . 
             "using (weekNumber, season) left join Pick using (userID, gameID) join Division using (divID) join " . 
             "Conference using (confID) where weekNumber=" . $_SESSION["showPicksWeek"] . " and season=" . 
-            $_SESSION["showPicksSeason"] . " order by section" . $sort . ", sPts desc, userID, gameTime, gameID, typeSort";
+            $_SESSION["showPicksSeason"] . " order by section" . $sort . ", sPts desc, userID, tieBreakOrder, gameTime, gameID, typeSort";
   $results = RunQuery( $query );
   $pickBank = array();
   foreach( $results as $thisPick )
@@ -139,7 +139,7 @@
   $currScore = 500;
   $possibleMax = 0;
   $grouping = 0;
-  $colSpan = ($_SESSION["showPicksWeek"] == 18) ? 14 : (($_SESSION["showPicksWeek"] == 19) ? 15 : (($_SESSION["showPicksWeek"] == 20) ? 16 : 19));
+  $colSpan = ($_SESSION["showPicksWeek"] == 18) ? (($_SESSION["showPicksSeason"] < 2020) ? 14 : 18) : (($_SESSION["showPicksWeek"] == 19) ? 15 : (($_SESSION["showPicksWeek"] == 20) ? 16 : 19));
   for( $jk=0; $jk<count($pickBank); $jk++ )
   {
     $thisPick = $pickBank[$jk];

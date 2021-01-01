@@ -25,7 +25,7 @@
   $gamesLive = 0;
   $firstRefresh = "";
   $results = RunQuery( "select *, if(lockTime>now(), 0, 1) as isLocked from Game where weekNumber=" . $_SESSION["showPicksWeek"] . 
-                       " and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID", false );
+                       " and season=" . $_SESSION["showPicksSeason"] . " order by tieBreakOrder, gameTime, gameID", false );
   foreach( $results as $thisGame )
   {
     $games[count($games)] = $thisGame;
@@ -58,7 +58,7 @@
                        "join Division using (divID) join Conference using (confID) " . 
                        "where weekNumber=" . $_SESSION["showPicksWeek"] . " and season=" . $_SESSION["showPicksSeason"] . 
                        " order by section, wPts desc" . ($tbUnlocked ? "" : ", tb1, tieBreaker") . 
-                       ", userID, gameTime, gameID" );
+                       ", userID, tieBreakOrder, gameTime, gameID" );
   $pickBank = array();
   foreach( $results as $thisPick )
   {

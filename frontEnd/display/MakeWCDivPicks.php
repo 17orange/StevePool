@@ -16,10 +16,10 @@
               <tr><td class="noBorder" colspan=6>&nbsp;</td></tr>
 <?php
   // grab their picks for this week
-  $pickResults = RunQuery( "select gameID, points, winner, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
+  $pickResults = RunQuery( "select gameID, points, winner, tieBreakOrder, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
                            "status, timeLeft, homeScore, awayScore from Pick join Game using (gameID) " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . 
-                           $result["weekNumber"] . " and season=" . $result["season"] . " order by gameTime", false );
+                           $result["weekNumber"] . " and season=" . $result["season"] . " order by tieBreakOrder, gameTime", false );
   $picks = array();
   foreach( $pickResults as $thisPick )
   {
@@ -27,8 +27,10 @@
   }
 
   // slider guts
+  $sliderCount = (($result["weekNumber"] == 18) ? 6 : 4);
+  $totalPoints = (($result["weekNumber"] == 18) ? 30 : 20);
   echo "              <tr style=\"display:none\"><td>\n";
-  for($i=0; $i<5; $i++)
+  for($i=0; $i<=$sliderCount; $i++)
   {
     echo "<div id=\"sliderHandle" . $i . "\">";
     echo "<div class=\"handleGuts\"></div>\n";
@@ -45,7 +47,7 @@
     <td class="noBorder" colspan="2" style="min-width:68px; font-size:20px">Confidence Points</td>
   </tr>
 <?php
-  for($i=1; $i<5; $i++) {
+  for($i=1; $i<=$sliderCount; $i++) {
 ?>
   <tr style="height:75px" class="montserrat">
 <?php
@@ -132,7 +134,7 @@
           <div class="sliderReal"><div class="pointSlider" id="slider<?php echo $i; ?>"><div class="sliderGood"></div></div></div>
         </td>
         <td class="noBorder" style="min-width:5px">&nbsp;</td>
-        <td class="noBorder" style="width:50px">17</td>
+        <td class="noBorder" style="width:50px"><?php echo ($totalPoints + 1 - $sliderCount);?></td>
       </tr></table>
     </td>
     <td class="noBorder" colspan=1 style="display:none; text-align:center; font-size: 20px;"><?php echo $picks[$i]["points"]?> points</td>
@@ -146,15 +148,15 @@
         <tr>
           <td class="noBorder">
             <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
-              <tr><td class="noBorder" colspan=15>&nbsp;</td></tr>
+              <tr><td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 18) ? 23 : 15); ?>>&nbsp;</td></tr>
               <tr>
-                <td class="noBorder" colspan=15 style="text-align:center; font-size:20px;">Tiebreakers</td>
+                <td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 18) ? 23 : 15); ?> style="text-align:center; font-size:20px;">Tiebreakers</td>
               </tr>
-              <tr style="height:20px"><td class="noBorder" colspan=15>&nbsp;</td></tr>
+              <tr style="height:20px"><td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 18) ? 23 : 15); ?>>&nbsp;</td></tr>
 <?php
   $games = RunQuery( "select homeTeam, awayTeam from Game where weekNumber=" . $result["weekNumber"] . 
-                     " and season=" . $result["season"] . " order by gameTime desc" );
-  $tieBreakers = RunQuery( "select tieBreaker1, tieBreaker2, tieBreaker3, tieBreaker4 from PlayoffResult " . 
+                     " and season=" . $result["season"] . " order by tieBreakOrder desc, gameTime desc" );
+  $tieBreakers = RunQuery( "select tieBreaker1, tieBreaker2, tieBreaker3, tieBreaker4, tieBreaker5, tieBreaker6 from PlayoffResult " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . 
                            " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"] );
   $count = 0;
@@ -164,9 +166,9 @@
     if( $count ) {
       echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
     }
-    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $teamAliases[$thisGame["awayTeam"]] . "</td>\n";
-    echo "                <td class=\"noBorder\" style=\"width:3.125%\">&nbsp;</td>\n";
-    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:9.375%\">" . $teamAliases[$thisGame["homeTeam"]] . "</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:" . (($result["weekNumber"] == 18) ? 6 : 9.375) . "%\">" . $teamAliases[$thisGame["awayTeam"]] . "</td>\n";
+    echo "                <td class=\"noBorder\" style=\"width:" . (($result["weekNumber"] == 18) ? 2 : 3.125) . "%\">&nbsp;</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:" . (($result["weekNumber"] == 18) ? 6 : 9.375) . "%\">" . $teamAliases[$thisGame["homeTeam"]] . "</td>\n";
     $count++;
   }
   echo "              </tr>\n";
@@ -213,7 +215,7 @@
 <?php
   echo "              <input type=\"hidden\" id=\"picksType\" name=\"picksType\" value=\"" . 
       (($result["weekNumber"] == 18) ? "wildCard" : "divisional") . "\">\n";
-  for( $i=1; $i<5; $i++ )
+  for( $i=1; $i<=$sliderCount; $i++ )
   {
     if( isset($picks[$i]) && ($picks[$i]["canChange"] != 0) )
     {
@@ -237,9 +239,9 @@
       </table>
   <script type="text/javascript">
     $(document).ready( function() {
-      <?php for($i=1; $i<5; $i++ ) { ?>
+      <?php for($i=1; $i<=$sliderCount; $i++ ) { ?>
         $("#slider<?php echo $i; ?>").slider({ 
-          value:<?php echo $picks[$i]["points"]?>, min:0, max:17, slide:fixCaption, stop:adjustSliders });
+          value:<?php echo $picks[$i]["points"]?>, min:0, max:<?php echo ($totalPoints + 1 - $sliderCount)?>, slide:fixCaption, stop:adjustSliders });
         $("#sliderHandle<?php echo $i; ?>").find("div").css({"min-width":"68px","height":"65px"});
         $("#slider<?php echo $i; ?>").find(".ui-slider-handle").append($("#sliderHandle<?php echo $i; ?>"));
       <?php } ?>

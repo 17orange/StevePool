@@ -10,6 +10,7 @@
       var currentMousePos = {x:-1, y:-1};
       var currentOffset = {x:0, y:0};
       var tries = 0;
+      var sliderCount = <?php echo (($result["weekNumber"] == 18) ? 6 : 4); ?>;
       $(document).mousemove(function(event) {
         // update the position
         currentMousePos.x = event.pageX;
@@ -167,7 +168,7 @@
           echo "19:19";
         ?>};
         var canSave = (document.getElementById("pointsLeft").innerHTML == "0 points remaining");
-        for( var i=1; i<5 && canSave; i++ )
+        for( var i=1; i<=sliderCount && canSave; i++ )
         {
           var testElem = document.getElementById("mp3_" + i);
           canSave = (testElem.className.indexOf("mpLockedSelection") != -1) || (testElem.innerHTML.indexOf("<img") != -1);
@@ -176,7 +177,7 @@
           {
             // find where in the array this game is located
             var thisTeam = teamAliases[testElem.innerHTML.substr(0, testElem.innerHTML.indexOf(" "))];
-            for( var k=1; k<5; k++ )
+            for( var k=1; k<=sliderCount; k++ )
             {
               var thisHome = document.getElementById("homeTeam" + k)
               var thisAway = document.getElementById("awayTeam" + k)
@@ -184,7 +185,7 @@
               {
                 // set its winner and point value
                 document.getElementById("winner" + k).value = thisTeam;
-                k = 5;
+                k = sliderCount + 1;
               }
             }
           }
@@ -213,7 +214,7 @@
           echo "19:19";
         ?>};
         var canSave = true;
-        for( var i=1; i<5 && canSave; i++ )
+        for( var i=1; i<=sliderCount && canSave; i++ )
         {
           var testElem = document.getElementById("mp3_" + i);
           canSave = (testElem.className.indexOf("mpLockedSelection") != -1) || (testElem.innerHTML.indexOf("<img") != -1);
@@ -223,7 +224,7 @@
           {
             // find where in the array this game is located
             var thisTeam = teamAliases[testElem.innerHTML.substr(0, testElem.innerHTML.indexOf("<br>"))];
-            for( var k=1; k<5; k++ )
+            for( var k=1; k<=sliderCount; k++ )
             {
               var thisHome = document.getElementById("homeTeam" + k)
               var thisAway = document.getElementById("awayTeam" + k)
@@ -231,8 +232,8 @@
               {
                 // set its winner and point value
                 document.getElementById("winner" + k).value = thisTeam;
-                document.getElementById("pts" + k).value = 5 - i;
-                k = 5;
+                document.getElementById("pts" + k).value = sliderCount + 1 - i;
+                k = sliderCount + 1;
               }
             }
           }
@@ -266,7 +267,7 @@
 
       function PickAllHomeTeams()
       {
-        for( var i=1; i<5; i++ )
+        for( var i=1; i<=sliderCount; i++ )
         {
           if( document.getElementById("mp3_" + i).className.indexOf("mpLockedSelection") == -1 )
           {
@@ -290,7 +291,7 @@
               if( j == 3 )
               {
                 var brPos = destElem.innerHTML.indexOf("<br>");
-                destElem.innerHTML = destElem.innerHTML.substr(0,brPos) + " " + (5 - i) + destElem.innerHTML.substr(brPos);
+                destElem.innerHTML = destElem.innerHTML.substr(0,brPos) + " " + (sliderCount + 1 - i) + destElem.innerHTML.substr(brPos);
               }
             }
             document.getElementById("mp1_" + i).className = "mpImgTD mpAwayTeam";
@@ -306,7 +307,7 @@
 
       function PickAllAwayTeams()
       {
-        for( var i=1; i<5; i++ )
+        for( var i=1; i<=sliderCount; i++ )
         {
           if( document.getElementById("mp3_" + i).className.indexOf("mpLockedSelection") == -1 )
           {
@@ -330,7 +331,7 @@
               if( j == 3 )
               {
                 var brPos = destElem.innerHTML.indexOf("<br>");
-                destElem.innerHTML = destElem.innerHTML.substr(0,brPos) + " " + (5 - i) + destElem.innerHTML.substr(brPos);
+                destElem.innerHTML = destElem.innerHTML.substr(0,brPos) + " " + (sliderCount + 1 - i) + destElem.innerHTML.substr(brPos);
               }
             }
             document.getElementById("mp5_" + i).className = "mpImgTD mpHomeTeam";
@@ -346,7 +347,7 @@
 
       function PickAllHomeTeamsMobile()
       {
-        for( var i=1; i<5; i++ )
+        for( var i=1; i<=sliderCount; i++ )
         {
           SetWinnerMobile(i, true);
         }
@@ -354,7 +355,7 @@
 
       function PickAllAwayTeamsMobile()
       {
-        for( var i=1; i<5; i++ )
+        for( var i=1; i<=sliderCount; i++ )
         {
           SetWinnerMobile(i, false);
         }
@@ -401,7 +402,7 @@
 
           // points
           var destElem = document.getElementById("mp5_" + row);
-          destElem.innerHTML = 5 - row;
+          destElem.innerHTML = sliderCount + 1 - row;
           destElem.className = "noBorder mpMobileBGText";
           destElem.style.textAlign = "left";
           destElem.onclick = null;
@@ -439,7 +440,7 @@
 
           // points
           var destElem = document.getElementById("mp1_" + row);
-          destElem.innerHTML = 5 - row;
+          destElem.innerHTML = sliderCount + 1 - row;
           destElem.className = "noBorder mpMobileBGText";
           destElem.style.textAlign = "right";
           destElem.onclick = null;
@@ -495,12 +496,12 @@
         }
 
         // fix the edges
-        for( var i=0; i<4; i++ )
+        for( var i=0; i<sliderCount; i++ )
         {
           var testElem = document.getElementById("mp" + ((i % 2) ? 1 : 5) + "_" + ((i < 2) ? row : newRow));
           if( testElem.className.indexOf("noBorder") != -1 )
           {
-            testElem.innerHTML = 5 - ((i < 2) ? row : newRow);
+            testElem.innerHTML = sliderCount + 1 - ((i < 2) ? row : newRow);
           }
         }
 
@@ -511,16 +512,17 @@
       }
 
       function adjustSliders(event, ui) {
-        var pointsLeft = 20;
-        var total = 20;
+        var pointsLeft = <?php echo (($result["weekNumber"] == 18) ? 30 : 20); ?>;
+        var total = <?php echo (($result["weekNumber"] == 18) ? 30 : 20); ?>;
+        var absoluteMax = <?php echo (($result["weekNumber"] == 18) ? 25 : 17); ?>;
         $(".pointSlider").each( function() {
           total -= ($(this).slider("value") ? $(this).slider("value") : 1);
           pointsLeft -= $(this).slider("value");
         } );
         $(".pointSlider").each( function() {
           var max = ($(this).slider("value") ? $(this).slider("value") : 1) + total;
-          if( max > 17 ) {
-            max = 17;
+          if( max > absoluteMax ) {
+            max = absoluteMax;
           }
           if( max < 1 ) {
             max = 1;
@@ -528,7 +530,7 @@
           $(this).slider("option", "max", max);
           $(this).slider("value", $(this).slider("value"));
           fixCaption({"target":$(this)}, {"value":$(this).slider("value")});
-          $(this).css({"width":((max * 100 / 17) + "%")});
+          $(this).css({"width":((max * 100 / absoluteMax) + "%")});
         } );
         $('#pointsLeft').html(pointsLeft + " point" + ((pointsLeft == 1) ? "" : "s") + " remaining");
 
@@ -576,9 +578,9 @@
             return "Are you sure? You didn't finish the form!";
           }
         });
-        <?php for($i=1; $i<5; $i++ ) { ?>
+        <?php for($i=1; $i<=(($result["weekNumber"] == 18) ? 6 : 4); $i++ ) { ?>
           $("#slider<?php echo $i; ?>").slider({ 
-            value:$("#pts<?php echo $i; ?>").attr("value"), min:0, max:17, slide:fixCaption, stop:adjustSliders });
+            value:$("#pts<?php echo $i; ?>").attr("value"), min:0, max:<?php echo (($result["weekNumber"] == 18) ? 25 : 17); ?>, slide:fixCaption, stop:adjustSliders });
           $("#sliderHandle<?php echo $i; ?>").find("div").css({"min-width":"68px","height":"65px"});
           $("#slider<?php echo $i; ?>").find(".ui-slider-handle").append($("#sliderHandle<?php echo $i; ?>"));
         <?php } ?>

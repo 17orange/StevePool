@@ -4,32 +4,34 @@
   // fill in the seed data
   $afcSeed1 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
                         " and weekNumber=19 order by gameID limit 0,1" );
-  $afcSeed2 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
-                        " and weekNumber=19 order by gameID limit 1,1" );
   $afcWCGame1 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
                           " and weekNumber=18 order by gameID limit 0,1" );
   $afcWCGame2 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
                           " and weekNumber=18 order by gameID limit 1,1" );
+  $afcWCGame3 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
+                          " and weekNumber=18 order by gameID limit 2,1" );
   $afcSeed1 = $afcSeed1[0]["homeTeam"];
-  $afcSeed2 = $afcSeed2[0]["homeTeam"];
-  $afcSeed3 = $afcWCGame1[0]["homeTeam"];
-  $afcSeed4 = $afcWCGame2[0]["homeTeam"];
-  $afcSeed5 = $afcWCGame2[0]["awayTeam"];
-  $afcSeed6 = $afcWCGame1[0]["awayTeam"];
+  $afcSeed2 = $afcWCGame1[0]["homeTeam"];
+  $afcSeed3 = $afcWCGame2[0]["homeTeam"];
+  $afcSeed4 = $afcWCGame3[0]["homeTeam"];
+  $afcSeed5 = $afcWCGame3[0]["awayTeam"];
+  $afcSeed6 = $afcWCGame2[0]["awayTeam"];
+  $afcSeed7 = $afcWCGame1[0]["awayTeam"];
   $nfcSeed1 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
                         " and weekNumber=19 order by gameID limit 2,1" );
-  $nfcSeed2 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
-                        " and weekNumber=19 order by gameID limit 3,1" );
   $nfcWCGame1 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                          " and weekNumber=18 order by gameID limit 2,1" );
-  $nfcWCGame2 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
                           " and weekNumber=18 order by gameID limit 3,1" );
+  $nfcWCGame2 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
+                          " and weekNumber=18 order by gameID limit 4,1" );
+  $nfcWCGame3 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
+                          " and weekNumber=18 order by gameID limit 5,1" );
   $nfcSeed1 = $nfcSeed1[0]["homeTeam"];
-  $nfcSeed2 = $nfcSeed2[0]["homeTeam"];
-  $nfcSeed3 = $nfcWCGame1[0]["homeTeam"];
-  $nfcSeed4 = $nfcWCGame2[0]["homeTeam"];
-  $nfcSeed5 = $nfcWCGame2[0]["awayTeam"];
-  $nfcSeed6 = $nfcWCGame1[0]["awayTeam"];
+  $nfcSeed2 = $nfcWCGame1[0]["homeTeam"];
+  $nfcSeed3 = $nfcWCGame2[0]["homeTeam"];
+  $nfcSeed4 = $nfcWCGame3[0]["homeTeam"];
+  $nfcSeed5 = $nfcWCGame3[0]["awayTeam"];
+  $nfcSeed6 = $nfcWCGame2[0]["awayTeam"];
+  $nfcSeed7 = $nfcWCGame1[0]["awayTeam"];
 
   echo "      var AS1 = '" . $afcSeed1 . "';\n";
   echo "      var AS2 = '" . $afcSeed2 . "';\n";
@@ -37,12 +39,14 @@
   echo "      var AS4 = '" . $afcSeed4 . "';\n";
   echo "      var AS5 = '" . $afcSeed5 . "';\n";
   echo "      var AS6 = '" . $afcSeed6 . "';\n";
+  echo "      var AS7 = '" . $afcSeed7 . "';\n";
   echo "      var NS1 = '" . $nfcSeed1 . "';\n";
   echo "      var NS2 = '" . $nfcSeed2 . "';\n";
   echo "      var NS3 = '" . $nfcSeed3 . "';\n";
   echo "      var NS4 = '" . $nfcSeed4 . "';\n";
   echo "      var NS5 = '" . $nfcSeed5 . "';\n";
   echo "      var NS6 = '" . $nfcSeed6 . "';\n";
+  echo "      var NS7 = '" . $nfcSeed7 . "';\n";
 ?>
 
       function MakePick(pickID)
@@ -63,12 +67,12 @@
           return;
         }
 
-        if( pickID.substring(1,6) == 'fcWC1' )
+        if( false && pickID.substring(1,6) == 'fcWC1' )
         {
-          // swap them if we need to 
-          var testSeed = (pickID.substring(0,3) == "afc") ? ((pickID.substring(6) == "A") ? AS1 : AS2)
-                                                          : ((pickID.substring(6) == "A") ? NS1 : NS2);
-          if( document.getElementById(pickID.substring(0,3) + 'Div1H').innerHTML != ("@ " + testSeed) )
+          // swap them if we need to
+          var isHome = pickID.substring(6,7) == "H";
+          var testSeed = (pickID.substring(0,3) == "afc") ? AS1 : NS1;
+          if( document.getElementById(pickID.substring(0,3) + 'Div' + (isHome ? "2H" : "1H")).innerHTML != ("@ " + testSeed) )
           {
             var temp = document.getElementById(pickID.substring(0,3) + 'Div1H').innerHTML;
             document.getElementById(pickID.substring(0,3) + 'Div1H').innerHTML = document.getElementById(pickID.substring(0,3) + 'Div2H').innerHTML;
@@ -76,25 +80,67 @@
             temp = document.getElementById(pickID.substring(0,3) + 'Div1H_IMG').src;
             document.getElementById(pickID.substring(0,3) + 'Div1H_IMG').src = document.getElementById(pickID.substring(0,3) + 'Div2H_IMG').src;
             document.getElementById(pickID.substring(0,3) + 'Div2H_IMG').src = temp;
+            temp = document.getElementById(pickID.substring(0,3) + 'Div1A').innerHTML;
+            document.getElementById(pickID.substring(0,3) + 'Div1A').innerHTML = document.getElementById(pickID.substring(0,3) + 'Div2A').innerHTML;
+            document.getElementById(pickID.substring(0,3) + 'Div2A').innerHTML = temp;
+            temp = document.getElementById(pickID.substring(0,3) + 'Div1A_IMG').src;
+            document.getElementById(pickID.substring(0,3) + 'Div1A_IMG').src = document.getElementById(pickID.substring(0,3) + 'Div2A_IMG').src;
+            document.getElementById(pickID.substring(0,3) + 'Div2A_IMG').src = temp;
             CleanPick(pickID.substring(0,3) + 'Div1', true);
             CleanPick(pickID.substring(0,3) + 'Div2', true);
           }
 
           // make this the pick
-          document.getElementById(pickID.substring(0,3) + 'Div1A').innerHTML = team;
+          document.getElementById(pickID.substring(0,3) + 'Div1' + (isHome ? "H" : "A")).innerHTML = (isHome ? "@ " : "") + team;
           document.getElementById(pickID).style.color = "#007500";
-          document.getElementById(pickID.substring(0,6) + ((pickID.substring(6) == "A") ? "H" : "A")).style.color = "#BF0000";
-          document.getElementById(pickID.substring(0,3) + 'Div1A_IMG').src = document.getElementById(pickID + '_IMG').src;
+          document.getElementById(pickID.substring(0,6) + (isHome ? "A" : "H")).style.color = "#BF0000";
+          document.getElementById(pickID.substring(0,3) + 'Div1' + (isHome ? "H" : "A") + '_IMG').src = document.getElementById(pickID + '_IMG').src;
         }
-        else if( pickID.substring(1,6) == 'fcWC2' )
+        else if( pickID.substring(1,5) == 'fcWC' )
         {
           // make this the pick
-          var targetID = pickID.substring(0,3) + "Div2A";
           var opponentID = pickID.substring(0,6) + ((pickID.substring(6) == "A") ? "H" : "A");
-          document.getElementById(targetID).innerHTML = team;
           document.getElementById(pickID).style.color = "#007500";
           document.getElementById(opponentID).style.color = "#BF0000";
-          document.getElementById(targetID + '_IMG').src = document.getElementById(pickID + '_IMG').src;
+          
+          // see if they need to be swapped
+          var seeds = (pickID.substring(0,3) == "afc") ? ["", AS1, AS2, AS3, AS4, AS5, AS6, AS7] : ["", NS1, NS2, NS3, NS4, NS5, NS6, NS7];
+          var images = (pickID.substring(0,3) == "afc") ? [emptyImg, null, "afcWC1H", "afcWC2H", "afcWC3H", "afcWC3A", "afcWC2A", "afcWC1A"] 
+                                                        : [emptyImg, null, "nfcWC1H", "nfcWC2H", "nfcWC3H", "nfcWC3A", "nfcWC2A", "nfcWC1A"];
+          var needsSwapped = (document.getElementById(pickID.substring(0,3) + "WC1H").style.color == "#BF0000");
+          if( needsSwapped ^ (document.getElementById(pickID.substring(0,3) + 'Div2H').innerHTML != ("@ " + seeds[1])) ) {
+            var temp = document.getElementById(pickID.substring(0,3) + 'Div1H').innerHTML;
+            document.getElementById(pickID.substring(0,3) + 'Div1H').innerHTML = document.getElementById(pickID.substring(0,3) + 'Div2H').innerHTML;
+            document.getElementById(pickID.substring(0,3) + 'Div2H').innerHTML = temp;
+            temp = document.getElementById(pickID.substring(0,3) + 'Div1H_IMG').src;
+            document.getElementById(pickID.substring(0,3) + 'Div1H_IMG').src = document.getElementById(pickID.substring(0,3) + 'Div2H_IMG').src;
+            document.getElementById(pickID.substring(0,3) + 'Div2H_IMG').src = temp;
+            temp = document.getElementById(pickID.substring(0,3) + 'Div1A').innerHTML;
+            document.getElementById(pickID.substring(0,3) + 'Div1A').innerHTML = document.getElementById(pickID.substring(0,3) + 'Div2A').innerHTML;
+            document.getElementById(pickID.substring(0,3) + 'Div2A').innerHTML = temp;
+            temp = document.getElementById(pickID.substring(0,3) + 'Div1A_IMG').src;
+            document.getElementById(pickID.substring(0,3) + 'Div1A_IMG').src = document.getElementById(pickID.substring(0,3) + 'Div2A_IMG').src;
+            document.getElementById(pickID.substring(0,3) + 'Div2A_IMG').src = temp;
+          }
+
+          // see how the games turned out
+          var failColor = document.getElementById(opponentID).style.color;
+          var w1 = (document.getElementById(pickID.substring(0,3) + "WC1A").style.color == failColor) ? 2 : 
+                   ((document.getElementById(pickID.substring(0,3) + "WC1H").style.color == failColor) ? 7 : 0);
+          var w2 = (document.getElementById(pickID.substring(0,3) + "WC2A").style.color == failColor) ? 3 : 
+                   ((document.getElementById(pickID.substring(0,3) + "WC2H").style.color == failColor) ? 6 : 0);
+          var w3 = (document.getElementById(pickID.substring(0,3) + "WC3A").style.color == failColor) ? 4 : 
+                   ((document.getElementById(pickID.substring(0,3) + "WC3H").style.color == failColor) ? 5 : 0);
+          var index1 = (w1 != 7) ? w1 : ((w2 != 6) ? w2 : w3);
+          var index2 = (w1 == 7) ? w1 : ((w2 == 6) ? w2 : w3);
+          var index3 = (w1 != 7) ? ((w2 != 6) ? w2 : w3) : ((w2 == 6) ? w2 : w3);
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'H').innerHTML = "@ " + seeds[index1];
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '1' : '2') + 'A').innerHTML = seeds[index2];
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'A').innerHTML = seeds[index3];
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'H_IMG').src = index1 ? document.getElementById(images[index1] + '_IMG').src : emptyImg;
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '1' : '2') + 'A_IMG').src = index2 ? document.getElementById(images[index2] + '_IMG').src : emptyImg;
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'A_IMG').src = index3 ? document.getElementById(images[index3] + '_IMG').src : emptyImg;
+          CleanPick(pickID.substring(0,3) + 'Div1', true);
           CleanPick(pickID.substring(0,3) + 'Div2', true);
         }
         else if( pickID.substring(1,6) == 'fcDiv' )
@@ -343,8 +389,10 @@
       {
         var canSave = document.getElementById('afcWC1').value != "";
         canSave &= document.getElementById('afcWC2').value != "";
+        canSave &= document.getElementById('afcWC3').value != "";
         canSave &= document.getElementById('nfcWC1').value != "";
         canSave &= document.getElementById('nfcWC2').value != "";
+        canSave &= document.getElementById('nfcWC3').value != "";
         canSave &= document.getElementById('afcDiv1').value != "";
         canSave &= document.getElementById('afcDiv2').value != "";
         canSave &= document.getElementById('nfcDiv1').value != "";

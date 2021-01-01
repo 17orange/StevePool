@@ -17,8 +17,11 @@ drop procedure if exists RemoveUserFromSeason;
 drop procedure if exists AddConference;
 drop procedure if exists AddDivision;
 drop procedure if exists AssignToDivision;
+drop procedure if exists ChangeGameTime;
 drop procedure if exists ChangeLockTime;
+drop procedure if exists MakeGameDisaster;
 drop procedure if exists AdminSetPicks;
+drop procedure if exists FreezeUser;
 
 delimiter //
 
@@ -224,6 +227,12 @@ create procedure SaveWildCardPicks( in _sessID    int unsigned ,
                                     in _tieBreak2 smallint     ,
                                     in _tieBreak3 smallint     ,
                                     in _tieBreak4 smallint     ,
+                                    in _tieBreak5 smallint     ,
+                                    in _tieBreak6 smallint     ,
+                                    in _pick6     char(3)      ,
+                                    in _pts6      smallint     ,
+                                    in _pick5     char(3)      ,
+                                    in _pts5      smallint     ,
                                     in _pick4     char(3)      ,
                                     in _pts4      smallint     ,
                                     in _pick3     char(3)      ,
@@ -236,26 +245,32 @@ begin
   # make sure theyve sent in the correct number of valid picks
   declare _week tinyint unsigned default 18;
   declare _numPts tinyint unsigned default 0;
-  declare _neededPts tinyint unsigned default 20;
+  declare _neededPts tinyint unsigned default 30;
   declare _numPicks tinyint unsigned default 0;
   declare _numGames tinyint unsigned default 0;
   declare _numGamesNeeded tinyint unsigned default 0;
   declare _numGamesMissed tinyint unsigned default 0;
   declare _userID int unsigned default 0;
-  select _pts4 + _pts3 + _pts2 + _pts1 into _numPts;
-  select if(_pick4!='',1,0) + if(_pick3!='',1,0) + if(_pick2!='',1,0) + if(_pick1!='',1,0) into _numPicks;
+  select _pts6 + _pts5 + _pts4 + _pts3 + _pts2 + _pts1 into _numPts;
+  select if(_pick6!='',1,0) + if(_pick5!='',1,0) + if(_pick4!='',1,0) + if(_pick3!='',1,0) + if(_pick2!='',1,0) + if(_pick1!='',1,0) into _numPicks;
   select count(*) into _numGames from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason') and (homeTeam in 
-         (_pick4, _pick3, _pick2, _pick1) or awayTeam in (_pick4, _pick3, _pick2, _pick1));
+         (_pick6, _pick5, _pick4, _pick3, _pick2, _pick1) or awayTeam in (_pick6, _pick5, _pick4, _pick3, _pick2, _pick1));
   select count(*) into _numGamesMissed from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason') and (homeTeam not in 
-         (_pick4, _pick3, _pick2, _pick1) and awayTeam not in (_pick4, _pick3, _pick2, _pick1));
+         (_pick6, _pick5, _pick4, _pick3, _pick2, _pick1) and awayTeam not in (_pick6, _pick5, _pick4, _pick3, _pick2, _pick1));
   select count(*) into _numGamesNeeded from Game where weekNumber=_week and lockTime>now() and season=
          (select value from Constants where name='fetchSeason');
 
   # make sure everything is set up correct-like
   if _numGames = _numGamesNeeded and _numPicks = _numGames and _numGamesMissed = 0 and _numPts = _neededPts then
     # save the winners they picked
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick6, points=_pts6 
+      where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
+            weekNumber=_week and lockTime>=now() and (homeTeam=_pick6 or awayTeam=_pick6);
+    update Pick join Session using (userID) join Game using (gameID) set winner=_pick5, points=_pts5
+      where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
+            weekNumber=_week and lockTime>=now() and (homeTeam=_pick5 or awayTeam=_pick5);
     update Pick join Session using (userID) join Game using (gameID) set winner=_pick4, points=_pts4 
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick4 or awayTeam=_pick4);
@@ -269,7 +284,7 @@ begin
       where sessionID=_sessID and IP=_IP and season = (select value from Constants where name='fetchSeason') and 
             weekNumber=_week and lockTime>=now() and (homeTeam=_pick1 or awayTeam=_pick1);
     update PlayoffResult join Session using (userID) set tieBreaker1=_tieBreak1, tieBreaker2=_tieBreak2, 
-      tieBreaker3=_tieBreak3, tieBreaker4=_tieBreak4 where sessionID=_sessID and IP=_IP and 
+      tieBreaker3=_tieBreak3, tieBreaker4=_tieBreak4, tieBreaker5=_tieBreak5, tieBreaker6=_tieBreak6 where sessionID=_sessID and IP=_IP and 
       season = (select value from Constants where name='fetchSeason') and weekNumber=_week;
 
     # add an event for it
@@ -599,6 +614,16 @@ begin
   update SeasonResult set divID=_divID where userID=_userID and season=_season;
 end;  //
 
+create procedure ChangeGameTime( in _gameID  int unsigned ,
+                                 in _newTime datetime     )
+begin
+  # change it
+  update Game set gameTime=_newTime where gameID=_gameID;
+
+  # add the event
+  insert into Event (gameID, type, atTime) values (_gameID, 'timeChange', now());
+end;  //
+
 create procedure ChangeLockTime( in _gameID  int unsigned ,
                                  in _newLock datetime     )
 begin
@@ -607,6 +632,34 @@ begin
 
   # add the event
   insert into Event (gameID, type, atTime) values (_gameID, 'lockChange', now());
+end;  //
+
+create procedure MakeGameDisaster( in _gameID  int unsigned )
+begin
+  declare _points tinyint;
+  declare _season smallint;
+  declare _week tinyint;
+
+  # grab the info
+  select season, weekNumber into _season, _week from Game where gameID=_gameID;
+
+  # change it
+  update Game set season=season+1 where gameID=_gameID;
+  
+  # adjust all of the picks
+  update Pick set points=0 where gameID=_gameID;
+  create temporary table PushPicks(userID int unsigned, gameID int unsigned);
+  set _points=16;
+  while _points > 1 do
+    truncate PushPicks;
+    insert into PushPicks select userID, gameID from Pick join Game using (gameID) where userID in (select userID from SeasonResult where season=_season and userID not in (select userID from Pick join Game using (gameID) where season=_season and weekNumber=_week and points=_points)) and points=_points - 1 and season=_season and weekNumber=_week;
+    update Pick join PushPicks using (userID, gameID) set points=points+1;
+    set _points=_points - 1;
+  end while;
+  drop table PushPicks;
+
+  # add the event
+  insert into Event (gameID, type, atTime) values (_gameID, 'timeChange', now());
 end;  //
 
 create procedure AdminSetPicks( in _userID   int unsigned , 
@@ -704,6 +757,17 @@ begin
   end if;
 end;  //
 
+create procedure FreezeUser( in _userID  int unsigned ,
+                             in _freeze  char(1)      )
+begin
+  # change it
+  if _freeze = 'Y' then
+    insert into FrozenUser (userID) values (_userID) on duplicate key update userID=_userID;
+  else
+    delete from FrozenUser where userID=_userID; 
+  end if;
+end;  //
+
 
 
 
@@ -733,8 +797,11 @@ grant execute on procedure StevePool.RemoveUserFromSeason to 'StevePoolAdmin'@'l
 grant execute on procedure StevePool.AddConference to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.AddDivision to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.AssignToDivision to 'StevePoolAdmin'@'localhost';  //
+grant execute on procedure StevePool.ChangeGameTime to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.ChangeLockTime to 'StevePoolAdmin'@'localhost';  //
+grant execute on procedure StevePool.MakeGameDisaster to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.AdminSetPicks to 'StevePoolAdmin'@'localhost';  //
+grant execute on procedure StevePool.FreezeUser to 'StevePoolAdmin'@'localhost';  //
 
 
 delimiter ;

@@ -46,7 +46,7 @@
   // grab the games from that week
   $games = array();
   $results = RunQuery( "select *, if(lockTime>now(), 0, 1) as isLocked from Game where weekNumber=" . $_SESSION["showPicksWeek"] . 
-                       " and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID", false );
+                       " and season=" . $_SESSION["showPicksSeason"] . " order by tieBreakOrder, gameTime, gameID", false );
   foreach( $results as $thisGame )
   {
     $MNFscore = $thisGame["homeScore"] + $thisGame["awayScore"];
@@ -72,7 +72,7 @@
                        "join Game using (weekNumber, season) join Pick using (userID, gameID) " . 
                        "join Division using (divID) join Conference using (confID) " . 
                        "where weekNumber=" . $_SESSION["showPicksWeek"] . " and season=" . $_SESSION["showPicksSeason"] . 
-                       " order by section, wPts desc" . ($tbUnlocked ? "" : ", tb1, tieBreaker") . ", userID, gameTime, gameID" );
+                       " order by section, wPts desc" . ($tbUnlocked ? "" : ", tb1, tieBreaker") . ", userID, tieBreakOrder, gameTime, gameID" );
   $pickBank = array();
   foreach( $results as $thisPick )
   {

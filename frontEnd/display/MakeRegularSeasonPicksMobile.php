@@ -28,7 +28,7 @@
         </tr>
 <?php
   // grab their picks for this week
-  $pickResults = RunQuery( "select gameID, points, winner, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
+  $pickResults = RunQuery( "select gameID, points, winner, tieBreakOrder, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
                            "status, timeLeft, homeScore, awayScore from Pick join Game using (gameID) " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . 
                            $result["weekNumber"] . " and season=" . $result["season"], false );
@@ -39,7 +39,7 @@
   {
     $picks[17 - $thisPick["points"]] = $thisPick;
     $playedTeams .= ",'" . $thisPick["homeTeam"] . "','" . $thisPick["awayTeam"] . "'";
-    if( $MNFgame == null || ($MNFgame["gameTime"] < $thisPick["gameTime"]) || (($MNFgame["gameTime"] == $thisPick["gameTime"]) && ($MNFgame["gameID"] < $thisPick["gameID"])) )
+    if( $MNFgame == null || ($MNFgame["tieBreakOrder"] < $thisPick["tieBreakOrder"]) || ($MNFgame["gameTime"] < $thisPick["gameTime"]) || (($MNFgame["gameTime"] == $thisPick["gameTime"]) && ($MNFgame["gameID"] < $thisPick["gameID"])) )
     {
       $MNFgame = $thisPick;
     }

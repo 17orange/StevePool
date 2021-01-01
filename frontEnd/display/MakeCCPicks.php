@@ -16,10 +16,10 @@
               <tr><td class="noBorder" colspan=8>&nbsp;</td></tr>
 <?php
   // grab their picks for this week
-  $pickResults = RunQuery( "select gameID, points, winner, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
+  $pickResults = RunQuery( "select gameID, points, winner, tieBreakOrder, gameTime, homeTeam, awayTeam, lockTime > now() as canChange, " . 
                            "status, timeLeft, homeScore, awayScore, type from Pick join Game using (gameID) " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . " and weekNumber=" . 
-                           $result["weekNumber"] . " and season=" . $result["season"] . " order by gameTime, type desc", false );
+                           $result["weekNumber"] . " and season=" . $result["season"] . " order by tieBreakOrder, gameTime, type desc", false );
   $picks = array();
   foreach( $pickResults as $thisPick )
   {
@@ -158,7 +158,7 @@
               <tr style="height:20px"><td class="noBorder" colspan=15>&nbsp;</td></tr>
 <?php
   $games = RunQuery( "select homeTeam, awayTeam from Game where weekNumber=" . $result["weekNumber"] . 
-                     " and season=" . $result["season"] . " order by gameTime desc" );
+                     " and season=" . $result["season"] . " order by tieBreakOrder desc, gameTime desc" );
   $tieBreakers = RunQuery( "select tieBreaker1, tieBreaker2, tieBreaker3, tieBreaker4 from PlayoffResult " . 
                            "join Session using (userID) where sessionID=" . $_SESSION["spsID"] . 
                            " and weekNumber=" . $result["weekNumber"] . " and season=" . $result["season"] );

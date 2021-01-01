@@ -85,7 +85,7 @@
     $str = "icons/" . $season . "/";
 
     $teamInfo = RunQuery( "select lower(nickname) as name from Team where teamID='" . $team . "'" );
-    $teamInfo = $teamInfo[0];
+    $teamInfo = str_replace(" ", "", $teamInfo[0]);
     $str .= $teamInfo["name"];
 
     $str .= ".svg";

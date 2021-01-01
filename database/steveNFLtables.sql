@@ -34,6 +34,7 @@ create table Team (teamID char(3) not null primary key,
 create table Game (gameID int unsigned not null primary key auto_increment, 
                    season smallint not null, 
                    weekNumber tinyint not null, 
+                   tieBreakOrder tinyint not null default 0, 
                    gameTime datetime not null,
                    lockTime datetime not null,
                    status tinyint not null,
@@ -104,7 +105,7 @@ create table Event (eventID int unsigned primary key auto_increment,
                     userID int unsigned,
                     gameID int unsigned,
                     type enum('userAdded', 'userEdited', 'userRemoved', 'login', 'madePicks', 'picksEdited', 
-                              'lockChange', 'adminPicksEdited', 'accountChanged', 'forgotPassword') not null,
+                              'timeChange', 'lockChange', 'adminPicksEdited', 'accountChanged', 'forgotPassword') not null,
                     atTime datetime not null,
                     browserInfo varchar(255));
 
@@ -117,8 +118,10 @@ create table ConsolationResult (userID int unsigned not null,
                                 points tinyint unsigned not null default 0,
                                 wc1AFC char(3),
                                 wc2AFC char(3),
+                                wc3AFC char(3),
                                 wc1NFC char(3),
                                 wc2NFC char(3),
+                                wc3NFC char(3),
                                 div1AFC char(3),
                                 div2AFC char(3),
                                 div1NFC char(3),
@@ -138,6 +141,8 @@ create table PlayoffResult (userID int unsigned not null,
                             tieBreaker2 smallint not null default 0,
                             tieBreaker3 smallint not null default 0,
                             tieBreaker4 smallint not null default 0,
+                            tieBreaker5 smallint not null default 0,
+                            tieBreaker6 smallint not null default 0,
                             advances enum ('Y', 'N', 'R') not null default 'N',
                             prevWeek1 tinyint unsigned not null default 0,
                             prevWeek2 tinyint unsigned not null default 0,
@@ -146,38 +151,42 @@ alter table PlayoffResult add primary key (userID, season, weekNumber);
 
 
 
-insert into Team values ("ARI", "Arizona",       "Cardinals");
-insert into Team values ("ATL", "Atlanta",       "Falcons");
-insert into Team values ("BAL", "Baltimore",     "Ravens");
-insert into Team values ("BUF", "Buffalo",       "Bills");
-insert into Team values ("CAR", "Carolina",      "Panthers");
-insert into Team values ("CHI", "Chicago",       "Bears");
-insert into Team values ("CIN", "Cincinnati",    "Bengals");
-insert into Team values ("CLE", "Cleveland",     "Browns");
-insert into Team values ("DAL", "Dallas",        "Cowboys");
-insert into Team values ("DEN", "Denver",        "Broncos");
-insert into Team values ("DET", "Detroit",       "Lions");
-insert into Team values ("GB",  "Green Bay",     "Packers");
-insert into Team values ("HOU", "Houston",       "Texans");
-insert into Team values ("IND", "Indianapolis",  "Colts");
-insert into Team values ("JAX", "Jacksonville",  "Jaguars");
-insert into Team values ("KC",  "Kansas City",   "Chiefs");
-insert into Team values ("MIA", "Miami",         "Dolphins");
-insert into Team values ("MIN", "Minnesota",     "Vikings");
-insert into Team values ("NE",  "New England",   "Patriots");
-insert into Team values ("NO",  "New Orleans",   "Saints");
-insert into Team values ("NYG", "New York",      "Giants");
-insert into Team values ("NYJ", "New York",      "Jets");
-insert into Team values ("OAK", "Oakland",       "Raiders");
-insert into Team values ("PHI", "Philadelphia",  "Eagles");
-insert into Team values ("PIT", "Pittsburgh",    "Steelers");
-insert into Team values ("SD",  "San Diego",     "Chargers");
-insert into Team values ("SEA", "Seattle",       "Seahawks");
-insert into Team values ("SF",  "San Fransisco", "49ers");
-insert into Team values ("STL", "St. Louis",     "Rams");
-insert into Team values ("TB",  "Tampa Bay",     "Buccaneers");
-insert into Team values ("TEN", "Tennessee",     "Titans");
-insert into Team values ("WAS", "Washington",    "Redskins");
+insert into Team values ("ARI", "ARZ", "Arizona",       "Cardinals",     "Y");
+insert into Team values ("ATL", "ATL", "Atlanta",       "Falcons",       "Y");
+insert into Team values ("BAL", "BAL", "Baltimore",     "Ravens",        "Y");
+insert into Team values ("BUF", "BUF", "Buffalo",       "Bills",         "Y");
+insert into Team values ("CAR", "CAR", "Carolina",      "Panthers",      "Y");
+insert into Team values ("CHI", "CHI", "Chicago",       "Bears",         "Y");
+insert into Team values ("CIN", "CIN", "Cincinnati",    "Bengals",       "Y");
+insert into Team values ("CLE", "CLE", "Cleveland",     "Browns",        "Y");
+insert into Team values ("DAL", "DAL", "Dallas",        "Cowboys",       "Y");
+insert into Team values ("DEN", "DEN", "Denver",        "Broncos",       "Y");
+insert into Team values ("DET", "DET", "Detroit",       "Lions",         "Y");
+insert into Team values ("GB",  "GB",  "Green Bay",     "Packers",       "Y");
+insert into Team values ("HOU", "HOU", "Houston",       "Texans",        "Y");
+insert into Team values ("IND", "IND", "Indianapolis",  "Colts",         "Y");
+insert into Team values ("JAC", "JAC", "Jacksonville",  "Jaguars",       "N");
+insert into Team values ("JAX", "JAX", "Jacksonville",  "Jaguars",       "Y");
+insert into Team values ("KC",  "KC",  "Kansas City",   "Chiefs",        "Y");
+insert into Team values ("LA",  "LAR", "Los Angeles",   "Rams",          "Y");
+insert into Team values ("LAC", "LAC", "Los Angeles",   "Chargers",      "Y");
+insert into Team values ("LV",  "LV",  "Las Vegas",     "Raiders",       "Y");
+insert into Team values ("MIA", "MIA", "Miami",         "Dolphins",      "Y");
+insert into Team values ("MIN", "MIN", "Minnesota",     "Vikings",       "Y");
+insert into Team values ("NE",  "NE",  "New England",   "Patriots",      "Y");
+insert into Team values ("NO",  "NO",  "New Orleans",   "Saints",        "Y");
+insert into Team values ("NYG", "NYG", "New York",      "Giants",        "Y");
+insert into Team values ("NYJ", "NYJ", "New York",      "Jets",          "Y");
+insert into Team values ("OAK", "OAK", "Oakland",       "Raiders",       "N");
+insert into Team values ("PHI", "PHI", "Philadelphia",  "Eagles",        "Y");
+insert into Team values ("PIT", "PIT", "Pittsburgh",    "Steelers",      "Y");
+insert into Team values ("SD",  "SD",  "San Diego",     "Chargers",      "N");
+insert into Team values ("SEA", "SEA", "Seattle",       "Seahawks",      "Y");
+insert into Team values ("SF",  "SF",  "San Fransisco", "49ers",         "Y");
+insert into Team values ("STL", "STL", "St. Louis",     "Rams",          "N");
+insert into Team values ("TB",  "TB",  "Tampa Bay",     "Buccaneers",    "Y");
+insert into Team values ("TEN", "TEN", "Tennessee",     "Titans",        "Y");
+insert into Team values ("WAS", "WAS", "Washington",    "Football Team", "Y");
 
 insert into Constants values ("fetchSeason", "2014");
 insert into Constants values ("fetchWeek", "1");

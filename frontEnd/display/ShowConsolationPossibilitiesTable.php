@@ -64,27 +64,54 @@
 
     // see if this wipes any of the winners from higher up the chain
     $index = $_GET["forcedWinnerGameID"] - $minGameID;
-    if( $index == 0 || $index == 1 )
-    {
-      $_SESSION["forcedWinners"][$minGameID + 4] = "TBD";
-      $_SESSION["forcedWinners"][$minGameID + 5] = "TBD";
-    }
-    else if( $index == 2 || $index == 3 )
-    {
-      $_SESSION["forcedWinners"][$minGameID + 6] = "TBD";
-      $_SESSION["forcedWinners"][$minGameID + 7] = "TBD";
-    }
-    if( $index == 0 || $index == 1 || $index == 4 || $index == 5 )
-    {
-      $_SESSION["forcedWinners"][$minGameID + 8] = "TBD";
-    }
-    else if( $index == 2 || $index == 3 || $index == 6 || $index == 7 )
-    {
-      $_SESSION["forcedWinners"][$minGameID + 9] = "TBD";
-    }
-    if( $index < 10 )
-    {
-      $_SESSION["forcedWinners"][$minGameID + 10] = "TBD";
+    // pre-2020 logic
+    if( $_SESSION["showPicksSeason"] < 2020 ) {
+      if( $index == 0 || $index == 1 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 4] = "TBD";
+        $_SESSION["forcedWinners"][$minGameID + 5] = "TBD";
+      }
+      else if( $index == 2 || $index == 3 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 6] = "TBD";
+        $_SESSION["forcedWinners"][$minGameID + 7] = "TBD";
+      }
+      if( $index == 0 || $index == 1 || $index == 4 || $index == 5 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 8] = "TBD";
+      }
+      else if( $index == 2 || $index == 3 || $index == 6 || $index == 7 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 9] = "TBD";
+      }
+      if( $index < 10 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 10] = "TBD";
+      }
+    // post-2020 logic
+    } else {
+      if( $index == 0 || $index == 1 || $index == 2 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 6] = "TBD";
+        $_SESSION["forcedWinners"][$minGameID + 7] = "TBD";
+      }
+      else if( $index == 3 || $index == 4 || $index == 5 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 8] = "TBD";
+        $_SESSION["forcedWinners"][$minGameID + 9] = "TBD";
+      }
+      if( $index == 0 || $index == 1 || $index == 2 || $index == 6 || $index == 7 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 10] = "TBD";
+      }
+      else if($index == 3 || $index == 4 || $index == 5 || $index == 8 || $index == 9 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 11] = "TBD";
+      }
+      if( $index < 12 )
+      {
+        $_SESSION["forcedWinners"][$minGameID + 12] = "TBD";
+      }
     }
   }
   else if( !isset($_SESSION["forcedWinners"]) || $standingsType == "actual" )
@@ -95,13 +122,15 @@
   // grab their picks if they're trying to show best or worst
   if( $standingsType == "best" || $standingsType == "worst" )
   {
-    $myPicks = RunQuery( "select wc1AFC, wc2AFC, wc1NFC, wc2NFC, div1AFC, div2AFC, div1NFC, div2NFC, confAFC, confNFC, " . 
+    $myPicks = RunQuery( "select wc1AFC, wc2AFC, wc3AFC, wc1NFC, wc2NFC, wc3NFC, div1AFC, div2AFC, div1NFC, div2NFC, confAFC, confNFC, " . 
                          "superBowl from ConsolationResult where userID=" . $myID . 
                          " and season=" . $_SESSION["showPicksSeason"] );
     $myPicks = $myPicks[0];
-    $columns = array("wc1AFC", "wc2AFC", "wc1NFC", "wc2NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl");
+    $columns = ($_SESSION["showPicksSeason"] < 2020) 
+               ? array("wc1AFC", "wc2AFC", "wc1NFC", "wc2NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl")
+               : array("wc1AFC", "wc2AFC", "wc3AFC", "wc1NFC", "wc2NFC", "wc3NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl");
     $eliminatedTeams = array();
-    for( $i=0; $i<11; $i++ )
+    for( $i=0; $i<count($games); $i++ )
     {
       $thisGame = $games[$gameIDtoIndex[$minGameID + $i]];
       if( $thisGame["status"] != "3" )
@@ -116,9 +145,13 @@
   }
 
   // see if there are any forced winners to account for
-  $actualUpsets = array(false, false, false, false, false, false, false, false, false, false, false);
-  $forcedUpsets = array(false, false, false, false, false, false, false, false, false, false, false);
-  for( $i=0; $i<11; $i+=1 )
+  $actualUpsets = ($_SESSION["showPicksSeason"] < 2020) 
+                  ? array(false, false, false, false, false, false, false, false, false, false, false)
+                  : array(false, false, false, false, false, false, false, false, false, false, false, false, false);
+  $forcedUpsets = ($_SESSION["showPicksSeason"] < 2020) 
+                  ? array(false, false, false, false, false, false, false, false, false, false, false)
+                  : array(false, false, false, false, false, false, false, false, false, false, false, false, false);
+  for( $i=0; $i<count($games); $i+=1 )
   {
     // this particular game has a forced winner
     $testID = $minGameID + $i;
@@ -140,86 +173,167 @@
       $forcedUpsets[$i] = ($games[$thisIndex]["leader"] == $games[$thisIndex]["awayTeam"]);
     }
 
-    // this is the AFC 3-6 game
-    if( $i == 0 )
-    {
-      $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
-      if( ($swap && ($games[$gameIDtoIndex[$minGameID + 4]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
-          (!$swap && ($games[$gameIDtoIndex[$minGameID + 5]]["awayTeam"] != $games[$thisIndex]["leader"])) )
+    // pre-2020 logic
+    if( $_SESSION["showPicksSeason"] < 2020 ) {
+      // this is the AFC 3-6 game
+      if( $i == 0 )
       {
-        $games[$gameIDtoIndex[$minGameID + ($swap ? 5 : 4)]]["awayTeam"] = $games[$gameIDtoIndex[$minGameID + ($swap ? 4 : 5)]]["awayTeam"];
-        $games[$gameIDtoIndex[$minGameID + ($swap ? 4 : 5)]]["awayTeam"] = $games[$thisIndex]["leader"];
+        $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        if( ($swap && ($games[$gameIDtoIndex[$minGameID + 4]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
+            (!$swap && ($games[$gameIDtoIndex[$minGameID + 5]]["awayTeam"] != $games[$thisIndex]["leader"])) )
+        {
+          $games[$gameIDtoIndex[$minGameID + ($swap ? 5 : 4)]]["awayTeam"] = $games[$gameIDtoIndex[$minGameID + ($swap ? 4 : 5)]]["awayTeam"];
+          $games[$gameIDtoIndex[$minGameID + ($swap ? 4 : 5)]]["awayTeam"] = $games[$thisIndex]["leader"];
+        }
       }
-    }
-    // this is the AFC 4-5 game
-    else if( $i == 1 )
-    {
-      $games[$gameIDtoIndex[$minGameID + ($swap ? 5 : 4)]]["awayTeam"] = $games[$thisIndex]["leader"];
-    }
-    // this is the NFC 3-6 game
-    else if( $i == 2 )
-    {
-      $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
-      if( ($swap && ($games[$gameIDtoIndex[$minGameID + 6]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
-          (!$swap && ($games[$gameIDtoIndex[$minGameID + 7]]["awayTeam"] != $games[$thisIndex]["leader"])) )
+      // this is the AFC 4-5 game
+      else if( $i == 1 )
       {
-        $games[$gameIDtoIndex[$minGameID + ($swap ? 7 : 6)]]["awayTeam"] = $games[$gameIDtoIndex[$minGameID + ($swap ? 6 : 7)]]["awayTeam"];
-        $games[$gameIDtoIndex[$minGameID + ($swap ? 6 : 7)]]["awayTeam"] = $games[$thisIndex]["leader"];
+        $games[$gameIDtoIndex[$minGameID + ($swap ? 5 : 4)]]["awayTeam"] = $games[$thisIndex]["leader"];
       }
-    }
-    // this is the NFC 4-5 game
-    else if( $i == 3 )
-    {
-      $games[$gameIDtoIndex[$minGameID + ($swap ? 7 : 6)]]["awayTeam"] = $games[$thisIndex]["leader"];
-    }
-    // this is the AFC 1-X game
-    else if( $i == 4 )
-    {
-      $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
-      if( ($swap && ($games[$gameIDtoIndex[$minGameID + 8]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
-          (!$swap && ($games[$gameIDtoIndex[$minGameID + 8]]["homeTeam"] != $games[$thisIndex]["leader"])) )
+      // this is the NFC 3-6 game
+      else if( $i == 2 )
       {
-        $games[$gameIDtoIndex[$minGameID + 8]][$swap ? "homeTeam" : "awayTeam"] = $games[$gameIDtoIndex[$minGameID + 8]][$swap ? "awayTeam" : "homeTeam"];
-        $games[$gameIDtoIndex[$minGameID + 8]][$swap ? "awayTeam" : "homeTeam"] = $games[$thisIndex]["leader"];
+        $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        if( ($swap && ($games[$gameIDtoIndex[$minGameID + 6]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
+            (!$swap && ($games[$gameIDtoIndex[$minGameID + 7]]["awayTeam"] != $games[$thisIndex]["leader"])) )
+        {
+          $games[$gameIDtoIndex[$minGameID + ($swap ? 7 : 6)]]["awayTeam"] = $games[$gameIDtoIndex[$minGameID + ($swap ? 6 : 7)]]["awayTeam"];
+          $games[$gameIDtoIndex[$minGameID + ($swap ? 6 : 7)]]["awayTeam"] = $games[$thisIndex]["leader"];
+        }
       }
-    }
-    // this is the AFC 2-Y game
-    else if( $i == 5 )
-    {
-      $games[$gameIDtoIndex[$minGameID + 8]][$swap ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
-    }
-    // this is the NFC 1-X game
-    else if( $i == 6 )
-    {
-      $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
-      if( ($swap && ($games[$gameIDtoIndex[$minGameID + 9]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
-          (!$swap && ($games[$gameIDtoIndex[$minGameID + 9]]["homeTeam"] != $games[$thisIndex]["leader"])) )
+      // this is the NFC 4-5 game
+      else if( $i == 3 )
       {
-        $games[$gameIDtoIndex[$minGameID + 9]][$swap ? "homeTeam" : "awayTeam"] = $games[$gameIDtoIndex[$minGameID + 9]][$swap ? "awayTeam" : "homeTeam"];
-        $games[$gameIDtoIndex[$minGameID + 9]][$swap ? "awayTeam" : "homeTeam"] = $games[$thisIndex]["leader"];
+        $games[$gameIDtoIndex[$minGameID + ($swap ? 7 : 6)]]["awayTeam"] = $games[$thisIndex]["leader"];
       }
-    }
-    // this is the NFC 2-Y game
-    else if( $i == 7 )
-    {
-      $games[$gameIDtoIndex[$minGameID + 9]][$swap ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
-    }
-    // this is the AFC CC game
-    else if( $i == 8 )
-    {
-      $games[$gameIDtoIndex[$minGameID + 10]]["awayTeam"] = $games[$thisIndex]["leader"];
-    }
-    // this is the NFC CC game
-    else if( $i == 9 )
-    {
-      $games[$gameIDtoIndex[$minGameID + 10]]["homeTeam"] = $games[$thisIndex]["leader"];
+      // this is the AFC 1-X game
+      else if( $i == 4 )
+      {
+        $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        if( ($swap && ($games[$gameIDtoIndex[$minGameID + 8]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
+            (!$swap && ($games[$gameIDtoIndex[$minGameID + 8]]["homeTeam"] != $games[$thisIndex]["leader"])) )
+        {
+          $games[$gameIDtoIndex[$minGameID + 8]][$swap ? "homeTeam" : "awayTeam"] = $games[$gameIDtoIndex[$minGameID + 8]][$swap ? "awayTeam" : "homeTeam"];
+          $games[$gameIDtoIndex[$minGameID + 8]][$swap ? "awayTeam" : "homeTeam"] = $games[$thisIndex]["leader"];
+        }
+      }
+      // this is the AFC 2-Y game
+      else if( $i == 5 )
+      {
+        $games[$gameIDtoIndex[$minGameID + 8]][$swap ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the NFC 1-X game
+      else if( $i == 6 )
+      {
+        $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        if( ($swap && ($games[$gameIDtoIndex[$minGameID + 9]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
+            (!$swap && ($games[$gameIDtoIndex[$minGameID + 9]]["homeTeam"] != $games[$thisIndex]["leader"])) )
+        {
+          $games[$gameIDtoIndex[$minGameID + 9]][$swap ? "homeTeam" : "awayTeam"] = $games[$gameIDtoIndex[$minGameID + 9]][$swap ? "awayTeam" : "homeTeam"];
+          $games[$gameIDtoIndex[$minGameID + 9]][$swap ? "awayTeam" : "homeTeam"] = $games[$thisIndex]["leader"];
+        }
+      }
+      // this is the NFC 2-Y game
+      else if( $i == 7 )
+      {
+        $games[$gameIDtoIndex[$minGameID + 9]][$swap ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the AFC CC game
+      else if( $i == 8 )
+      {
+        $games[$gameIDtoIndex[$minGameID + 10]]["awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the NFC CC game
+      else if( $i == 9 )
+      {
+        $games[$gameIDtoIndex[$minGameID + 10]]["homeTeam"] = $games[$thisIndex]["leader"];
+      }
+    // post-2020 logic
+    } else {
+      // this is the AFC 2-7 game
+      if( $i == 0 )
+      {
+        $upset = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        $games[$gameIDtoIndex[$minGameID + ($upset ? 6 : 7)]][$upset ? "awayTeam" : "homeTeam"] = $games[$thisIndex]["leader"];        
+      }
+      // this is the AFC 3-6 game
+      else if( $i == 1 )
+      {
+        $upset2 = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        $games[$gameIDtoIndex[$minGameID + ((!$upset && $upset2) ? 6 : 7)]][($upset && !$upset2) ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the AFC 4-5 game
+      else if( $i == 2 )
+      {
+        $games[$gameIDtoIndex[$minGameID + (($upset || $upset2) ? 7 : 6)]][($upset && $upset2) ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the NFC 2-7 game
+      else if( $i == 3 )
+      {
+        $upset = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        $games[$gameIDtoIndex[$minGameID + ($upset ? 8 : 9)]][$upset ? "awayTeam" : "homeTeam"] = $games[$thisIndex]["leader"];        
+      }
+      // this is the NFC 3-6 game
+      else if( $i == 4 )
+      {
+        $upset2 = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        $games[$gameIDtoIndex[$minGameID + ((!$upset && $upset2) ? 8 : 9)]][($upset && !$upset2) ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the NFC 4-5 game
+      else if( $i == 5 )
+      {
+        $games[$gameIDtoIndex[$minGameID + (($upset || $upset2) ? 9 : 8)]][($upset && $upset2) ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the AFC 1-X game
+      else if( $i == 6 )
+      {
+        $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        if( ($swap && ($games[$gameIDtoIndex[$minGameID + 10]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
+            (!$swap && ($games[$gameIDtoIndex[$minGameID + 10]]["homeTeam"] != $games[$thisIndex]["leader"])) )
+        {
+          $games[$gameIDtoIndex[$minGameID + 10]][$swap ? "homeTeam" : "awayTeam"] = $games[$gameIDtoIndex[$minGameID + 10]][$swap ? "awayTeam" : "homeTeam"];
+          $games[$gameIDtoIndex[$minGameID + 10]][$swap ? "awayTeam" : "homeTeam"] = $games[$thisIndex]["leader"];
+        }
+      }
+      // this is the AFC Y-Z game
+      else if( $i == 7 )
+      {
+        $games[$gameIDtoIndex[$minGameID + 10]][$swap ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the NFC 1-X game
+      else if( $i == 8 )
+      {
+        $swap = $forcedUpsets[$i] || (!isset($_SESSION["forcedWinners"][$testID]) && $actualUpsets[$i]);
+        if( ($swap && ($games[$gameIDtoIndex[$minGameID + 11]]["awayTeam"] != $games[$thisIndex]["leader"])) ||
+            (!$swap && ($games[$gameIDtoIndex[$minGameID + 11]]["homeTeam"] != $games[$thisIndex]["leader"])) )
+        {
+          $games[$gameIDtoIndex[$minGameID + 11]][$swap ? "homeTeam" : "awayTeam"] = $games[$gameIDtoIndex[$minGameID + 11]][$swap ? "awayTeam" : "homeTeam"];
+          $games[$gameIDtoIndex[$minGameID + 11]][$swap ? "awayTeam" : "homeTeam"] = $games[$thisIndex]["leader"];
+        }
+      }
+      // this is the NFC Y-Z game
+      else if( $i == 9 )
+      {
+        $games[$gameIDtoIndex[$minGameID + 11]][$swap ? "homeTeam" : "awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the AFC CC game
+      else if( $i == 10 )
+      {
+        $games[$gameIDtoIndex[$minGameID + 12]]["awayTeam"] = $games[$thisIndex]["leader"];
+      }
+      // this is the NFC CC game
+      else if( $i == 11 )
+      {
+        $games[$gameIDtoIndex[$minGameID + 12]]["homeTeam"] = $games[$thisIndex]["leader"];
+      }
     }
   }
 
   // grab all of the rows
-  $poolLocked = (($games[0]["isLocked"] == 1) && ($games[0]["status"] != 19));
+  $poolLocked = 1; //(($games[0]["isLocked"] == 1) && ($games[0]["status"] != 19));
   $results = RunQuery( "select userID, concat(firstName, ' ', lastName) as pName, ConsolationResult.points as cPts, " . 
-                       "wc1AFC, wc2AFC, wc1NFC, wc2NFC, div1AFC, div2AFC, div1NFC, div2NFC, confAFC, confNFC, " . 
+                       "wc1AFC, wc2AFC, wc3AFC, wc1NFC, wc2NFC, wc3NFC, div1AFC, div2AFC, div1NFC, div2NFC, confAFC, confNFC, " . 
                        "superBowl, picksCorrect, tieBreaker, abs(tieBreaker - " . $MNFscore . ") as tb2, " . 
                        "(" . $MNFscore . " - tieBreaker) as tb3, SeasonResult.points as tb4, SeasonResult.weeklyWins as tb5, " . 
                        "if(wc1AFC is null, 2, 1) as filter " . 
@@ -279,11 +393,11 @@
   // start the new table
 ?>
         <tr>
-          <td colspan="19" class="headerBackgroundTable" style="font-size:24px;">Consolation Pool Standings</td>
+          <td colspan="<?php echo ($_SESSION["showPicksSeason"] < 2020) ? 19 : 21; ?>" class="headerBackgroundTable" style="font-size:24px;">Consolation Pool Standings</td>
         </tr>
         <tr>
           <td colspan="2" class="headerBackgroundTable">&nbsp;</td>
-          <td colspan="4" class="headerBackgroundTable">Wild Card</td>
+          <td colspan="<?php echo ($_SESSION["showPicksSeason"] < 2020) ? 4 : 6; ?>" class="headerBackgroundTable">Wild Card</td>
           <td colspan="4" class="headerBackgroundTable">Divisional Round</td>
           <td colspan="2" class="headerBackgroundTable">Conference Championships</td>
           <td colspan="2" class="headerBackgroundTable">Super Bowl</td>
@@ -373,19 +487,22 @@
 
     // show their picks
     $isMe = ($userID == $myID);
-    $columns = array("wc1AFC", "wc2AFC", "wc1NFC", "wc2NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl");
-    $pointVals = array(1,1,1,1,2,2,2,2,4,4,8);
+    $columns = ($_SESSION["showPicksSeason"] < 2020) 
+               ? array("wc1AFC", "wc2AFC", "wc1NFC", "wc2NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl")
+               : array("wc1AFC", "wc2AFC", "wc3AFC", "wc1NFC", "wc2NFC", "wc3NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl");
+    $pointVals = ($_SESSION["showPicksSeason"] < 2020) ? array(1,1,1,1,2,2,2,2,4,4,8) : array(1,1,1,1,1,1,2,2,2,2,4,4,8);
     $eliminatedTeams = array();
-    for( $ind=0; $ind<11; $ind++ )
+    $swapColIndex = ($_SESSION["showPicksSeason"] < 2020) ? 4 : 6;
+    for( $ind=0; $ind<count($games); $ind++ )
     {
       $columnIndex = $games[$ind]["gameID"] - $minGameID;
       $thePick = $thisPick[$columns[$columnIndex]];
       $gameToDisplay = $games[$ind];
-      if( $columnIndex >= 4 && $columnIndex < 8 )
+      if( $columnIndex >= $swapColIndex && $columnIndex < ($swapColIndex + 4) )
       {
-        $checkIndex = (($columnIndex < 6) ? 4 : 6) + (($columnIndex + 1) % 2);
+        $checkIndex = (($columnIndex < ($swapColIndex + 2)) ? $swapColIndex : ($swapColIndex + 2)) + (($columnIndex + 1) % 2);
         // find it
-        for( $cInd=4; $cInd<8; $cInd++ )
+        for( $cInd=$swapColIndex; $cInd<($swapColIndex + 4); $cInd++ )
         {
           if( ($games[$cInd]["gameID"] - $minGameID) == $checkIndex )
           {
@@ -398,21 +515,21 @@
       }
       ShowPick($thePick, $gameToDisplay, $pointVals[$ind], $isMe, $poolLocked, $eliminatedTeams);
 
-      $forced = isset($_SESSION["forcedWinners"][$games[$ind]["gameID"]]) &&
-                ($_SESSION["forcedWinners"][$games[$ind]["gameID"]] != "TBD");
-      if( (($games[$ind]["status"] == 2) || ($games[$ind]["status"] == 3) || $forced) && $thePick != $games[$ind]["leader"] )
+      $forced = isset($_SESSION["forcedWinners"][$gameToDisplay["gameID"]]) &&
+                ($_SESSION["forcedWinners"][$gameToDisplay["gameID"]] != "TBD");
+      if( (($gameToDisplay["status"] == 2) || ($gameToDisplay["status"] == 3) || $forced) && $thePick != $gameToDisplay["leader"] )
       {
         $eliminatedTeams[$thePick] = 19;
       }
 
       // factor it into the max
       if( $poolLocked || ($thisPick["userID"] == $myID)) {
-        $started = (($games[$ind]["status"] != 1) && ($games[$ind]["status"] != 19));
+        $started = (($gameToDisplay["status"] != 1) && ($gameToDisplay["status"] != 19));
         $possibleMax += ((isset($eliminatedTeams[$thePick])) ||       // team eliminated
-                         ($started && ($thePick["winner"] == "")))    // they missed it
+                         ($started && ($thePick == "")))              // they missed it
                         ? 0 : $pointVals[$ind];
-        $displayScore += (($thePick != "") && ($thePick == $games[$ind]["leader"])) ? $pointVals[$ind] : 0;
-        $correctPicks += (($thePick != "") && ($thePick == $games[$ind]["leader"])) ? 1 : 0;
+        $displayScore += (($thePick != "") && ($thePick == $gameToDisplay["leader"])) ? $pointVals[$ind] : 0;
+        $correctPicks += (($thePick != "") && ($thePick == $gameToDisplay["leader"])) ? 1 : 0;
       } else {
         $possibleMax += $pointVals[$ind];
       }
@@ -507,22 +624,22 @@
                 }
 
                 // sort these rows
-                var compareIndex = 14;
+                var compareIndex = <?php echo ($_SESSION["showPicksSeason"] < 2020) ? 14 : 16; ?>;
                 if( arg == "maxPts" )
                 {
-                  compareIndex = 15;
+                  compareIndex += 1;
                 }
                 else if( arg == "picks" )
                 {
-                  compareIndex = 16;
+                  compareIndex += 2;
                 }
                 else if( arg == "ytdPts" )
                 {
-                  compareIndex = 17;
+                  compareIndex += 3;
                 }
                 else if( arg == "wins" )
                 {
-                  compareIndex = 18;
+                  compareIndex += 4;
                 }
                 else if( arg == "name" )
                 {

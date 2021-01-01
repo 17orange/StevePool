@@ -53,7 +53,7 @@
   // grab all of the rows
   $poolLocked = (($games[0]["isLocked"] == 1) && ($games[0]["status"] != 19));
   $results = RunQuery( "select userID, concat(firstName, ' ', lastName) as pName, ConsolationResult.points as cPts, " . 
-                       "wc1AFC, wc2AFC, wc1NFC, wc2NFC, div1AFC, div2AFC, div1NFC, div2NFC, confAFC, confNFC, " . 
+                       "wc1AFC, wc2AFC, wc3AFC, wc1NFC, wc2NFC, wc3NFC, div1AFC, div2AFC, div1NFC, div2NFC, confAFC, confNFC, " . 
                        "superBowl, picksCorrect, tieBreaker, abs(tieBreaker - " . $MNFscore . ") as tb2, " . 
                        "(" . $MNFscore . " - tieBreaker) as tb3, SeasonResult.points as tb4, SeasonResult.weeklyWins as tb5, " . 
                        "if(wc1AFC is null, 2, 1) as filter " . 
@@ -69,11 +69,11 @@
   // start the new table
 ?>
         <tr>
-          <td colspan="19" class="headerBackgroundTable" style="font-size:24px;">Consolation Pool Standings</td>
+          <td colspan="<?php echo ($_SESSION["showPicksSeason"] < 2020) ? 19 : 21; ?>" class="headerBackgroundTable" style="font-size:24px;">Consolation Pool Standings</td>
         </tr>
         <tr>
           <td colspan="2" class="headerBackgroundTable">&nbsp;</td>
-          <td colspan="4" class="headerBackgroundTable">Wild Card</td>
+          <td colspan="<?php echo ($_SESSION["showPicksSeason"] < 2020) ? 4 : 6; ?>" class="headerBackgroundTable">Wild Card</td>
           <td colspan="4" class="headerBackgroundTable">Divisional Round</td>
           <td colspan="2" class="headerBackgroundTable">Conference Championships</td>
           <td colspan="2" class="headerBackgroundTable">Super Bowl</td>
@@ -153,19 +153,22 @@
 
     // show their picks
     $isMe = ($userID == $myID);
-    $columns = array("wc1AFC", "wc2AFC", "wc1NFC", "wc2NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl");
-    $pointVals = array(1,1,1,1,2,2,2,2,4,4,8);
+    $columns = ($_SESSION["showPicksSeason"] < 2020) 
+               ? array("wc1AFC", "wc2AFC", "wc1NFC", "wc2NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl")
+               : array("wc1AFC", "wc2AFC", "wc3AFC", "wc1NFC", "wc2NFC", "wc3NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl");
+    $pointVals = ($_SESSION["showPicksSeason"] < 2020) ? array(1,1,1,1,2,2,2,2,4,4,8) : array(1,1,1,1,1,1,2,2,2,2,4,4,8);
     $eliminatedTeams = array();
-    for( $ind=0; $ind<11; $ind++ )
+    $swapColIndex = ($_SESSION["showPicksSeason"] < 2020) ? 4 : 6;
+    for( $ind=0; $ind<count($pointVals); $ind++ )
     {
       $columnIndex = $games[$ind]["gameID"] - $minGameID;
       $thePick = $thisPick[$columns[$columnIndex]];
       $gameToDisplay = $games[$ind];
-      if( $columnIndex >= 4 && $columnIndex < 8 )
+      if( $columnIndex >= $swapColIndex && $columnIndex < ($swapColIndex + 4) )
       {
-        $checkIndex = (($columnIndex < 6) ? 4 : 6) + (($columnIndex + 1) % 2);
+        $checkIndex = (($columnIndex < ($swapColIndex + 2)) ? $swapColIndex : ($swapColIndex + 2)) + (($columnIndex + 1) % 2);
         // find it
-        for( $cInd=4; $cInd<8; $cInd++ )
+        for( $cInd=$swapColIndex; $cInd<($swapColIndex + 4); $cInd++ )
         {
           if( ($games[$cInd]["gameID"] - $minGameID) == $checkIndex )
           {
@@ -191,7 +194,7 @@
       // factor it into the max
       $started = (($games[$ind]["status"] != 1) && ($games[$ind]["status"] != 19));
       $possibleMax += ((isset($eliminatedTeams[$thePick]) && ($eliminatedTeams[$thePick]== 3)) || // team eliminated
-                       ($started && ($thePick["winner"] == "")))                                    // they missed it
+                       ($started && ($thePick == "")))                                            // they missed it
                       ? 0 : $pointVals[$ind];
     }
 
@@ -280,22 +283,22 @@
                 }
 
                 // sort these rows
-                var compareIndex = 14;
+                var compareIndex = <?php echo ($_SESSION["showPicksSeason"] < 2020) ? 14 : 16; ?>;
                 if( arg == "maxPts" )
                 {
-                  compareIndex = 15;
+                  compareIndex += 1;
                 }
                 else if( arg == "picks" )
                 {
-                  compareIndex = 16;
+                  compareIndex += 2;
                 }
                 else if( arg == "ytdPts" )
                 {
-                  compareIndex = 17;
+                  compareIndex += 3;
                 }
                 else if( arg == "wins" )
                 {
-                  compareIndex = 18;
+                  compareIndex += 4;
                 }
                 else if( arg == "name" )
                 {

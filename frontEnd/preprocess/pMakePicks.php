@@ -56,7 +56,7 @@
     // make sure these are valid game ids
     $query = "select distinct(weekNumber) as weekNumber from Game where gameID in (-1";
     $winners = array();
-    for( $i=1; $i<5; $i++ )
+    for( $i=1; $i<7; $i++ )
     {
       if( isset($_POST["game" . $i]) )
       {
@@ -75,11 +75,13 @@
       $tieBreak2 = mysqli_real_escape_string($link, $_POST["tb2"]);
       $tieBreak3 = mysqli_real_escape_string($link, $_POST["tb3"]);
       $tieBreak4 = mysqli_real_escape_string($link, $_POST["tb4"]);
+      $tieBreak5 = mysqli_real_escape_string($link, $_POST["tb5"]);
+      $tieBreak6 = mysqli_real_escape_string($link, $_POST["tb6"]);
 
       // build the query
       $saveQuery = "call SaveWildCardPicks(" . mysqli_real_escape_string( $link, $_SESSION["spsID"] ) . 
-                   ",'" . $_SERVER["REMOTE_ADDR"] . "'," . $tieBreak1 . "," . $tieBreak2 . "," . $tieBreak3 . "," . $tieBreak4;
-      for( $i=4; $i>0; $i-- )
+                   ",'" . $_SERVER["REMOTE_ADDR"] . "'," . $tieBreak1 . "," . $tieBreak2 . "," . $tieBreak3 . "," . $tieBreak4 . "," . $tieBreak5 . "," . $tieBreak6;
+      for( $i=6; $i>0; $i-- )
       {
         $saveQuery .= ",'" . mysqli_real_escape_string($link, $_POST["winner" . $i]) . "', " . 
                       mysqli_real_escape_string($link, $_POST["pts" . $i]);
@@ -205,8 +207,10 @@
     $tieBreak = mysqli_real_escape_string($link, $_POST["tieBreaker"]);
     $wc1AFC = mysqli_real_escape_string($link, $_POST["afcWC1"]);
     $wc2AFC = mysqli_real_escape_string($link, $_POST["afcWC2"]);
+    $wc3AFC = mysqli_real_escape_string($link, $_POST["afcWC3"]);
     $wc1NFC = mysqli_real_escape_string($link, $_POST["nfcWC1"]);
     $wc2NFC = mysqli_real_escape_string($link, $_POST["nfcWC2"]);
+    $wc3NFC = mysqli_real_escape_string($link, $_POST["nfcWC3"]);
     $div1AFC = mysqli_real_escape_string($link, $_POST["afcDiv1"]);
     $div2AFC = mysqli_real_escape_string($link, $_POST["afcDiv2"]);
     $div1NFC = mysqli_real_escape_string($link, $_POST["nfcDiv1"]);
@@ -217,8 +221,8 @@
 
     // build the query
     $saveQuery = "call SaveConsolationPicks(" . mysqli_real_escape_string( $link, $_SESSION["spsID"] ) . 
-                 ",'" . $_SERVER["REMOTE_ADDR"] . "','" . $wc1AFC . "','" . $wc2AFC . "','" . $wc1NFC . "','" . 
-                 $wc2NFC . "','" . $div1AFC . "','" . $div2AFC . "','" . $div1NFC . "','" . $div2NFC . "','" . 
+                 ",'" . $_SERVER["REMOTE_ADDR"] . "','" . $wc1AFC . "','" . $wc2AFC . "','" . $wc3AFC . "','" . $wc1NFC . "','" . 
+                 $wc2NFC . "','" . $wc3NFC . "','" . $div1AFC . "','" . $div2AFC . "','" . $div1NFC . "','" . $div2NFC . "','" . 
                  $confAFC . "','" . $confNFC . "','" . $superBowl . "'," . $tieBreak . ")";
 
     // run it

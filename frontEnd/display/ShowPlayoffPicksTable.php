@@ -25,7 +25,7 @@
   $gamesLive = 0;
   $firstRefresh = "";
   $results = RunQuery( "select *, if(lockTime>now(), 0, 1) as isLocked from Game where weekNumber=" . $_SESSION["showPicksWeek"] . 
-                       " and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID", false );
+                       " and season=" . $_SESSION["showPicksSeason"] . " order by tieBreakOrder, gameTime, gameID", false );
   foreach( $results as $thisGame )
   {
     $games[count($games)] = $thisGame;
@@ -65,7 +65,7 @@
   if( $_SESSION["showPicksWeek"] == 22 )
   {
     $query .= "if(prevWeek1>=0, if(prevWeek2>=0, if(prevWeek3>=0, " . ($poolLocked ? "0" : "-prevWeek3") . 
-              ", 25 + prevWeek3), 50 + prevWeek2), 75 + prevWeek1) as tb1, ";
+              ", 100 + prevWeek3), 200 + prevWeek2), 300 + prevWeek1) as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb2, ";
     $query .= "if(type='winner', 10, if(type='winner3Q', 9, if(type='winner2Q', 8, if(type='winner1Q', 7, " . 
               "if(type='passYds', 6, if(type='passYds2Q', 5, if(type='rushYds', 4, if(type='rushYds2Q', 3, " . 
@@ -74,7 +74,7 @@
   }
   else if( $_SESSION["showPicksWeek"] == 20 )
   {
-    $query .= "if(prevWeek1>=0, if(prevWeek2>=0, " . ($poolLocked ? "0" : "-prevWeek2") . ", 25 + prevWeek2), 50 + prevWeek1) as tb1, ";
+    $query .= "if(prevWeek1>=0, if(prevWeek2>=0, " . ($poolLocked ? "0" : "-prevWeek2") . ", 100 + prevWeek2), 200 + prevWeek1) as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb2, ";
     $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb3, ";
     $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[1]["homeScore2Q"] + $games[1]["awayScore2Q"]) . ")") : "1") . " as tb4, ";
@@ -87,23 +87,26 @@
   else
   {
     $query .= (($_SESSION["showPicksWeek"] == 18) ? "if(firstRoundBye='Y', 1, 2)" : 
-               ($poolLocked ? "if(prevWeek1>=0, -20, 25 + prevWeek1)"
-                            : "if(prevWeek1=0, -20, if(prevWeek1>0, -prevWeek1, 25 + prevWeek1))")) . " as tb1, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[3]["homeScore"] + $games[3]["awayScore"]) . ")") : "1") . " as tb2, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[2]["homeScore"] + $games[2]["awayScore"]) . ")") : "1") . " as tb3, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb4, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker4 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb5, ";
+               ($poolLocked ? "if(prevWeek1>=0, -50, 100 + prevWeek1)"
+                            : "if(prevWeek1=0, -50, if(prevWeek1>0, -prevWeek1, 100 + prevWeek1))")) . " as tb1, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[5]["homeScore"] + $games[5]["awayScore"]) . ")") : "1") . " as tb2, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[4]["homeScore"] + $games[4]["awayScore"]) . ")") : "1") . " as tb3, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[3]["homeScore"] + $games[3]["awayScore"]) . ")") : "1") . " as tb4, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker4 - " . ($games[2]["homeScore"] + $games[2]["awayScore"]) . ")") : "1") . " as tb5, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker5 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb6, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker6 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb7, ";
     $query .= "1 as typeSort ";
     $sort = ", tb1 asc, wPts desc, tb2 asc" . ($poolLocked ? ", tieBreaker1" : "") . ", tb3 asc" . 
            ($poolLocked ? ", tieBreaker2" : "") . ", tb4 asc" . ($poolLocked ? ", tieBreaker3" : "") . ", tb5 asc" . 
-           ($poolLocked ? ", tieBreaker4" : "") ;
+           ($poolLocked ? ", tieBreaker4" : "") . ", tb6 asc" . ($poolLocked ? ", tieBreaker5" : "") . ", tb7 asc" . 
+           ($poolLocked ? ", tieBreaker6" : "");
   }
 
   // get the rest of the query
   $query .= "from SeasonResult join PlayoffResult using (userID, season) join User using (userID) join Game " . 
             "using (weekNumber, season) left join Pick using (userID, gameID) join Division using (divID) join " . 
             "Conference using (confID) where weekNumber=" . $_SESSION["showPicksWeek"] . " and season=" . 
-            $_SESSION["showPicksSeason"] . " order by section" . $sort . ", sPts desc, userID, gameTime, gameID, typeSort";
+            $_SESSION["showPicksSeason"] . " order by section" . $sort . ", sPts desc, userID, tieBreakOrder, gameTime, gameID, typeSort";
   $results = RunQuery( $query );
   $pickBank = array();
   foreach( $results as $thisPick )
@@ -116,7 +119,7 @@
   $playerCount = 0;
   $currScore = 500;
   $possibleMax = 0;
-  $colSpan = ($_SESSION["showPicksWeek"] == 18) ? 14 : (($_SESSION["showPicksWeek"] == 19) ? 15 : (($_SESSION["showPicksWeek"] == 20) ? 16 : 19));
+  $colSpan = ($_SESSION["showPicksWeek"] == 18) ? 18 : (($_SESSION["showPicksWeek"] == 19) ? 15 : (($_SESSION["showPicksWeek"] == 20) ? 16 : 19));
   for( $jk=0; $jk<count($pickBank); $jk++ )
   {
     $thisPick = $pickBank[$jk];
@@ -576,11 +579,11 @@
                   var maxTest = rows[maxIndex].cells[compareIndex].innerHTML;
                   if( arg != "name" && ((maxTest == "Bye") || (maxTest == "--")) )
                   {
-                    maxTest = 20;
+                    maxTest = 50;
                   }
                   else if( arg != "name" && ((maxTest == "Out") || (maxTest == "--&nbsp;")) )
                   {
-                    maxTest = -20;
+                    maxTest = -50;
                   }
                   else if( arg != "name" )
                   {
@@ -595,7 +598,7 @@
                     var thisTest = rows[k].cells[compareIndex].innerHTML;
                     if( arg != "name" && ((thisTest == "Bye") || (thisTest == "--")) )
                     {
-                      thisTest = 20;
+                      thisTest = 50;
                     }
                     else if( arg != "name" )
                     {

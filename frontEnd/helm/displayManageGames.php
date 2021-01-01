@@ -40,6 +40,7 @@
     echo "          <td style=\"font-weight:bold\">Matchup</td>\n";
     echo "          <td style=\"font-weight:bold\">Game Time</td>\n";
     echo "          <td style=\"font-weight:bold\">Lock Time</td>\n";
+    echo "          <td style=\"font-weight:bold\">Disaster Button</td>\n";
     echo "        </tr>\n";
 
     // dump them out into the table
@@ -51,6 +52,7 @@
            $row["gameTime"] . "\" /></td>\n";
       echo "          <td><input type=\"text\" name=\"lockTime" . $row["gameID"] . "\" value=\"" .
            $row["lockTime"] . "\" /></td>\n";
+      echo "          <td><input type=\"checkbox\" name=\"disaster" . $row["gameID"] . "\"/></td>\n";
       echo "        </tr>\n";
     }
 ?>
