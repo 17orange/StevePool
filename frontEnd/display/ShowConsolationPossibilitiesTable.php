@@ -331,7 +331,7 @@
   }
 
   // grab all of the rows
-  $poolLocked = 1; //(($games[0]["isLocked"] == 1) && ($games[0]["status"] != 19));
+  $poolLocked = (($games[0]["isLocked"] == 1) && ($games[0]["status"] != 19));
   $results = RunQuery( "select userID, concat(firstName, ' ', lastName) as pName, ConsolationResult.points as cPts, " . 
                        "wc1AFC, wc2AFC, wc3AFC, wc1NFC, wc2NFC, wc3NFC, div1AFC, div2AFC, div1NFC, div2NFC, confAFC, confNFC, " . 
                        "superBowl, picksCorrect, tieBreaker, abs(tieBreaker - " . $MNFscore . ") as tb2, " . 
