@@ -46,7 +46,7 @@
   // grab all of the rows
   $poolLocked = (($games[0]["isLocked"] == 1) && ($games[0]["status"] != 19));
   $query = "select userID, concat(firstName, ' ', lastName) as pName, winner, tieBreaker1, tieBreaker2, tieBreaker3, " . 
-           "tieBreaker4, Pick.points as pPts, advances, prevWeek1, prevWeek2, prevWeek3, firstRoundBye, " . 
+           "tieBreaker4, tieBreaker5, tieBreaker6, Pick.points as pPts, advances, prevWeek1, prevWeek2, prevWeek3, firstRoundBye, " . 
            "if(type='winner', if(homeScore>awayScore, homeTeam, if(awayScore>homeScore, awayTeam, 'TIE')), " . 
            "if(type='winner3Q', if(homeScore3Q>awayScore3Q, homeTeam, if(awayScore3Q>homeScore3Q, awayTeam, 'TIE')), " . 
            "if(type='winner2Q', if(homeScore2Q>awayScore2Q, homeTeam, if(awayScore2Q>homeScore2Q, awayTeam, 'TIE')), " . 
@@ -489,10 +489,11 @@
     if( $_SESSION["showPicksWeek"] < 22 )
     {
       // show their score pick
-      $toggle = (($jk - $baseJK) % 4);
+      $radix = ((($_SESSION["showPicksWeek"] == 18) && ($_SESSION["showPicksSeason"] > 2019)) ? 6 : 4);
+      $toggle = (($jk - $baseJK) % $radix);
       $toggle = (($toggle == 1) && ($_SESSION["showPicksWeek"] == 20)) ? 2 : 
                 ((($toggle == 2) && ($_SESSION["showPicksWeek"] == 20)) ? 1 : $toggle);
-      $tbName = "tieBreaker" . (4 - ($toggle % 4));
+      $tbName = "tieBreaker" . ($radix - ($toggle % $radix));
       echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick[$tbName] == "0") 
           ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID) 
                    ? "X" : $thisPick[$tbName]))) . "</td>\n";
