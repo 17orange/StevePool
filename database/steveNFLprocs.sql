@@ -775,7 +775,8 @@ end;  //
 ##### basic user permissions   
 ##### production pword: $t3v3P00lU$3r
 revoke all privileges, grant option from 'StevePoolUser'@'localhost';  //
-grant select on StevePool.* to 'StevePoolUser'@'localhost' identified by '$t3v3P00lU$3r';  //
+create user if not exists 'StevePoolUser'@'localhost' identified by '$t3v3P00lU$3r';  //
+grant select on StevePool.* to 'StevePoolUser'@'localhost';  //
 grant execute on procedure StevePool.Login to 'StevePoolUser'@'localhost';  //
 grant execute on procedure StevePool.Logout to 'StevePoolUser'@'localhost';  //
 grant execute on procedure StevePool.SavePicks to 'StevePoolUser'@'localhost';  //
@@ -789,7 +790,8 @@ grant execute on procedure StevePool.EditAccount to 'StevePoolUser'@'localhost';
 ##### admin permissions   
 ##### production pword: $t3v3P00l4dm!n
 revoke all privileges, grant option from 'StevePoolAdmin'@'localhost';  //
-grant select on StevePool.* to 'StevePoolAdmin'@'localhost' identified by '$t3v3P00l4dm!n';  //
+create user if not exists 'StevePoolAdmin'@'localhost' identified by '$t3v3P00l4dm!n';  //
+grant select on StevePool.* to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.AddUser to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.EditUser to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.AddUserToSeason to 'StevePoolAdmin'@'localhost';  //

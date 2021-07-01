@@ -263,7 +263,10 @@ def GrabWeekGames(week, season):
 #			cur.execute(yardQuery)
 
 		nextRow = liveScores.find("<tr class=", start)
-		if( nextRow > tableEnd ):
+		nextAbbr = liveScores.find("<abbr", start)
+		if( nextAbbr == -1 ):
+			start = nextAbbr
+		elif( nextRow > tableEnd ):
 			start = liveScores.find("<table class=\"schedule has-team-logos", tableEnd)
 			tableEnd = liveScores.find("</table>", start)
 			byeWeek = liveScores.find("byeweek", start)

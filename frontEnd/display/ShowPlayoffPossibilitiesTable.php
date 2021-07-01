@@ -454,11 +454,12 @@
         }
         echo "            </table>\n";
         echo "          </td>\n";
+        $indexJump = (($_SESSION["showPicksWeek"] == 18) && ($_SESSION["showPicksSeason"] >= 2020)) ? 6 : 4;
 ?>
           <td class="headerBackgroundTable" style="width:3%; border-left:none;">
-            <input type="submit" onclick="AdjustScore(<?php echo ($grouping . "," . ($grouping + (($grouping < 4) ? 4 : -4))); ?>,1);" value="+"><br>
+            <input type="submit" onclick="AdjustScore(<?php echo ($grouping . "," . ($grouping + (($grouping < $indexJump) ? $indexJump : -$indexJump))); ?>,1);" value="+"><br>
             Score<br><span id="caption<?php echo $grouping; ?>"><?php echo ($games[$i]["awayScore"] + $games[$i]["homeScore"]); ?></span><br>
-            <input type="submit" onclick="AdjustScore(<?php echo ($grouping . "," . ($grouping + (($grouping < 4) ? 4 : -4))); ?>,-1);" value="-">
+            <input type="submit" onclick="AdjustScore(<?php echo ($grouping . "," . ($grouping + (($grouping < $indexJump) ? $indexJump : -$indexJump))); ?>,-1);" value="-">
           </td>
 <?php
         $grouping++;
@@ -710,7 +711,17 @@
           {
             // grab the MNF score
 <?php
-  if( $_SESSION["showPicksWeek"] < 22 )
+  if( ($_SESSION["showPicksWeek"] == 18) && ($_SESSION["showPicksSeason"] >= 2020) ) {
+?>
+            var TB1  = parseInt( document.getElementById("caption5").innerHTML );
+            var TB2  = parseInt( document.getElementById("caption4").innerHTML );
+            var TB3  = parseInt( document.getElementById("caption3").innerHTML );
+            var TB4  = parseInt( document.getElementById("caption2").innerHTML );
+            var TB4A = parseInt( document.getElementById("caption1").innerHTML );
+            var TB4B = parseInt( document.getElementById("caption0").innerHTML );
+<?php
+  }
+  else if( $_SESSION["showPicksWeek"] < 22 )
   {
     if( $_SESSION["showPicksWeek"] == 20 )
     {
@@ -763,6 +774,12 @@
               }
 
 <?php
+  if( ($_SESSION["showPicksWeek"] == 18) && ($_SESSION["showPicksSeason"] >= 2020) ) {
+?>
+              var ghostTB4A = parseInt(rows[j].cells[rows[j].cells.length - 15].innerHTML );
+              var ghostTB4B = parseInt(rows[j].cells[rows[j].cells.length - 17].innerHTML );
+<?php
+  }
   if( $_SESSION["showPicksWeek"] < 22 )
   {
     if( $_SESSION["showPicksWeek"] == 20 )
@@ -797,9 +814,15 @@
 ?>
               var thisRow = [j, thisVal, isNumeric<?php 
   echo ($poolLocked ? (", Math.abs(TB1 - thisTB1), false, thisTB1, false" . (($_SESSION["showPicksWeek"] < 22) 
-      ? (", Math.abs(TB2 - thisTB2), false, thisTB2, false, Math.abs(TB3 - thisTB3), false, thisTB3, false, Math.abs(TB4 - thisTB4), false, thisTB4, false" . 
-        (($_SESSION["showPicksWeek"] == 18) ? ", thisTB5, true" : ""))
+      ? (", Math.abs(TB2 - thisTB2), false, thisTB2, false, Math.abs(TB3 - thisTB3), false, thisTB3, false, Math.abs(TB4 - thisTB4), false, thisTB4, false" . (($_SESSION["showPicksWeek"] == 18) 
+        ? ((($_SESSION["showPicksSeason"] >= 2020) 
+          ? ", Math.abs(TB4A - ghostTB4A), false, ghostTB4A, false, Math.abs(TB4B - ghostTB4B), false, ghostTB4B, false" 
+          : "") . ", thisTB5, true") 
+        : ""))
       : "")) : ""); ?>];
+              if( j == start + 5 ) {
+                //alert(thisRow);
+              }
               myRows.push(thisRow);
             }
 

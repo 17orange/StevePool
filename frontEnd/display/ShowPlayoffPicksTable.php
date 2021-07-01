@@ -86,15 +86,16 @@
   }
   else
   {
+    $adjust = ($_SESSION["showPicksWeek"] == 18) ? 2 : 0;
     $query .= (($_SESSION["showPicksWeek"] == 18) ? "if(firstRoundBye='Y', 1, 2)" : 
                ($poolLocked ? "if(prevWeek1>=0, -50, 100 + prevWeek1)"
                             : "if(prevWeek1=0, -50, if(prevWeek1>0, -prevWeek1, 100 + prevWeek1))")) . " as tb1, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[5]["homeScore"] + $games[5]["awayScore"]) . ")") : "1") . " as tb2, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[4]["homeScore"] + $games[4]["awayScore"]) . ")") : "1") . " as tb3, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[3]["homeScore"] + $games[3]["awayScore"]) . ")") : "1") . " as tb4, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker4 - " . ($games[2]["homeScore"] + $games[2]["awayScore"]) . ")") : "1") . " as tb5, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker5 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb6, ";
-    $query .= ($poolLocked ? ("abs(tieBreaker6 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb7, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[3 + $adjust]["homeScore"] + $games[3 + $adjust]["awayScore"]) . ")") : "1") . " as tb2, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker2 - " . ($games[2 + $adjust]["homeScore"] + $games[2 + $adjust]["awayScore"]) . ")") : "1") . " as tb3, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker3 - " . ($games[1 + $adjust]["homeScore"] + $games[1 + $adjust]["awayScore"]) . ")") : "1") . " as tb4, ";
+    $query .= ($poolLocked ? ("abs(tieBreaker4 - " . ($games[0 + $adjust]["homeScore"] + $games[0 + $adjust]["awayScore"]) . ")") : "1") . " as tb5, ";
+    $query .= (($poolLocked && $adjust) ? ("abs(tieBreaker5 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb6, ";
+    $query .= (($poolLocked && $adjust) ? ("abs(tieBreaker6 - " . ($games[0]["homeScore"] + $games[0]["awayScore"]) . ")") : "1") . " as tb7, ";
     $query .= "1 as typeSort ";
     $sort = ", tb1 asc, wPts desc, tb2 asc" . ($poolLocked ? ", tieBreaker1" : "") . ", tb3 asc" . 
            ($poolLocked ? ", tieBreaker2" : "") . ", tb4 asc" . ($poolLocked ? ", tieBreaker3" : "") . ", tb5 asc" . 
