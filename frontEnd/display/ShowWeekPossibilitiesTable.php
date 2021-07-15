@@ -293,7 +293,9 @@
 ?>
           <td class="headerBackgroundTable" style="width:3%; border-left:none;">
             <input type="submit" onclick="AdjustMNF(1);" value="+"><br>
-            Score<br><span id="caption<?php echo $grouping; ?>"><?php echo $MNFscore; ?></span><br>
+            Score<br><input id="adjust<?php echo $grouping; ?>" value="<?php echo $MNFscore; ?>" style="display:none; width:60%" 
+            onFocusOut="SubmitScoreBox(<?php echo $grouping; ?>);" onKeyUp="KeyUpScoreBox(event, <?php echo $grouping; ?>);">
+            <span id="caption<?php echo $grouping; ?>" style="cursor:pointer" onClick="ShowScoreBox(<?php echo $grouping; ?>);"><?php echo $MNFscore; ?></span><br>
             <input type="submit" onclick="AdjustMNF(-1);" value="-">
           </td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('weekPts');">PTS</td>
@@ -643,26 +645,52 @@
             recalculating = false;
           }
 
+          function ShowScoreBox(grouping)
+          {
+            $("#caption" + grouping).css("display","none");
+            $("#adjust" + grouping).css("display","inline-block");
+          }
+
+          function KeyUpScoreBox(e, grouping)
+          {
+            if( e.keyCode == 13 )
+            {
+              SubmitScoreBox(grouping);
+            }
+          }
+
+          function SubmitScoreBox(grouping)
+          {
+            $("#adjust" + grouping).css("display","none");
+            $("#caption" + grouping).css("display","inline");
+
+            var elem = document.getElementById("caption" + grouping);
+            var elem2 = document.getElementById("adjust" + grouping);
+            var currScore = parseInt(elem.innerHTML);
+            var newScore = parseInt(elem2.value);
+            AdjustMNF(newScore - currScore);
+          }
+
           function AdjustMNF(delta)
           {            
             // move the draggers to match
             var MNFIndex = 1;
             var elem = document.getElementById("caption" + MNFIndex);
-            while( elem != null )
+            var elem2 = document.getElementById("adjust" + MNFIndex);
+            while( elem != null && elem2 != null )
             {
               // dont go into negatives
               var score = parseInt(elem.innerHTML);
-              if( score == 0 && delta < 0 )
+              if( score + delta <= 0 )
               {
-                return;
+                delta = 0 - score;
               }
-              else
-              {
-                elem.innerHTML = score + delta;
+              elem.innerHTML = score + delta;
+              elem2.value = score + delta;
 
-                MNFIndex += 1;
-                elem = document.getElementById("caption" + MNFIndex);
-              }
+              MNFIndex += 1;
+              elem = document.getElementById("caption" + MNFIndex);
+              elem2 = document.getElementById("adjust" + MNFIndex);
             }
 
             SortTable((mostRecentSort=="ytdPts") ? "ytdPts" : "weekPts");

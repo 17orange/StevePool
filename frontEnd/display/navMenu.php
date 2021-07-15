@@ -22,7 +22,7 @@
   else
   {
     $results = $results[0];
-    $openResults = ($results["weekNumber"] < 18) ? $openResults[0] : array("openYet" => "Y");
+    $openResults = ($results["weekNumber"] < 19) ? $openResults[0] : array("openYet" => "Y");
   }
 
   if( $era[0]["heading"] == "SUCCESS" )
@@ -41,7 +41,7 @@
       {
         echo "          <tr><td class='noBorder'>" . $lockResults[0]["num"] . " game" . (($lockResults[0]["num"] == 1) ? " is" : "s are") . 
             " locked!</td></tr>\n";
-        if( $results["weekNumber"] >= 18 ) {
+        if( $results["weekNumber"] >= 19 ) {
           echo "          <tr><td class='noBorder'>Consolation Pool is locked!</td></tr>\n";
         }
       }
@@ -53,7 +53,7 @@
       {
         echo "          <tr><td class='noBorder'>" . $thisLock["num"] . " game" . (($thisLock["num"] == 1) ? "" : "s") . " lock" . 
             (($thisLock["num"] == 1) ? "s" : "") . " at " . $thisLock["lockStr"] . "</td></tr>\n";
-        if( $i == 0 && $results["weekNumber"] == 18 ) {
+        if( $i == 0 && $results["weekNumber"] == 19 ) {
           echo "          <tr><td class='noBorder'>Consolation Pool locks at " . $lockResults[0]["lockStr"] . "</td></tr>\n";
         }
       }
@@ -73,19 +73,19 @@
   {
     echo $era[0]["heading"];
   }
-  else if( $results["weekNumber"] == 18 )
+  else if( $results["weekNumber"] == 19 )
   {
     echo "Wild Card Round";
   }
-  else if( $results["weekNumber"] == 19 )
+  else if( $results["weekNumber"] == 20 )
   {
     echo "Divisional Round";
   }
-  else if( $results["weekNumber"] == 20 )
+  else if( $results["weekNumber"] == 21 )
   {
     echo "Conference Championship";
   }
-  else if( $results["weekNumber"] == 22 )
+  else if( $results["weekNumber"] == 23 )
   {
     echo "Super Bowl";
   }

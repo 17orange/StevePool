@@ -27,7 +27,8 @@
   $minGameID = -1;
   $results = RunQuery( "select *, if(homeScore > awayScore, homeTeam, if(awayScore > homeScore, awayTeam, '')) as leader, " .
                        "if(lockTime>now(), 0, 1) as isLocked " . 
-                       "from Game where weekNumber>17 and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID", false );
+                       "from Game where weekNumber>" . (($_SESSION["showPicksSeason"] <= 2020) ? "17" : "18") .
+                       " and season=" . $_SESSION["showPicksSeason"] . " order by gameTime, gameID", false );
   foreach( $results as $thisGame )
   {
     if( $minGameID == -1 || $thisGame["gameID"] < $minGameID )
@@ -158,6 +159,7 @@
                : array("wc1AFC", "wc2AFC", "wc3AFC", "wc1NFC", "wc2NFC", "wc3NFC", "div1AFC", "div2AFC", "div1NFC", "div2NFC", "confAFC", "confNFC", "superBowl");
     $pointVals = ($_SESSION["showPicksSeason"] < 2020) ? array(1,1,1,1,2,2,2,2,4,4,8) : array(1,1,1,1,1,1,2,2,2,2,4,4,8);
     $eliminatedTeams = array();
+    $divWinners = array();
     $swapColIndex = ($_SESSION["showPicksSeason"] < 2020) ? 4 : 6;
     for( $ind=0; $ind<count($pointVals); $ind++ )
     {
@@ -191,11 +193,25 @@
         $eliminatedTeams[$thePick] = $games[$ind]["status"];
       }
 
+      // keep track of their picks in the divisional round
+      if( $ind>=$swapColIndex && $ind<($swapColIndex + 4) ) {
+        $divWinners[] = $thePick;
+      }
+
       // factor it into the max
       $started = (($games[$ind]["status"] != 1) && ($games[$ind]["status"] != 19));
       $possibleMax += ((isset($eliminatedTeams[$thePick]) && ($eliminatedTeams[$thePick]== 3)) || // team eliminated
                        ($started && ($thePick == "")))                                            // they missed it
                       ? 0 : $pointVals[$ind];
+
+      // check for double scoop in the divisional round
+      if( $ind==($swapColIndex + 4) ) {
+        for( $ind2=$swapColIndex; $ind2<($swapColIndex+4); $ind2++ ) {
+          if( ($games[$ind]["status"] != 3) && in_array($games[$ind2]["homeTeam"], $divWinners) && in_array($games[$ind2]["awayTeam"], $divWinners) ) {
+            $possibleMax -= $pointVals[$ind2];
+          }
+        }
+      }
     }
 
     // see if that ends this person's picks

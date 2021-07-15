@@ -1,4 +1,4 @@
-      <span>Making Picks for <?php echo (($result["weekNumber"] == 18) ? "Wild Card" : "Divisional"); ?> Round</span>
+      <span>Making Picks for <?php echo (($result["weekNumber"] == 19) ? "Wild Card" : "Divisional"); ?> Round</span>
       <br/>
       <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
         <tr>
@@ -8,7 +8,7 @@
               <tr>
                 <td class="noBorder" colspan=8 style="text-align:center; font-size: 20px;"><table style="width:100%"><tr>
                   <td class="noBorder warningZone" style="font-size: 20px">&nbsp;</td>
-                  <td class="noBorder" style="text-align:center; font-size: 20px;"><?php echo (($result["weekNumber"] == 18) ? "Wild Card" : "Divisional"); ?> Games</td>
+                  <td class="noBorder" style="text-align:center; font-size: 20px;"><?php echo (($result["weekNumber"] == 19) ? "Wild Card" : "Divisional"); ?> Games</td>
                   <td class="noBorder warningZone" style="font-size: 20px">&nbsp;</td>
                 </tr></table></td>
               </tr>
@@ -27,8 +27,8 @@
   }
 
   // slider guts
-  $sliderCount = (($result["weekNumber"] == 18) ? 6 : 4);
-  $totalPoints = (($result["weekNumber"] == 18) ? 30 : 20);
+  $sliderCount = (($result["weekNumber"] == 19) ? 6 : 4);
+  $totalPoints = (($result["weekNumber"] == 19) ? 30 : 20);
   echo "              <tr style=\"display:none\"><td>\n";
   for($i=0; $i<=$sliderCount; $i++)
   {
@@ -148,11 +148,11 @@
         <tr>
           <td class="noBorder">
             <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
-              <tr><td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 18) ? 23 : 15); ?>>&nbsp;</td></tr>
+              <tr><td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 19) ? 23 : 15); ?>>&nbsp;</td></tr>
               <tr>
-                <td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 18) ? 23 : 15); ?> style="text-align:center; font-size:20px;">Tiebreakers</td>
+                <td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 19) ? 23 : 15); ?> style="text-align:center; font-size:20px;">Tiebreakers</td>
               </tr>
-              <tr style="height:20px"><td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 18) ? 23 : 15); ?>>&nbsp;</td></tr>
+              <tr style="height:20px"><td class="noBorder" colspan=<?php echo (($result["weekNumber"] == 19) ? 23 : 15); ?>>&nbsp;</td></tr>
 <?php
   $games = RunQuery( "select homeTeam, awayTeam from Game where weekNumber=" . $result["weekNumber"] . 
                      " and season=" . $result["season"] . " order by tieBreakOrder desc, gameTime desc" );
@@ -166,9 +166,9 @@
     if( $count ) {
       echo "                <td class=\"noBorder\" style=\"min-width:30px;\">&nbsp;</td>\n";
     }
-    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:" . (($result["weekNumber"] == 18) ? 6 : 9.375) . "%\">" . $teamAliases[$thisGame["awayTeam"]] . "</td>\n";
-    echo "                <td class=\"noBorder\" style=\"width:" . (($result["weekNumber"] == 18) ? 2 : 3.125) . "%\">&nbsp;</td>\n";
-    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:" . (($result["weekNumber"] == 18) ? 6 : 9.375) . "%\">" . $teamAliases[$thisGame["homeTeam"]] . "</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:" . (($result["weekNumber"] == 19) ? 6 : 9.375) . "%\">" . $teamAliases[$thisGame["awayTeam"]] . "</td>\n";
+    echo "                <td class=\"noBorder\" style=\"width:" . (($result["weekNumber"] == 19) ? 2 : 3.125) . "%\">&nbsp;</td>\n";
+    echo "                <td class=\"noBorder\" style=\"font-size:30px;width:" . (($result["weekNumber"] == 19) ? 6 : 9.375) . "%\">" . $teamAliases[$thisGame["homeTeam"]] . "</td>\n";
     $count++;
   }
   echo "              </tr>\n";
@@ -214,7 +214,7 @@
               <input type="hidden" id="windowScrollPos" name="windowScrollPos" value="0">
 <?php
   echo "              <input type=\"hidden\" id=\"picksType\" name=\"picksType\" value=\"" . 
-      (($result["weekNumber"] == 18) ? "wildCard" : "divisional") . "\">\n";
+      (($result["weekNumber"] == 19) ? "wildCard" : "divisional") . "\">\n";
   for( $i=1; $i<=$sliderCount; $i++ )
   {
     if( isset($picks[$i]) && ($picks[$i]["canChange"] != 0) )

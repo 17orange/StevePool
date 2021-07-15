@@ -9,7 +9,7 @@
     <form action="." method="post">
       <input type="hidden" name="adminTask" value="manageGames" />
 <?php
-    for( $i=1; $i<18; $i+=1 )
+    for( $i=1; $i<19; $i+=1 )
     {
       echo "      <input type=\"radio\" name=\"manageGameWeek\" value=\"" . $i . "\" " .
            (($_SESSION["manageGameWeek"] == $i) ? "checked " : "") . "/><span>" . $i . "</span><br/>\n";

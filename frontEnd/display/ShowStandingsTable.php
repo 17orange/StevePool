@@ -20,7 +20,7 @@
 
   // grab the next refresh time
   $gamesLive = 0;
-  $lastWeek = 18;
+  $lastWeek = (($_SESSION["showStandingsSeason"] <= 2020) ? 18 : 19);
   $results = RunQuery( "select count(*) as num, weekNumber from Game where season=" . 
                        $_SESSION["showStandingsSeason"] . " and status=2 order by gameTime, gameID" );
   if( $results[0]["num"] > 0 )
@@ -69,7 +69,7 @@
       if( $userID != -1 )
       {
         echo "        <tr>\n";
-        echo "          <td class=\"noBorder\" style=\"height:30px;\"colspan=\"25\"></td>";
+        echo "          <td class=\"noBorder\" style=\"height:30px;\"colspan=\"" . (($_SESSION["showStandingsSeason"] <= 2020) ? "25" : "26") . "\"></td>";
         echo "        </tr>\n";
       }
       $userID = -1;
@@ -79,7 +79,7 @@
 
       // show the title
       echo "        <tr>\n";
-      echo "          <td class=\"headerBackgroundTable\" colspan=\"25\" style=\"font-size:24px\">";
+      echo "          <td class=\"headerBackgroundTable\" colspan=\"" . (($_SESSION["showStandingsSeason"] <= 2020) ? "25" : "26") . "\" style=\"font-size:24px\">";
       if( $_SESSION["showStandingsSplit"] == "division" )
       {
         echo $thisWeek["cName"] . " " . $thisWeek["dName"] . " Division";
@@ -100,7 +100,7 @@
           <td class="headerBackgroundTable" style="cursor:pointer;" onClick="SortTable('name');">Player</td>
 <?php
       // show the games from that week
-      for( $i=1; $i<18; $i++ )
+      for( $i=1; $i<(($_SESSION["showStandingsSeason"] <= 2020) ? 18 : 19); $i++ )
       {
         echo "          <td class=\"headerBackgroundTable\" style=\"cursor:pointer;\" onClick=\"SortTable('w" . 
             $i . "');\">W" . $i . "</td>\n";
@@ -197,22 +197,22 @@
                 }
 
                 // sort these rows
-                var compareIndex = rows[i1].cells.length - 24;
+                var compareIndex = rows[i1].cells.length - (($_SESSION["showStandingsSeason"] <= 2020) ? 24 : 25);
                 if( arg == "picks" )
                 {
-                  compareIndex += 21;
+                  compareIndex += (($_SESSION["showStandingsSeason"] <= 2020) ? 21 : 22);
                 }
                 else if( arg == "misses" )
                 {
-                  compareIndex += 20;
+                  compareIndex += (($_SESSION["showStandingsSeason"] <= 2020) ? 20 : 21);
                 }
                 else if( arg == "wins" )
                 {
-                  compareIndex += 19;
+                  compareIndex += (($_SESSION["showStandingsSeason"] <= 2020) ? 19 : 20);
                 }
                 else if( arg == "points" )
                 {
-                  compareIndex += 18;
+                  compareIndex += (($_SESSION["showStandingsSeason"] <= 2020) ? 18 : 19);
                 }
                 else if( arg != "name")
                 {

@@ -7,11 +7,11 @@
     $toPlayoffs = (($_POST["showPicksSplit"] == "playoffs") || ($_POST["showPicksSplit"] == "consolation"));
     if( $inPlayoffs && !$toPlayoffs )
     {
-      $_POST["showPicksWeek"] = 17;
+      $_POST["showPicksWeek"] = ($_POST["showPicksSeason"] <= 2020) ? 17 : 18;
     }
     if( !$inPlayoffs && $toPlayoffs )
     {
-      $_POST["showPicksWeek"] = 18;
+      $_POST["showPicksWeek"] = ($_POST["showPicksSeason"] <= 2020) ? 18 : 19;
     }
 
     // see if we need to cap the playoffs stuff

@@ -21,6 +21,8 @@ drop procedure if exists ChangeGameTime;
 drop procedure if exists ChangeLockTime;
 drop procedure if exists MakeGameDisaster;
 drop procedure if exists AdminSetPicks;
+drop procedure if exists AdminSetPlayoffPicks;
+drop procedure if exists AdminSetConsolationPicks;
 drop procedure if exists FreezeUser;
 
 delimiter //
@@ -757,6 +759,118 @@ begin
   end if;
 end;  //
 
+create procedure AdminSetPlayoffPicks( in _userID    int unsigned , 
+                                       in _gameID1   int unsigned ,
+                                       in _type1     char(10)     ,
+                                       in _pick1     char(3)      ,
+                                       in _points1   smallint     ,
+                                       in _gameID2   int unsigned ,
+                                       in _type2     char(10)     ,
+                                       in _pick2     char(3)      ,
+                                       in _points2   smallint     ,
+                                       in _gameID3   int unsigned ,
+                                       in _type3     char(10)     ,
+                                       in _pick3     char(3)      ,
+                                       in _points3   smallint     ,
+                                       in _gameID4   int unsigned ,
+                                       in _type4     char(10)     ,
+                                       in _pick4     char(3)      ,
+                                       in _points4   smallint     ,
+                                       in _gameID5   int unsigned ,
+                                       in _type5     char(10)     ,
+                                       in _pick5     char(3)      ,
+                                       in _points5   smallint     ,
+                                       in _gameID6   int unsigned ,
+                                       in _type6     char(10)     ,
+                                       in _pick6     char(3)      ,
+                                       in _points6   smallint     ,
+                                       in _gameID7   int unsigned ,
+                                       in _type7     char(10)     ,
+                                       in _pick7     char(3)      ,
+                                       in _points7   smallint     ,
+                                       in _gameID8   int unsigned ,
+                                       in _type8     char(10)     ,
+                                       in _pick8     char(3)      ,
+                                       in _points8   smallint     ,
+                                       in _gameID9   int unsigned ,
+                                       in _type9     char(10)     ,
+                                       in _pick9     char(3)      ,
+                                       in _points9   smallint     ,
+                                       in _gameID10  int unsigned ,
+                                       in _type10    char(10)     ,
+                                       in _pick10    char(3)      ,
+                                       in _points10  smallint     ,
+                                       in _tieBreak1 smallint     ,
+                                       in _tieBreak2 smallint     ,
+                                       in _tieBreak3 smallint     ,
+                                       in _tieBreak4 smallint     ,
+                                       in _tieBreak5 smallint     ,
+                                       in _tieBreak6 smallint     )
+begin
+  # make sure theyve sent in valid picks
+  declare _numPicks tinyint unsigned default 0;
+  declare _numGamesBlank tinyint unsigned default 0;
+  declare _numWeeks tinyint unsigned default 0;
+  select if(_gameID10!=0,1,0) + if(_gameID9!=0,1,0) + if(_gameID8!=0,1,0) + 
+         if(_gameID7!=0,1,0) + if(_gameID6!=0,1,0) + if(_gameID5!=0,1,0) + 
+         if(_gameID4!=0,1,0) + if(_gameID3!=0,1,0) + if(_gameID2!=0,1,0) + if(_gameID1!=0,1,0) into _numPicks;
+  select if(_pick10='' and _gameID10!=0,1,0) + if(_pick9='' and _gameID9!=0,1,0) + 
+         if(_pick8='' and _gameID8!=0,1,0) + if(_pick7='' and _gameID7!=0,1,0) + 
+         if(_pick6='' and _gameID6!=0,1,0) + if(_pick5='' and _gameID5!=0,1,0) + 
+         if(_pick4='' and _gameID4!=0,1,0) + if(_pick3='' and _gameID3!=0,1,0) + 
+         if(_pick2='' and _gameID2!=0,1,0) + if(_pick1='' and _gameID1!=0,1,0) into _numGamesBlank;
+  select count(distinct weekNumber) into _numWeeks from Game where gameID in 
+         (_gameID10, _gameID9, _gameID8, _gameID7, _gameID6, _gameID5, _gameID4, _gameID3, _gameID2, _gameID1);
+
+  # make sure everything is set up correct-like
+  if (_numPicks + _numGamesBlank) = 10 and _numWeeks = 1 then
+    # save the winners they picked
+    update Pick set winner=if(_pick10='', null, _pick10), points=_points10 where userID=_userID and gameID=_gameID10 and type=_type10;
+    update Pick set winner=if(_pick9='', null, _pick9), points=_points9 where userID=_userID and gameID=_gameID9 and type=_type9;
+    update Pick set winner=if(_pick8='', null, _pick8), points=_points8 where userID=_userID and gameID=_gameID8 and type=_type8;
+    update Pick set winner=if(_pick7='', null, _pick7), points=_points7 where userID=_userID and gameID=_gameID7 and type=_type7;
+    update Pick set winner=if(_pick6='', null, _pick6), points=_points6 where userID=_userID and gameID=_gameID6 and type=_type6;
+    update Pick set winner=if(_pick5='', null, _pick5), points=_points5 where userID=_userID and gameID=_gameID5 and type=_type5;
+    update Pick set winner=if(_pick4='', null, _pick4), points=_points4 where userID=_userID and gameID=_gameID4 and type=_type4;
+    update Pick set winner=if(_pick3='', null, _pick3), points=_points3 where userID=_userID and gameID=_gameID3 and type=_type3;
+    update Pick set winner=if(_pick2='', null, _pick2), points=_points2 where userID=_userID and gameID=_gameID2 and type=_type2;
+    update Pick set winner=if(_pick1='', null, _pick1), points=_points1 where userID=_userID and gameID=_gameID1 and type=_type1;
+
+    # fix the tiebreaker
+    update PlayoffResult join Game using (weekNumber) set tieBreaker1=_tieBreak1, tieBreaker2=_tieBreak2, tieBreaker3=_tieBreak3, 
+           tieBreaker4=_tieBreak4, tieBreaker5=_tieBreak5, tieBreaker6=_tieBreak6 where userID=_userID and gameID=_gameID1;
+
+    # add an event for it
+    select weekNumber into _numWeeks from Game where gameID in 
+           (_gameID10, _gameID9, _gameID8, _gameID7, _gameID6, _gameID5, _gameID4, _gameID3, _gameID2, _gameID1) limit 1;
+    insert into Event (userID, gameID, type, atTime) values (_userID, _numWeeks, 'picksEdited', now());
+  end if;
+end;  //
+
+create procedure AdminSetConsolationPicks( in _userID    int unsigned , 
+                                           in _wc1AFC    char(3)      ,
+                                           in _wc2AFC    char(3)      ,
+                                           in _wc3AFC    char(3)      ,
+                                           in _wc1NFC    char(3)      ,
+                                           in _wc2NFC    char(3)      ,
+                                           in _wc3NFC    char(3)      ,
+                                           in _div1AFC   char(3)      ,
+                                           in _div2AFC   char(3)      ,
+                                           in _div1NFC   char(3)      ,
+                                           in _div2NFC   char(3)      ,
+                                           in _confAFC   char(3)      ,
+                                           in _confNFC   char(3)      ,
+                                           in _superBowl char(3)      ,
+                                           in _tieBreak  smallint     )
+begin
+  update ConsolationResult set wc1AFC=_wc1AFC, wc2AFC=_wc2AFC, wc3AFC=_wc3AFC, wc1NFC=_wc1NFC, wc2NFC=_wc2NFC, wc3NFC=_wc3NFC, 
+         div1AFC=_div1AFC, div2AFC=_div2AFC, div1NFC=_div1NFC, div2NFC=_div2NFC, confAFC=confAFC, confNFC=_confNFC, 
+         superBowl=_superBowl, tieBreaker=_tieBreak where userID=_userID and season=(select value from Constants where name='fetchSeason');
+
+  # add an event for it
+  insert into Event (userID, gameID, type, atTime) values (_userID, 0, 'picksEdited', now());
+end;  //
+
 create procedure FreezeUser( in _userID  int unsigned ,
                              in _freeze  char(1)      )
 begin
@@ -803,6 +917,8 @@ grant execute on procedure StevePool.ChangeGameTime to 'StevePoolAdmin'@'localho
 grant execute on procedure StevePool.ChangeLockTime to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.MakeGameDisaster to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.AdminSetPicks to 'StevePoolAdmin'@'localhost';  //
+grant execute on procedure StevePool.AdminSetPlayoffPicks to 'StevePoolAdmin'@'localhost';  //
+grant execute on procedure StevePool.AdminSetConsolationPicks to 'StevePoolAdmin'@'localhost';  //
 grant execute on procedure StevePool.FreezeUser to 'StevePoolAdmin'@'localhost';  //
 
 

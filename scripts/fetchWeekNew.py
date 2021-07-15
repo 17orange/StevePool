@@ -136,15 +136,18 @@ def GrabWeekGames(week, season):
 			# its not over yet, so we need to keep going
 			if gameID[0][1] == statsUtil.IN_PROGRESS and timeLeft[:5] != "FINAL":
 				allDone = False
-#		# its not in there yet, so we need to enter it
-#		else:
-#			# its over, so just give it a dummy gametime
-#			if timeLeft[:5] == "FINAL":
+		# its not in there yet, so we need to enter it
+		else:
+			datadate = boxScore.find(" data-date=\"") + 12
+			datadate = boxScore[datadate:(datadate + 17)]
+			gameTime = datetime.datetime.strptime(datadate, "%Y-%m-%dT%H:%MZ")
+			# its over, so just give it a dummy gametime
+			if timeLeft[:5] == "FINAL":
 #				if day[4:6] == "01":
 #					gameTime = datetime.datetime.strptime((season + 1) + " " + day + " 01:00 PM", "%Y %a, %b %d %I:%M %p")
 #				else:
 #					gameTime = datetime.datetime.strptime(season + " " + day + " 01:00 PM", "%Y %a, %b %d %I:%M %p")
-#				status = statsUtil.FINAL
+				status = statsUtil.FINAL
 #			# weird bug fix for the one london game with AM PM
 #			elif timeLeft[-9:] == "AM  PM ET":
 #				if day[:3] == "Jan":
@@ -152,21 +155,21 @@ def GrabWeekGames(week, season):
 #				else:
 #					gameTime = datetime.datetime.strptime(season + " " + day + " " + timeLeft[:-7], "%Y %a, %b %d %I:%M %p")
 #				status = statsUtil.FUTURE
-#			# its in the future (we dont have any in progress logic, because im not 
-#			#                    waiting until games are happening to load the database)
-#			else:
+			# its in the future (we dont have any in progress logic, because im not 
+			#                    waiting until games are happening to load the database)
+			else:
 #				if day[4:6] == "01":
 #					###gameTime = datetime.datetime.strptime((season + 1) + " " + day + " " + timeLeft[:-4], "%Y %a, %b %d %I:%M %p")
 #					gameTime = datetime.datetime.strptime(day + " " + ("0" if (len(clock) == 4) else "") + clock + " PM", "%Y%m%d %I:%M %p")
 #				else:
 #					###gameTime = datetime.datetime.strptime(season + " " + day + " " + timeLeft[:-4], "%Y %a, %b %d %I:%M %p")
 #					gameTime = datetime.datetime.strptime(day + " " + ("0" if (len(clock) == 4) else "") + clock + " PM", "%Y%m%d %I:%M %p")
-#				status = statsUtil.FUTURE
-#			# add it to the database
-#			cur.execute("insert into Game (season, weekNumber, homeTeam, homeScore1Q, homeScore2Q, homeScore3Q, homeScore, awayTeam, awayScore1Q, awayScore2Q, awayScore3Q, awayScore, gameTime, lockTime, status, NFLgameID) values (" + season + "," + week + ",'" + homeTeam + "'," + str(home1QScore) + "," + str(home2QScore) + "," + str(home3QScore) + "," + str(homeScore) + ",'" + awayTeam + "'," + str(away1QScore) + "," + str(away2QScore) + "," + str(away3QScore) + "," + str(awayScore) + ",'" + gameTime.strftime("%Y-%m-%d %H:%M:00") + "','" + gameTime.strftime("%Y-%m-%d %H:%M:00") + "'," + str(status) + "," + str(nflID) + ")")
+				status = statsUtil.FUTURE
+			# add it to the database (THESE ARE IN ZULU TIME!! YOU NEED TO CORRECT THEM BY HAND FOR EST/EDT)
+			cur.execute("insert into Game (season, weekNumber, homeTeam, homeScore1Q, homeScore2Q, homeScore3Q, homeScore, awayTeam, awayScore1Q, awayScore2Q, awayScore3Q, awayScore, gameTime, lockTime, status, NFLgameID) values (" + season + "," + week + ",'" + homeTeam + "'," + str(homeScore[0]) + "," + str(homeScore[1]) + "," + str(homeScore[2]) + "," + str(homeScore[3]) + ",'" + awayTeam + "'," + str(awayScore[0]) + "," + str(awayScore[1]) + "," + str(awayScore[2]) + "," + str(awayScore[3]) + ",'" + gameTime.strftime("%Y-%m-%d %H:%M:00") + "','" + gameTime.strftime("%Y-%m-%d %H:%M:00") + "'," + str(status) + ",0)")
 		if (len(gameID) > 0): # or status != statsUtil.FUTURE):
 			# grab the yardage totals and touchdown counts
-			cur.execute("select gameID, concat('NFL_', date_format(gameTime, '%Y%m%d'), '_', if(((season%2) = 1) and (weekNumber=22), homeTeam, awayTeam),'@', if(((season%2) = 1) and (weekNumber=22), awayTeam, homeTeam)) as URL from Game where season=" + str(season) + " and weekNumber=" + str(week) + " and homeTeam='" + homeTeam + "' and awayTeam='" + awayTeam + "'")
+			cur.execute("select gameID, concat('NFL_', date_format(gameTime, '%Y%m%d'), '_', if(((season%2) = 1) and (weekNumber=23), homeTeam, awayTeam),'@', if(((season%2) = 1) and (weekNumber=23), awayTeam, homeTeam)) as URL from Game where season=" + str(season) + " and weekNumber=" + str(week) + " and homeTeam='" + homeTeam + "' and awayTeam='" + awayTeam + "'")
 			dbInfo = cur.fetchall()[0]
 			analyzePage = str(urllib.request.urlopen("http://www.cbssports.com/nfl/gametracker/live/" + dbInfo[1].replace("JAX", "JAC").replace("LAC", "QXV").replace("LA", "LAR").replace("QXV", "LAC")).read())
 			preHalftime = ((timeLeft == "Halftime") or ((timeLeft[:1] == "Q") and timeLeft[1:2].isnumeric() and (int(timeLeft[1:2]) < 3)))

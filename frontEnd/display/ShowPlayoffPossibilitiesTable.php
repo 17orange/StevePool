@@ -80,11 +80,12 @@
            "if(type='TDs', if(homeTDs>awayTDs, homeTeam, if(awayTDs>homeTDs, awayTeam, 'TIE')), " . 
            "if(type='TDs2Q', if(homeTDs2Q>awayTDs2Q, homeTeam, if(awayTDs2Q>homeTDs2Q, awayTeam, 'TIE')), " . 
            "'')))))))))) as leader, PlayoffResult.points as wPts, SeasonResult.points as sPts, if(lockTime>now(), 1, 0) " . 
-           "as status, Conference.name as cName, " . (($_SESSION["showPicksWeek"] == 22) ? "1" : "confID") . " as section, " .
+           "as status, Conference.name as cName, " . 
+           (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23)) ? "1" : "confID") . " as section, " .
            "if(Game.status=3, 1, 0) as isFinal, Game.status as gStatus, weeklyWins, ";
 
   // fill in the tiebreaker data
-  if( $_SESSION["showPicksWeek"] == 22 )
+  if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
   {
     $query .= "if(prevWeek1>=0, if(prevWeek2>=0, if(prevWeek3>=0, " . ($poolLocked ? "0" : "-prevWeek3") . 
               ", 25 + prevWeek3), 50 + prevWeek2), 75 + prevWeek1) as tb1, ";
@@ -94,7 +95,7 @@
               "if(type='TDs', 2, 1))))))))) as typeSort ";
     $sort = ", tb1 asc, wPts desc, tb2 asc" . ($poolLocked ? ", tieBreaker1" : "");
   }
-  else if( $_SESSION["showPicksWeek"] == 20 )
+  else if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
   {
     $query .= "if(prevWeek1>=0, if(prevWeek2>=0, " . ($poolLocked ? "0" : "-prevWeek2") . ", 25 + prevWeek2), 50 + prevWeek1) as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[1]["homeScore"] + $games[1]["awayScore"]) . ")") : "1") . " as tb2, ";
@@ -108,7 +109,7 @@
   }
   else
   {
-    $query .= (($_SESSION["showPicksWeek"] == 18) ? "if(firstRoundBye='Y', 1, 2)" : 
+    $query .= (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) ? "if(firstRoundBye='Y', 1, 2)" : 
                ($poolLocked ? "if(prevWeek1>=0, -20, 25 + prevWeek1)"
                             : "if(prevWeek1=0, -20, if(prevWeek1>0, -prevWeek1, 25 + prevWeek1))")) . " as tb1, ";
     $query .= ($poolLocked ? ("abs(tieBreaker1 - " . ($games[3]["homeScore"] + $games[3]["awayScore"]) . ")") : "1") . " as tb2, ";
@@ -139,7 +140,9 @@
   $currScore = 500;
   $possibleMax = 0;
   $grouping = 0;
-  $colSpan = ($_SESSION["showPicksWeek"] == 18) ? (($_SESSION["showPicksSeason"] < 2020) ? 14 : 18) : (($_SESSION["showPicksWeek"] == 19) ? 15 : (($_SESSION["showPicksWeek"] == 20) ? 16 : 19));
+  $colSpan = ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) ? (($_SESSION["showPicksSeason"] < 2020) ? 14 : 18) :
+             (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20)) ? 15 : 
+             (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? 16 : 19));
   for( $jk=0; $jk<count($pickBank); $jk++ )
   {
     $thisPick = $pickBank[$jk];
@@ -167,7 +170,7 @@
       // show the title
       echo "        <tr>\n";
       echo "          <td colspan=\"" . $colSpan . "\" class=\"headerBackgroundTable\" style=\"font-size:24px;\">";
-      if( $_SESSION["showPicksWeek"] < 22 )
+      if( $_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
       {
         echo $thisPick["cName"] . " Conference";
       }
@@ -183,15 +186,15 @@
           <td class="headerBackgroundTable" style="width:16%; cursor:pointer;" onClick="SortTable('name');">Player</td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('ytdPts');">Regular Season</td>
 <?php
-      if( $_SESSION["showPicksWeek"] > 18 )
+      if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) )
       {
         echo "          <td class=\"headerBackgroundTable\" style=\"width:3%; cursor:pointer;\" onClick=\"SortTable('wcPts');\">Wild Card Round</td>\n";
       }
-      if( $_SESSION["showPicksWeek"] > 19 )
+      if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20) )
       {
         echo "          <td class=\"headerBackgroundTable\" style=\"width:3%; cursor:pointer;\" onClick=\"SortTable('divPts');\">Divisional Round</td>\n";
       }
-      if( $_SESSION["showPicksWeek"] > 20 )
+      if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
       {
         echo "          <td class=\"headerBackgroundTable\" style=\"width:3%; cursor:pointer;\" onClick=\"SortTable('confPts');\">Conference Championship</td>\n";
       }
@@ -199,9 +202,9 @@
       // show the games from that week
       for( $i=0; $i<count($games); $i++ )
       {
-        if( $_SESSION["showPicksWeek"] >= 20 )
+        if( $_SESSION["showPicksWeek"] >= (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
         {           
-          if( $_SESSION["showPicksWeek"] == 22 )
+          if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
           {           
             echo "          <td style=\"display:none;\">Weekly Wins</td>\n";
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
@@ -367,7 +370,7 @@
             echo "          </td>\n";
           }
           echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;" . 
-              (($_SESSION["showPicksWeek"]==20) ? " border-right:none;" : "") . "\">\n";
+              (($_SESSION["showPicksWeek"]==(($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? " border-right:none;" : "") . "\">\n";
           echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-Score2Q\">\n";
           echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score2Q','" . $games[$i]["awayTeam"] . "');\">\n";
           echo "                <td class=\"posTop\" style=\"background-color:" . 
@@ -390,12 +393,16 @@
           echo "              </tr>\n";
           echo "            </table>\n";
           echo "          </td>\n";
-          if( $_SESSION["showPicksWeek"] == 20 )
+          if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
           {
 ?>
           <td class="headerBackgroundTable" style="width:3%; border-left:none;">
             <input type="submit" onclick="AdjustScore(<?php echo ($grouping . "," . ($grouping + (($grouping < 4) ? 4 : -4))); ?>,1);" value="+"><br>
-            Halftime Score<br><span id="caption<?php echo $grouping; ?>"><?php echo ($games[$i]["awayScore2Q"] + $games[$i]["homeScore2Q"]); ?></span><br>
+            Halftime Score<br><input id="adjust<?php echo $grouping; ?>" value="<?php echo ($games[$i]["awayScore2Q"] + $games[$i]["homeScore2Q"]); ?>" style="display:none; width:60%" 
+            onFocusOut="SubmitScoreBox(<?php echo ($grouping . "," . ($grouping + (($grouping < 4) ? 4 : -4))); ?>);" onKeyUp="KeyUpScoreBox(event, <?php 
+            echo ($grouping . "," . ($grouping + (($grouping < 4) ? 4 : -4))); ?>);">
+            <span id="caption<?php echo $grouping; ?>" style="cursor:pointer" onClick="ShowScoreBox(<?php echo ($grouping . "," . ($grouping + (($grouping < 4) ? 4 : -4))); ?>);"><?php 
+            echo ($games[$i]["awayScore2Q"] + $games[$i]["homeScore2Q"]); ?></span><br>
             <input type="submit" onclick="AdjustScore(<?php echo ($grouping . "," . ($grouping + (($grouping < 4) ? 4 : -4))); ?>,-1);" value="-">
           </td>
 <?php
@@ -446,7 +453,7 @@
             $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . 
             "\"/></div></div></td>\n";
         echo "              </tr>\n";
-        if( $_SESSION["showPicksWeek"] >= 20 )
+        if( $_SESSION["showPicksWeek"] >= (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
         {
           echo "              <tr>\n";
           echo "                <td colspan=\"2\" class=\"noBorder\" style=\"height:35px;\">Final</td>\n";
@@ -454,11 +461,16 @@
         }
         echo "            </table>\n";
         echo "          </td>\n";
-        $indexJump = (($_SESSION["showPicksWeek"] == 18) && ($_SESSION["showPicksSeason"] >= 2020)) ? 6 : 4;
+        $indexJump = (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) && ($_SESSION["showPicksSeason"] >= 2020)) ? 6 : 4;
 ?>
           <td class="headerBackgroundTable" style="width:3%; border-left:none;">
             <input type="submit" onclick="AdjustScore(<?php echo ($grouping . "," . ($grouping + (($grouping < $indexJump) ? $indexJump : -$indexJump))); ?>,1);" value="+"><br>
-            Score<br><span id="caption<?php echo $grouping; ?>"><?php echo ($games[$i]["awayScore"] + $games[$i]["homeScore"]); ?></span><br>
+            Score<br><input id="adjust<?php echo $grouping; ?>" value="<?php echo ($games[$i]["awayScore"] + $games[$i]["homeScore"]); ?>" style="display:none; width:60%" 
+            onFocusOut="SubmitScoreBox(<?php echo ($grouping . "," . ($grouping + (($grouping < $indexJump) ? $indexJump : -$indexJump))); ?>);" onKeyUp="KeyUpScoreBox(event, <?php 
+            echo ($grouping . "," . ($grouping + (($grouping < $indexJump) ? $indexJump : -$indexJump))); ?>);">
+            <span id="caption<?php echo $grouping; ?>" style="cursor:pointer" onClick="ShowScoreBox(<?php 
+            echo ($grouping . "," . ($grouping + (($grouping < $indexJump) ? $indexJump : -$indexJump))); ?>);"><?php 
+            echo ($games[$i]["awayScore"] + $games[$i]["homeScore"]); ?></span><br>
             <input type="submit" onclick="AdjustScore(<?php echo ($grouping . "," . ($grouping + (($grouping < $indexJump) ? $indexJump : -$indexJump))); ?>,-1);" value="-">
           </td>
 <?php
@@ -471,7 +483,7 @@
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('points');">Total Points</td>
           <td class="headerBackgroundTable" style="width:3%; cursor:pointer;" onClick="SortTable('maxPts');">Max</td>
 <?php
-      if( $_SESSION["showPicksWeek"] < 22 )
+      if( $_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
       {
         echo "          <td class=\"headerBackgroundTable\" style=\"width:3%;\">Advance</td>\n";
       }
@@ -480,10 +492,10 @@
     // print their rank and name
     if( $thisPick["userID"] != $userID )
     {
-      $hasBye = ($_SESSION["showPicksWeek"] == 18 && $thisPick["firstRoundBye"] == "Y");
-      $eliminated = ($_SESSION["showPicksWeek"] >= 19 && $thisPick["prevWeek1"] < 0) || 
-                    ($_SESSION["showPicksWeek"] >= 20 && $thisPick["prevWeek2"] < 0) || 
-                    ($_SESSION["showPicksWeek"] == 22 && $thisPick["prevWeek3"] < 0);
+      $hasBye = ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) && $thisPick["firstRoundBye"] == "Y");
+      $eliminated = ($_SESSION["showPicksWeek"] >= (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20) && $thisPick["prevWeek1"] < 0) || 
+                    ($_SESSION["showPicksWeek"] >= (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) && $thisPick["prevWeek2"] < 0) || 
+                    ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) && $thisPick["prevWeek3"] < 0);
       $baseJK = $jk;
 
       // get their rank if theyre not on a bye
@@ -507,19 +519,19 @@
       echo "          <td class=\"lightBackgroundTable\">" . $thisPick["sPts"] . "</td>\n";
 
       // show wild card score
-      if( $_SESSION["showPicksWeek"] > 18 )
+      if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) )
       {
         echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] == 0) 
             ? "Bye" : (($thisPick["prevWeek1"] < 0) ? (($thisPick["prevWeek1"] + 1) * -1) : $thisPick["prevWeek1"])). "</td>\n";
       }
       // show divisional score
-      if( $_SESSION["showPicksWeek"] > 19 )
+      if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20) )
       {
         echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] < 0) 
             ? "--&nbsp;" : (($thisPick["prevWeek2"] < 0) ? (($thisPick["prevWeek2"] + 1) * -1) : $thisPick["prevWeek2"])) . "</td>\n";
       }
       // show conference score
-      if( $_SESSION["showPicksWeek"] > 20 )
+      if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
       {
         echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . 
             ((($thisPick["prevWeek1"] < 0) || ($thisPick["prevWeek2"] < 0)) ? "--&nbsp;" : 
@@ -572,9 +584,9 @@
     echo "</td>\n";
 
     // dump the extra slots
-    if( $_SESSION["showPicksWeek"] >= 20 && $eliminated )
+    if( $_SESSION["showPicksWeek"] >= (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) && $eliminated )
     {
-      $extras = ($_SESSION["showPicksWeek"] == 20) ? 2 : 9;
+      $extras = ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? 2 : 9;
       for( $z=0; $z<$extras; $z++ )
       {
         echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">--</td>\n";
@@ -586,13 +598,13 @@
                      ($poolLocked && ($thisPick["winner"] == "")))                                  // they missed it
                     ? 0 : $thisPick["pPts"];
 
-    if( $_SESSION["showPicksWeek"] < 22 )
+    if( $_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
     {
       // show their score pick
-      $radix = ((($_SESSION["showPicksWeek"] == 18) && ($_SESSION["showPicksSeason"] > 2019)) ? 6 : 4);
+      $radix = ((($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) && ($_SESSION["showPicksSeason"] > 2019)) ? 6 : 4);
       $toggle = (($jk - $baseJK) % $radix);
-      $toggle = (($toggle == 1) && ($_SESSION["showPicksWeek"] == 20)) ? 2 : 
-                ((($toggle == 2) && ($_SESSION["showPicksWeek"] == 20)) ? 1 : $toggle);
+      $toggle = (($toggle == 1) && ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21))) ? 2 : 
+                ((($toggle == 2) && ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21))) ? 1 : $toggle);
       $tbName = "tieBreaker" . ($radix - ($toggle % $radix));
       echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick[$tbName] == "0") 
           ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID) 
@@ -602,7 +614,7 @@
     // see if that ends this person's picks
     if( ($nextPick == null) || ($nextPick["userID"] != $thisPick["userID"]) )
     {
-      if( $_SESSION["showPicksWeek"] == 22 )
+      if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
       {
         echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick["tieBreaker1"] == "0") 
             ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID) 
@@ -613,7 +625,7 @@
       echo "          <td style=\"display:none\">" . (($games[0]["status"] == 1) ? "0" : $thisPick["tieBreaker1"]) . "</td>\n";
       echo "          <td class=\"lightBackgroundTable\">" . ($hasBye ? "Bye" : ($eliminated ? "Out" : $thisPick["wPts"])) . "</td>\n";
       echo "          <td class=\"lightBackgroundTable\">" . ($hasBye ? "--" : ($eliminated ? "--&nbsp;" : $possibleMax)) . "</td>\n";
-      if( $_SESSION["showPicksWeek"] < 22 )
+      if( $_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
       {
         echo "          <td class=\"lightBackgroundTable\">" . (($thisPick["advances"] == "Y") ? "Yes" : 
             (($thisPick["advances"] == "N") ? "No" : "Maybe")) . "</td>\n";
@@ -656,7 +668,7 @@
                 }
 
                 // sort these rows
-                var compareIndex = rows[i1].cells.length - <?php echo (($_SESSION["showPicksWeek"] == 22) ? "2" : "3"); ?>;
+                var compareIndex = rows[i1].cells.length - <?php echo (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23)) ? "2" : "3"); ?>;
                 if( arg == "maxPts" )
                 {
                   compareIndex += 1;
@@ -691,7 +703,7 @@
             }
 
 <?php
-  if( $_SESSION["showPicksWeek"] == 22 )
+  if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
   {
     echo "            SuperBowlTiebreakers();\n";
   } 
@@ -711,7 +723,7 @@
           {
             // grab the MNF score
 <?php
-  if( ($_SESSION["showPicksWeek"] == 18) && ($_SESSION["showPicksSeason"] >= 2020) ) {
+  if( ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) && ($_SESSION["showPicksSeason"] >= 2020) ) {
 ?>
             var TB1  = parseInt( document.getElementById("caption5").innerHTML );
             var TB2  = parseInt( document.getElementById("caption4").innerHTML );
@@ -721,9 +733,9 @@
             var TB4B = parseInt( document.getElementById("caption0").innerHTML );
 <?php
   }
-  else if( $_SESSION["showPicksWeek"] < 22 )
+  else if( $_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
   {
-    if( $_SESSION["showPicksWeek"] == 20 )
+    if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
     {
 ?>
             var TB2 = parseInt( document.getElementById("caption1").innerHTML );
@@ -774,15 +786,15 @@
               }
 
 <?php
-  if( ($_SESSION["showPicksWeek"] == 18) && ($_SESSION["showPicksSeason"] >= 2020) ) {
+  if( ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) && ($_SESSION["showPicksSeason"] >= 2020) ) {
 ?>
               var ghostTB4A = parseInt(rows[j].cells[rows[j].cells.length - 15].innerHTML );
               var ghostTB4B = parseInt(rows[j].cells[rows[j].cells.length - 17].innerHTML );
 <?php
   }
-  if( $_SESSION["showPicksWeek"] < 22 )
+  if( $_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
   {
-    if( $_SESSION["showPicksWeek"] == 20 )
+    if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
     {
 ?>
               var thisTB2 = parseInt(rows[j].cells[rows[j].cells.length - 11].innerHTML );
@@ -813,8 +825,9 @@
   }
 ?>
               var thisRow = [j, thisVal, isNumeric<?php 
-  echo ($poolLocked ? (", Math.abs(TB1 - thisTB1), false, thisTB1, false" . (($_SESSION["showPicksWeek"] < 22) 
-      ? (", Math.abs(TB2 - thisTB2), false, thisTB2, false, Math.abs(TB3 - thisTB3), false, thisTB3, false, Math.abs(TB4 - thisTB4), false, thisTB4, false" . (($_SESSION["showPicksWeek"] == 18) 
+  echo ($poolLocked ? (", Math.abs(TB1 - thisTB1), false, thisTB1, false" . (($_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23)) 
+      ? (", Math.abs(TB2 - thisTB2), false, thisTB2, false, Math.abs(TB3 - thisTB3), false, thisTB3, false, Math.abs(TB4 - thisTB4), false, thisTB4, false" . 
+        (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) 
         ? ((($_SESSION["showPicksSeason"] >= 2020) 
           ? ", Math.abs(TB4A - ghostTB4A), false, ghostTB4A, false, Math.abs(TB4B - ghostTB4B), false, ghostTB4B, false" 
           : "") . ", thisTB5, true") 
@@ -842,7 +855,7 @@
               // fix the row so it highlights me
               rows[j + start].className = (rows[j + start].contains(document.getElementById("myPicks")) ? "myRow" : "tableRow");
               thisScore = rows[j+start].cells[rows[j+start].cells.length - <?php 
-                echo ($_SESSION["showPicksWeek"] == 22) ? 2 : 3; ?>].innerHTML;
+                echo ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23)) ? 2 : 3; ?>].innerHTML;
               if( thisScore != "Bye" && thisScore != "Out" && mostRecentSort == "points" ) 
               {
                 thisScore = parseInt(thisScore);
@@ -979,6 +992,15 @@
           }
 
           var recalculating = false;
+<?php
+  if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
+  {
+?>
+          var sbWinner = "<?php echo ($games[0]["awayScore"] > $games[0]["homeScore"]) ? $games[0]["awayTeam"] : 
+                                     (($games[0]["awayScore"] < $games[0]["homeScore"]) ? $games[0]["homeTeam"] : "TIE"); ?>";
+<?php
+  }
+?>
           function ForceWinner(gameID, winner)
           {
             // guard against threading
@@ -1009,10 +1031,11 @@
                 // see if its the scores row, and if so, lets look for the right game
                 if( rows[i1].cells.length > 1 )
                 {
-                  for( var j=<?php echo (($_SESSION["showPicksWeek"] == 18) ? 3 : 
-                                        (($_SESSION["showPicksWeek"] == 19) ? 4 : 
-                                        (($_SESSION["showPicksWeek"] == 20) ? 5 : 7))) ?>; j<rows[i1].cells.length - <?php
-  echo (($_SESSION["showPicksWeek"] == 22) ? 6 : 7) ?>; j+= <?php echo (($_SESSION["showPicksWeek"] == 22) ? 1 : 2) ?>)
+                  for( var j=<?php echo (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) ? 3 : 
+                                        (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20)) ? 4 : 
+                                        (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? 5 : 7))) ?>; j<rows[i1].cells.length - <?php
+  echo (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23)) ? 6 : 7) ?>; j+= <?php 
+  echo (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23)) ? 1 : 2) ?>)
                   {
                     var t = rows[i1].cells[j].firstElementChild;
                     if( t.getAttribute("name") == "game" + gameID )
@@ -1020,6 +1043,16 @@
                       if( checkIndex == -1 )
                       {
                         checkIndex = j;
+<?php
+  if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
+  {
+?>
+                        if( checkIndex == 16 ) {
+                          sbWinner = winner;
+                        }
+<?php
+  }
+?>
                       }
                       var aTeam = t.rows[0].cells[0].firstElementChild.innerHTML;
                       aTeam = aTeam.slice(0, aTeam.indexOf("<"));
@@ -1057,7 +1090,8 @@
                     BG.style.backgroundColor = (nowRight ? "#00AA00": "#FF0000");
                     txt.style.color = (nowRight ? "#007500": "#AF0000");
                     // update their scores if we need to
-                    if( ((wasRight != nowRight) || (!wasWrong && !wasRight)) <?php echo (($_SESSION["showPicksWeek"] == 22) ? " && checkIndex != 16" : ""); ?> )
+                    if( ((wasRight != nowRight) || (!wasWrong && !wasRight)) <?php 
+  echo (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23)) ? " && checkIndex != 16" : ""); ?> )
                     {
                       var score = parseInt(txt.innerHTML.slice(txt.innerHTML.indexOf(" ") + 1)) * (nowRight ? 1 : -1);
                       if( nowRight || wasRight ) {
@@ -1069,18 +1103,6 @@
                         max.innerHTML = parseInt(max.innerHTML) + score;
                       }
                     }
-<?php
-  if( $_SESSION["showPicksWeek"] == 22 )
-  {
-?>
-                    // fix their row color
-                    else if( checkIndex == 16 )
-                    {
-                      rows[j].style.color = (nowRight ? "#007500": "#AF0000");
-                    }
-<?php
-  }
-?>
                   }
                 }
 
@@ -1089,43 +1111,106 @@
             }
 
             SortTable("points");
+
+<?php
+  if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
+  {
+?>
+            // fix their row color
+            i1 = 0;
+            while( i1 < rows.length )
+            {
+              // skip non-data rows
+              if( rows[i1].cells[0].className != "lightBackgroundTable" )
+              {
+                i1 += 1;
+              } else {
+                // find the end of this section
+                var i2 = i1;
+                while( i2 >= 0 && i2 < rows.length && rows[i2].cells[0].className == "lightBackgroundTable" )
+                {
+                  i2 += 1;
+                }
+
+                // iterate over these rows and see whether that person made the pick we just changed
+                for( var j=i1; j<i2; j+=1 )
+                {
+                  if( rows[j].cells[16].firstElementChild != null )
+                  {
+                    BG = rows[j].cells[16].firstElementChild.firstElementChild;
+                    txt = BG.nextElementSibling.rows[0].cells[0].firstElementChild<?php echo ($logosHidden ? ".firstElementChild" : ""); ?>;
+                    nowRight = (txt.innerHTML.slice(0, teamAliases[sbWinner].length) == teamAliases[sbWinner]);
+                    rows[j].style.color = (nowRight ? "#007500": "#AF0000");
+                  }
+                }
+
+                i1 = i2;
+              }
+            }
+<?php
+  }
+?>
 /**/
 
             // tell them it's safe
             recalculating = false;
           }
 
+          function ShowScoreBox(grouping, grouping2)
+          {
+            $("#caption" + grouping).css("display","none");
+            $("#adjust" + grouping).css("display","inline-block");
+          }
+
+          function KeyUpScoreBox(e, grouping, grouping2)
+          {
+            if( e.keyCode == 13 )
+            {
+              SubmitScoreBox(grouping, grouping2);
+            }
+          }
+
+          function SubmitScoreBox(grouping, grouping2)
+          {
+            $("#adjust" + grouping).css("display","none");
+            $("#caption" + grouping).css("display","inline");
+
+            var elem = document.getElementById("caption" + grouping);
+            var elem2 = document.getElementById("adjust" + grouping);
+            var currScore = parseInt(elem.innerHTML);
+            var newScore = parseInt(elem2.value);
+            AdjustScore(grouping, grouping2, newScore - currScore);
+          }
+
           function AdjustScore(index1, index2, delta)
-          {            
+          {
             // move the draggers to match
             var elem = document.getElementById("caption" + index1);
-            if( elem != null )
+            var elem2 = document.getElementById("adjust" + index1);
+            if( elem != null && elem2 != null )
             {
               // dont go into negatives
               var score = parseInt(elem.innerHTML);
-              if( score == 0 && delta < 0 )
+              if( score + delta <= 0 )
               {
-                return;
+                delta = 0 - score;
               }
-              else
-              {
-                elem.innerHTML = score + delta;
-              }
+              elem.innerHTML = score + delta;
+              elem2.value = score + delta;
             }
 
-            var elem = document.getElementById("caption" + index2);
-            if( index1 != index2 && elem != null )
+            elem = document.getElementById("caption" + index2);
+            elem2 = document.getElementById("adjust" + index2);
+            if( index1 != index2 && elem != null && elem2 != null )
             {
               // dont go into negatives
               var score = parseInt(elem.innerHTML);
-              if( score == 0 && delta < 0 )
+              if( score + delta <= 0 )
               {
-                return;
+                delta = 0 - score;
               }
-              else
-              {
-                elem.innerHTML = score + delta;
-              }
+              elem.innerHTML = score + delta;
+              elem2.value = score + delta;
             }
 
             SortTable("points");
@@ -1161,7 +1246,10 @@
                   var advance = (rows[j].cells[rows[j].cells.length - 1].innerHTML == "Yes");
                   if( mostRecentSort == "points" )
                   {
-                    advance = (j - i1) < <?php echo ($_SESSION["showPicksWeek"] == 20 ) ? 5 : (($_SESSION["showPicksWeek"] == 19) ? 10 : (($_SESSION["showPicksSeason"] < 2017) ? 20 : 21)); ?>;
+                    advance = (j - i1) < <?php
+  echo ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? 5 : 
+       (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20)) ? 10 : 
+       (($_SESSION["showPicksSeason"] < 2017) ? 20 : (($_SESSION["showPicksSeason"] <= 2020) ? 21 : 22))); ?>;
                     rows[j].cells[rows[j].cells.length - 1].innerHTML = (advance ? "Yes" : "No");
                   }
                   rows[j].style.color = (advance ? "#007500": "#AF0000");

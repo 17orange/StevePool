@@ -10,7 +10,7 @@
       var currentMousePos = {x:-1, y:-1};
       var currentOffset = {x:0, y:0};
       var tries = 0;
-      var sliderCount = <?php echo (($result["weekNumber"] == 18) ? 6 : 4); ?>;
+      var sliderCount = <?php echo (($result["weekNumber"] == 19) ? 6 : 4); ?>;
       $(document).mousemove(function(event) {
         // update the position
         currentMousePos.x = event.pageX;
@@ -512,9 +512,9 @@
       }
 
       function adjustSliders(event, ui) {
-        var pointsLeft = <?php echo (($result["weekNumber"] == 18) ? 30 : 20); ?>;
-        var total = <?php echo (($result["weekNumber"] == 18) ? 30 : 20); ?>;
-        var absoluteMax = <?php echo (($result["weekNumber"] == 18) ? 25 : 17); ?>;
+        var pointsLeft = <?php echo (($result["weekNumber"] == 19) ? 30 : 20); ?>;
+        var total = <?php echo (($result["weekNumber"] == 19) ? 30 : 20); ?>;
+        var absoluteMax = <?php echo (($result["weekNumber"] == 19) ? 25 : 17); ?>;
         $(".pointSlider").each( function() {
           total -= ($(this).slider("value") ? $(this).slider("value") : 1);
           pointsLeft -= $(this).slider("value");
@@ -578,9 +578,9 @@
             return "Are you sure? You didn't finish the form!";
           }
         });
-        <?php for($i=1; $i<=(($result["weekNumber"] == 18) ? 6 : 4); $i++ ) { ?>
+        <?php for($i=1; $i<=(($result["weekNumber"] == 19) ? 6 : 4); $i++ ) { ?>
           $("#slider<?php echo $i; ?>").slider({ 
-            value:$("#pts<?php echo $i; ?>").attr("value"), min:0, max:<?php echo (($result["weekNumber"] == 18) ? 25 : 17); ?>, slide:fixCaption, stop:adjustSliders });
+            value:$("#pts<?php echo $i; ?>").attr("value"), min:0, max:<?php echo (($result["weekNumber"] == 19) ? 25 : 17); ?>, slide:fixCaption, stop:adjustSliders });
           $("#sliderHandle<?php echo $i; ?>").find("div").css({"min-width":"68px","height":"65px"});
           $("#slider<?php echo $i; ?>").find(".ui-slider-handle").append($("#sliderHandle<?php echo $i; ?>"));
         <?php } ?>

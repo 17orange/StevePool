@@ -18,7 +18,7 @@
         </tr>
         <tr style="height:15px"><td class="noBorder" colspan="9">&nbsp;</td></tr>
 <?php
-  $playoffGames = RunQuery( "select * from Game where weekNumber>17 and season=" . $result["season"] . 
+  $playoffGames = RunQuery( "select * from Game where weekNumber>18 and season=" . $result["season"] .
                             " order by weekNumber, gameID" );
   $myPicks = RunQuery( "select * from ConsolationResult join Session using (userID) where season=" .
                        $result["season"] . " and sessionID=" . $_SESSION["spsID"] );

@@ -1,5 +1,10 @@
 <?php
   // grab the current week and season
+  if( !isset($_SESSION["showPicksSeason"]) )
+  {
+    $results = RunQuery( "select season from Game join WeekResult using (weekNumber, season) order by gameID desc limit 1" );
+    $_SESSION["showPicksSeason"] = $results[0]["season"];
+  }
   if( !isset($_SESSION["showPicksWeek"]) )
   {
     $results = RunQuery( "select weekNumber from Game join WeekResult using (weekNumber, season) where status < 3 or (status=3 and date(gameTime) >= date(date_add(now(), interval -56 hour))) order by gameTime asc limit 1" );
@@ -16,18 +21,13 @@
       }
       else
       {
-        $_SESSION["showPicksWeek"] = 22;
+        $_SESSION["showPicksWeek"] = (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23);
       }
     }
   }
-  if( !isset($_SESSION["showPicksSeason"]) )
-  {
-    $results = RunQuery( "select season from Game join WeekResult using (weekNumber, season) order by gameID desc limit 1" );
-    $_SESSION["showPicksSeason"] = $results[0]["season"];
-  }
   if( !isset($_SESSION["showPicksSplit"]) )
   {
-    if( $_SESSION["showPicksWeek"] < 18 )
+    if( $_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) )
     {
       $_SESSION["showPicksSplit"] = "overall";
     }
@@ -52,19 +52,19 @@
   {
     echo "Consolation Pool";
   }
-  else if( $_SESSION["showPicksSplit"] == "playoffs" && $_SESSION["showPicksWeek"] == 18 )
+  else if( $_SESSION["showPicksSplit"] == "playoffs" && $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) )
   {
     echo "Wild Card Round";
   }
-  else if( $_SESSION["showPicksSplit"] == "playoffs" && $_SESSION["showPicksWeek"] == 19 )
+  else if( $_SESSION["showPicksSplit"] == "playoffs" && $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20) )
   {
     echo "Divisional Round";
   }
-  else if( $_SESSION["showPicksSplit"] == "playoffs" && $_SESSION["showPicksWeek"] == 20 )
+  else if( $_SESSION["showPicksSplit"] == "playoffs" && $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
   {
     echo "Conference Championship";
   }
-  else if( $_SESSION["showPicksSplit"] == "playoffs" && $_SESSION["showPicksWeek"] == 22 )
+  else if( $_SESSION["showPicksSplit"] == "playoffs" && $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
   {
     echo "Super Bowl";
   }
@@ -114,14 +114,14 @@
   $weekResult = RunQuery( "select value from Constants where name='fetchWeek'" );
   
   echo ($_SESSION["showPicksSplit"] == "consolation") ? " selected" : ""; 
-  if( $_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 18 )
+  if( $_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) )
   {
     echo " disabled";
   }
 ?>>Consolation Standings</option>
                 <option value="playoffs"<?php
   echo ($_SESSION["showPicksSplit"] == "playoffs") ? " selected" : ""; 
-  if( $_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 18 )
+  if( $_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) )
   {
     echo " disabled";
   }
@@ -140,21 +140,25 @@
   echo "              <select name=\"showPicksWeek\" onchange=\"document.getElementById('changeOutcomeWeek').submit();\">\n";
   if( $_SESSION["showPicksSplit"] == "playoffs" || $_SESSION["showPicksSplit"] == "consolation" )
   {
-    echo "                <option value=\"18\"" . ((18 == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
+    echo "                <option value=\"" . (($_SESSION["showPicksSeason"] <= 2020) ? "18" : "19") . "\"" . 
+         (((($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
           ">Wild Card Round</option>\n";
-    echo "                <option value=\"19\"" . ((19 == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
-         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 19 ) ? " disabled" : "") .
+    echo "                <option value=\"" . (($_SESSION["showPicksSeason"] <= 2020) ? "19" : "20") . "\"" . 
+         (((($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20) == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
+         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20) ) ? " disabled" : "") .
          ">Divisional Round</option>\n";
-    echo "                <option value=\"20\"" . ((20 == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
-         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 20 ) ? " disabled" : "") .
+    echo "                <option value=\"" . (($_SESSION["showPicksSeason"] <= 2020) ? "20" : "21") . "\"" . 
+         (((($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
+         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) ) ? " disabled" : "") .
          ">Conference Championship</option>\n";
-    echo "                <option value=\"22\"" . ((22 == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
-         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < 22 ) ? " disabled" : "") .
+    echo "                <option value=\"" . (($_SESSION["showPicksSeason"] <= 2020) ? "22" : "23") . "\"" . 
+         (((($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
+         (($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"] && $weekResult[0]["value"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) ) ? " disabled" : "") .
          ">Super Bowl</option>\n";
   }
   else
   {
-    for( $i=1; $i<18; $i++ )
+    for( $i=1; $i<(($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19); $i++ )
     {
       echo "                <option value=\"" . $i . "\"" . (($i == $_SESSION["showPicksWeek"]) ? " selected" : "") . 
           ((($_SESSION["showPicksSeason"] >= $seasonResult[0]["value"]) && ($i > $weekResult[0]["value"])) ? " disabled" : "") . 

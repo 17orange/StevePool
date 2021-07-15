@@ -15,7 +15,7 @@
   {
     $result = $result[0];
 
-    if( $result["weekNumber"] < 18 )
+    if( $result["weekNumber"] < 19 )
     {
       include "MakeRegularSeasonPicksJavascript.php";
     }
@@ -23,15 +23,15 @@
     {
       include "MakeConsolationPicksJavascript.php";
     }
-    else if( $result["weekNumber"] < 20 )
+    else if( $result["weekNumber"] < 21 )
     {
       include "MakeWCDivPicksJavascript.php";
     }
-    else if( $result["weekNumber"] < 21 )
+    else if( $result["weekNumber"] < 22 )
     {
       include "MakeCCPicksJavascript.php";
     }
-    else if( $result["weekNumber"] < 23 )
+    else if( $result["weekNumber"] < 24 )
     {
       include "MakeSuperBowlPicksJavascript.php";
     }
@@ -41,9 +41,9 @@
 <?php
   if( isset($gamesStillTBP) && $gamesStillTBP == 0 )
   {
-    $playoffsPlayed = RunQuery( "select count(*) as num from Game where weekNumber>17 and season=(select value " . 
+    $playoffsPlayed = RunQuery( "select count(*) as num from Game where weekNumber>18 and season=(select value " . 
                                 "from Constants where name='fetchSeason') and status not in (1,19)" );
-    $gamesLeft = RunQuery( "select count(*) as num from Game where weekNumber>17 and season=(select value " . 
+    $gamesLeft = RunQuery( "select count(*) as num from Game where weekNumber>18 and season=(select value " . 
                            "from Constants where name='fetchSeason') and status in (1,19)" );
     if( $poolResults["inPlayoffs"] == "N" && $playoffsPlayed[0]["num"] > 0 )
     {
@@ -67,10 +67,10 @@
   else
   {
     // see if they got eliminated already
-    if( $result["weekNumber"] >= 18 && $poolResults["inPlayoffs"] == "Y" )
+    if( $result["weekNumber"] >= 19 && $poolResults["inPlayoffs"] == "Y" )
     {
       $outOfPlayoffs = RunQuery( "select prevWeek1, prevWeek2, prevWeek3 from PlayoffResult join Session using (userID) where sessionID=" . 
-                                 $_SESSION["spsID"] . " and weekNumber=22 and season=(select value " . 
+                                 $_SESSION["spsID"] . " and weekNumber=23 and season=(select value " . 
                                 "from Constants where name='fetchSeason')" );
     }
 
@@ -98,14 +98,14 @@
       echo "      <div style=\"height:100px;\"></div>\n";
     }
     // regular season picks
-    else if( $result["weekNumber"] < 18 )
+    else if( $result["weekNumber"] < 19 )
     {
       include "MakeRegularSeasonPicks.php";
     }
     // consolation pool picks
     else if( $poolResults["inPlayoffs"] == "N" )
     {
-      if( $result["weekNumber"] == 18 )
+      if( $result["weekNumber"] == 19 )
       {
         include "MakeConsolationPicks.php";
       }
@@ -117,19 +117,19 @@
       }
     }
     // they've been eliminated
-    else if( ($result["weekNumber"] == 19 && $outOfPlayoffs[0]["prevWeek1"] < 0) || 
-             ($result["weekNumber"] == 20 && $outOfPlayoffs[0]["prevWeek2"] < 0) || 
-             ($result["weekNumber"] == 22 && $outOfPlayoffs[0]["prevWeek3"] < 0))
+    else if( ($result["weekNumber"] == 20 && $outOfPlayoffs[0]["prevWeek1"] < 0) || 
+             ($result["weekNumber"] == 21 && $outOfPlayoffs[0]["prevWeek2"] < 0) || 
+             ($result["weekNumber"] == 23 && $outOfPlayoffs[0]["prevWeek3"] < 0))
     {
       echo "      <div style=\"height:100px;\"></div>\n";
       echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">You have been eliminated from the playoff pool!  Better luck next year!</div>\n";
       echo "      <div style=\"height:100px;\"></div>\n";
     }
     // wild card and divisional rounds
-    else if( $result["weekNumber"] < 20 )
+    else if( $result["weekNumber"] < 21 )
     {
       // people with byes
-      if( $poolResults["firstRoundBye"] == "Y" && $result["weekNumber"] == 18 )
+      if( $poolResults["firstRoundBye"] == "Y" && $result["weekNumber"] == 19 )
       {
         echo "      <div style=\"height:100px;\"></div>\n";
         echo "      <div style=\"width:100%; text-align:center; font-size:32px;\">You have earned a first round bye!  Enjoy the week off!</div>\n";
@@ -142,12 +142,12 @@
       }
     }
     // conference championships
-    else if( $result["weekNumber"] < 21 )
+    else if( $result["weekNumber"] < 22 )
     {
       include "MakeCCPicks.php";
     }
     // super bowl
-    else if( $result["weekNumber"] < 23 )
+    else if( $result["weekNumber"] < 24 )
     {
       include "MakeSuperBowlPicks.php";
     }

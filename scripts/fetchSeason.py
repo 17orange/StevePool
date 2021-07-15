@@ -1,6 +1,6 @@
 import urllib
 import statsUtil
-import fetchWeek
+import fetchWeekNew
 from subprocess import Popen
 
 # grab the cursor from the util file
@@ -14,8 +14,8 @@ season = int(cur.fetchall()[0][0])
 cur.execute("delete from Game where season=" + str(season))
 
 # grab the requested season's games
-for i in range(17):
-	fetchWeek.GrabWeekGames(str(i+1), str(season))
+for i in range(18):
+	fetchWeekNew.GrabWeekGames(str(i+1), str(season))
 
 # set the lock times to be 5 minutes before the earliest game that day (or earliest game on sunday if this is a monday game)
 cur.execute("create temporary table LockTimes (gameID int unsigned primary key, lTime datetime)")
@@ -28,7 +28,7 @@ cur.execute("drop table LockTimes")
 cur.execute("update Constants set value='1' where name='fetchWeek'")
 
 # clear the cache
-urllib.urlopen("http://localhost/stevePool/helm/flushCache.php").read()
+urllib.request.urlopen("http://localhost/stevePool/helm/flushCache.php").read()
 
 # commit the changes
 statsUtil.db.commit()
