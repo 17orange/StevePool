@@ -543,7 +543,7 @@
         // check for double scoop in the divisional round
         if( $ind==($swapColIndex + 4) ) {
           for( $ind2=$swapColIndex; $ind2<($swapColIndex+4); $ind2++ ) {
-            if( in_array($games[$ind2]["homeTeam"], $divWinners) && in_array($games[$ind2]["awayTeam"], $divWinners) ) {
+            if( in_array($games[$ind2]["homeTeam"], $divWinners) && in_array($games[$ind2]["awayTeam"], $divWinners) && ("TBD" == $games[$ind2]["leader"]) ) {
               $possibleMax -= $pointVals[$ind2];
             }
           }
