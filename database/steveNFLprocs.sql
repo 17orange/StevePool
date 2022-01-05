@@ -565,7 +565,7 @@ begin
   select cast(value as signed) into _season from Constants where name='fetchSeason';
   select cast(value as signed) into _week from Constants where name='fetchWeek';
   insert into SeasonResult values (_userID, _season, null, 0, 0, 0, 0, 'R', 'R');
-  while _week < 18 do
+  while _week < 19 do
     insert into WeekResult values (_userID, _season, _week, 0, 0);
     insert into Pick (userID, gameID, points) select userID, gameID, @rowNum := @rowNum - 1 
       from User join Game, (select @rowNum := 17) r 
