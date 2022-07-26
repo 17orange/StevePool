@@ -36,7 +36,7 @@
   }
 ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en">
   <head>
     <script type="text/javascript" src="../includes/jquery-1.11.1.js"></script>
   </head>

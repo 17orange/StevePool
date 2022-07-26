@@ -4,7 +4,7 @@
   include "../util.php";
 ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en">
   <head>
     <script type="text/javascript" src="../includes/jquery-1.11.1.js"></script>
   </head>
@@ -46,7 +46,7 @@
 
       // save the session ID for future use
       $sessionResults = RunQuery( "select sessionID from Session where userID=" . $results[0]["userID"], false );
-      mail($results[0]["email"], "Steve's NFL Pool Password Reset", "Click the following link to reset your password for Steve's NFL Pool:  http://bradplusplus.com/stevePool/helpers/passwordReset.php?session=" . $sessionResults[0]["sessionID"], "From: StevePool@bradplusplus.com");
+      mail($results[0]["email"], "Steve's NFL Pool Password Reset", "Click the following link to reset your password for Steve's NFL Pool:  https://bradplusplus.com/stevePool/helpers/passwordReset.php?session=" . $sessionResults[0]["sessionID"], "From: StevePool@bradplusplus.com");
 ?>
       parent.document.getElementById("loginError").innerHTML = "Check your email for the reset link!<br>(Be sure to check in your spam folder too.)";
 <?php

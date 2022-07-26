@@ -184,8 +184,10 @@ create procedure SaveConsolationPicks( in _sessID    int unsigned ,
                                        in _IP        varchar(100) ,
                                        in _wc1AFC    char(3)      ,
                                        in _wc2AFC    char(3)      ,
+                                       in _wc3AFC    char(3)      ,
                                        in _wc1NFC    char(3)      ,
                                        in _wc2NFC    char(3)      ,
+                                       in _wc3NFC    char(3)      ,
                                        in _div1AFC   char(3)      ,
                                        in _div2AFC   char(3)      ,
                                        in _div1NFC   char(3)      ,
@@ -201,20 +203,21 @@ begin
   declare _season smallint;
 
   # make sure theyve sent in the correct number of valid picks
-  select if(_wc1AFC!='',1,0) + if(_wc2AFC!='',1,0) + if(_wc1NFC!='',1,0) + if(_wc2NFC!='',1,0) + 
+  select if(_wc1AFC!='',1,0) + if(_wc2AFC!='',1,0) + if(_wc3AFC!='',1,0) +
+         if(_wc1NFC!='',1,0) + if(_wc2NFC!='',1,0) + if(_wc3NFC!='',1,0) +
          if(_div1AFC!='',1,0) + if(_div2AFC!='',1,0) + if(_div1NFC!='',1,0) + if(_div2NFC!='',1,0) + 
          if(_confAFC!='',1,0) + if(_confNFC!='',1,0) + if(_superBowl!='',1,0) into _numPicks;
 
   # make sure no games have locked
   # fill in his results and give him all the null picks
   select cast(value as signed) into _season from Constants where name='fetchSeason';
-  select count(*) into _numStarted from Game where weekNumber > 17 and season=_season and lockTime < now();
+  select count(*) into _numStarted from Game where weekNumber > 18 and season=_season and lockTime < now();
 
   # make sure everything is set up correct-like
-  if _numPicks = 11 and _numStarted = 0 then
+  if _numPicks = 13 and _numStarted = 0 then
     # save the winners they picked
-    update ConsolationResult join Session using (userID) set wc1AFC=_wc1AFC, wc2AFC=_wc2AFC, wc1NFC=_wc1NFC, wc2NFC=_wc2NFC,
-      div1AFC=_div1AFC, div2AFC=_div2AFC, div1NFC=_div1NFC, div2NFC=_div2NFC, confAFC=_confAFC, confNFC=_confNFC,
+    update ConsolationResult join Session using (userID) set wc1AFC=_wc1AFC, wc2AFC=_wc2AFC, wc3AFC=_wc3AFC, wc1NFC=_wc1NFC, wc2NFC=_wc2NFC,
+      wc3NFC=_wc3NFC, div1AFC=_div1AFC, div2AFC=_div2AFC, div1NFC=_div1NFC, div2NFC=_div2NFC, confAFC=_confAFC, confNFC=_confNFC,
       superBowl=_superBowl, tieBreaker=_tieBreak where sessionID=_sessID and IP=_IP and season=_season;
 
     # add an event for it
@@ -245,7 +248,7 @@ create procedure SaveWildCardPicks( in _sessID    int unsigned ,
                                     in _pts1      smallint     )
 begin
   # make sure theyve sent in the correct number of valid picks
-  declare _week tinyint unsigned default 18;
+  declare _week tinyint unsigned default 19;
   declare _numPts tinyint unsigned default 0;
   declare _neededPts tinyint unsigned default 30;
   declare _numPicks tinyint unsigned default 0;
@@ -311,7 +314,7 @@ create procedure SaveDivisionalPicks( in _sessID    int unsigned ,
                                       in _pts1      smallint     )
 begin
   # make sure theyve sent in the correct number of valid picks
-  declare _week tinyint unsigned default 19;
+  declare _week tinyint unsigned default 20;
   declare _numPts tinyint unsigned default 0;
   declare _neededPts tinyint unsigned default 20;
   declare _numPicks tinyint unsigned default 0;
@@ -379,7 +382,7 @@ create procedure SaveConferencePicks( in _sessID    int unsigned ,
                                       in _type1     char(8)      )
 begin
   # make sure theyve sent in the correct number of valid picks
-  declare _week tinyint unsigned default 20;
+  declare _week tinyint unsigned default 21;
   declare _numPts tinyint unsigned default 0;
   declare _neededPts tinyint unsigned default 20;
   declare _numPicks tinyint unsigned default 0;
@@ -442,7 +445,7 @@ create procedure SaveSuperBowlPicks( in _sessID    int unsigned ,
                                      in _TDs2Q     char(3)      )
 begin
   # make sure theyve sent in the correct number of valid picks
-  declare _week tinyint unsigned default 22;
+  declare _week tinyint unsigned default 23;
   declare _userID int unsigned default 0;
   declare _gameID int unsigned default 0;
   
@@ -863,8 +866,8 @@ create procedure AdminSetConsolationPicks( in _userID    int unsigned ,
                                            in _superBowl char(3)      ,
                                            in _tieBreak  smallint     )
 begin
-  update ConsolationResult set wc1AFC=_wc1AFC, wc2AFC=_wc2AFC, wc3AFC=_wc3AFC, wc1NFC=_wc1NFC, wc2NFC=_wc2NFC, wc3NFC=_wc3NFC, 
-         div1AFC=_div1AFC, div2AFC=_div2AFC, div1NFC=_div1NFC, div2NFC=_div2NFC, confAFC=confAFC, confNFC=_confNFC, 
+  update ConsolationResult set wc1AFC=_wc1AFC, wc2AFC=_wc2AFC, wc3AFC=_wc3AFC, wc1NFC=_wc1NFC, wc2NFC=_wc2NFC, wc3NFC=_wc3NFC,
+         div1AFC=_div1AFC, div2AFC=_div2AFC, div1NFC=_div1NFC, div2NFC=_div2NFC, confAFC=_confAFC, confNFC=_confNFC,
          superBowl=_superBowl, tieBreaker=_tieBreak where userID=_userID and season=(select value from Constants where name='fetchSeason');
 
   # add an event for it

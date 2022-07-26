@@ -3,13 +3,13 @@
   echo "      var emptyImg = \"icons/" . $result["season"] . "/nfl.png\";\n";
   // fill in the seed data
   $afcSeed1 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
-                        " and weekNumber=19 order by gameID limit 0,1" );
+                        " and weekNumber=20 order by gameID limit 0,1" );
   $afcWCGame1 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                          " and weekNumber=18 order by gameID limit 0,1" );
+                          " and weekNumber=19 order by gameID limit 0,1" );
   $afcWCGame2 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                          " and weekNumber=18 order by gameID limit 1,1" );
+                          " and weekNumber=19 order by gameID limit 1,1" );
   $afcWCGame3 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                          " and weekNumber=18 order by gameID limit 2,1" );
+                          " and weekNumber=19 order by gameID limit 2,1" );
   $afcSeed1 = $afcSeed1[0]["homeTeam"];
   $afcSeed2 = $afcWCGame1[0]["homeTeam"];
   $afcSeed3 = $afcWCGame2[0]["homeTeam"];
@@ -18,13 +18,13 @@
   $afcSeed6 = $afcWCGame2[0]["awayTeam"];
   $afcSeed7 = $afcWCGame1[0]["awayTeam"];
   $nfcSeed1 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
-                        " and weekNumber=19 order by gameID limit 2,1" );
+                        " and weekNumber=20 order by gameID limit 2,1" );
   $nfcWCGame1 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                          " and weekNumber=18 order by gameID limit 3,1" );
+                          " and weekNumber=19 order by gameID limit 3,1" );
   $nfcWCGame2 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                          " and weekNumber=18 order by gameID limit 4,1" );
+                          " and weekNumber=19 order by gameID limit 4,1" );
   $nfcWCGame3 = RunQuery( "select homeTeam, awayTeam from Game where season=" . $result["season"] .
-                          " and weekNumber=18 order by gameID limit 5,1" );
+                          " and weekNumber=19 order by gameID limit 5,1" );
   $nfcSeed1 = $nfcSeed1[0]["homeTeam"];
   $nfcSeed2 = $nfcWCGame1[0]["homeTeam"];
   $nfcSeed3 = $nfcWCGame2[0]["homeTeam"];
@@ -49,14 +49,21 @@
   echo "      var NS7 = '" . $nfcSeed7 . "';\n";
 ?>
 
+      const TEAM_ALIASES = {<?php
+        foreach($teamAliases as $thisID => $thisAlias) {
+          echo $thisID . ":\"" . $thisAlias . "\",";
+        }
+        echo "19:19";
+      ?>};
+      const TEAM_REVERSE_ALIASES = {<?php
+        foreach($teamAliases as $thisID => $thisAlias) {
+          echo $thisAlias . ":\"" . $thisID . "\",";
+        }
+        echo "19:19";
+      ?>};
+
       function MakePick(pickID)
       {
-        var teamAliases = {<?php
-          foreach($teamAliases as $thisID => $thisAlias) {
-            echo $thisAlias . ":\"" . $thisID . "\",";
-          }
-          echo "19:19";
-        ?>};
         var team = document.getElementById(pickID).innerHTML;
         if( pickID.substring(pickID.length - 1) == "H" && pickID != "SBH" )
         {
@@ -66,6 +73,7 @@
         {
           return;
         }
+        team = TEAM_REVERSE_ALIASES[team];
 
         if( false && pickID.substring(1,6) == 'fcWC1' )
         {
@@ -134,9 +142,9 @@
           var index1 = (w1 != 7) ? w1 : ((w2 != 6) ? w2 : w3);
           var index2 = (w1 == 7) ? w1 : ((w2 == 6) ? w2 : w3);
           var index3 = (w1 != 7) ? ((w2 != 6) ? w2 : w3) : ((w2 == 6) ? w2 : w3);
-          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'H').innerHTML = "@ " + seeds[index1];
-          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '1' : '2') + 'A').innerHTML = seeds[index2];
-          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'A').innerHTML = seeds[index3];
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'H').innerHTML = "@ " + TEAM_ALIASES[seeds[index1]];
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '1' : '2') + 'A').innerHTML = TEAM_ALIASES[seeds[index2]];
+          document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'A').innerHTML = TEAM_ALIASES[seeds[index3]];
           document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'H_IMG').src = index1 ? document.getElementById(images[index1] + '_IMG').src : emptyImg;
           document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '1' : '2') + 'A_IMG').src = index2 ? document.getElementById(images[index2] + '_IMG').src : emptyImg;
           document.getElementById(pickID.substring(0,3) + 'Div' + (needsSwapped ? '2' : '1') + 'A_IMG').src = index3 ? document.getElementById(images[index3] + '_IMG').src : emptyImg;
@@ -152,6 +160,8 @@
           {
             opponentTeam = opponentTeam.substring(2);
           }
+          opponentTeam = TEAM_REVERSE_ALIASES[opponentTeam];
+
           if( (document.getElementById(pickID.substring(0,3) + 'CCA').innerHTML == opponentTeam) || 
               (document.getElementById(pickID.substring(0,3) + 'CCA').innerHTML == team) )
           {
@@ -166,8 +176,8 @@
           }
 
           // see where we are trying to stick this guy
-          var targetSlot = pickID.substring(0,3) + ((team == ((pickID.substring(0,3) == 'afc') ? AS1 : NS1)) ? 'CCH' : 
-                                                   ((team == ((pickID.substring(0,3) == 'afc') ? AS6 : NS6)) ? 'CCA' : 
+          var targetSlot = pickID.substring(0,3) + ((team == ((pickID.substring(0,3) == 'afc') ? AS1 : NS1)) ? 'CCH' :
+                                                   ((team == ((pickID.substring(0,3) == 'afc') ? AS7 : NS7)) ? 'CCA' :
                                                     ('CC' + ((pickID.substring(6,7) == "1") ? "A" : "H"))));
           var opponentSlot = pickID.substring(0,3) + 'CC' + ((targetSlot.substring(5) == "H") ? "A" : "H");
 
@@ -190,14 +200,15 @@
             {
               them = them.substring(2);
             }
+            them = TEAM_REVERSE_ALIASES[them];
 
             // find seeds
             var mySeed = (pickID.substring(0,3) == 'afc') 
-                         ? ((team == AS1) ? 1 : ((team == AS2) ? 2 : ((team == AS3) ? 3 : ((team == AS4) ? 4 : ((team == AS5) ? 5 : 6)))))
-                         : ((team == NS1) ? 1 : ((team == NS2) ? 2 : ((team == NS3) ? 3 : ((team == NS4) ? 4 : ((team == NS5) ? 5 : 6)))));
+                         ? ((team == AS1) ? 1 : ((team == AS2) ? 2 : ((team == AS3) ? 3 : ((team == AS4) ? 4 : ((team == AS5) ? 5 : ((team == AS6) ? 6 : 7))))))
+                         : ((team == NS1) ? 1 : ((team == NS2) ? 2 : ((team == NS3) ? 3 : ((team == NS4) ? 4 : ((team == NS5) ? 5 : ((team == NS6) ? 6 : 7))))));
             var theirSeed = (pickID.substring(0,3) == 'afc') 
-                            ? ((them == AS1) ? 1 : ((them == AS2) ? 2 : ((them == AS3) ? 3 : ((them == AS4) ? 4 : ((them == AS5) ? 5 : 6)))))
-                            : ((them == NS1) ? 1 : ((them == NS2) ? 2 : ((them == NS3) ? 3 : ((them == NS4) ? 4 : ((them == NS5) ? 5 : 6)))));
+                            ? ((them == AS1) ? 1 : ((them == AS2) ? 2 : ((them == AS3) ? 3 : ((them == AS4) ? 4 : ((them == AS5) ? 5 : ((them == AS6) ? 6 : 7))))))
+                            : ((them == NS1) ? 1 : ((them == NS2) ? 2 : ((them == NS3) ? 3 : ((them == NS4) ? 4 : ((them == NS5) ? 5 : ((them == NS6) ? 6 : 7))))));
             if( ((mySeed < theirSeed) && (targetSlot.substring(5) == "A")) || ((mySeed > theirSeed) && (targetSlot.substring(5) == "H")) )
             {
               targetSlot = opponentSlot;
@@ -208,12 +219,12 @@
             // if they're in the target, swap them over
             if( targetOccupied )
             {
-              document.getElementById(opponentSlot).innerHTML = ((opponentSlot.substring(5) == "H") ? "@ " : "") + them;
+              document.getElementById(opponentSlot).innerHTML = ((opponentSlot.substring(5) == "H") ? "@ " : "") + TEAM_ALIASES[them];
               document.getElementById(opponentSlot + "_IMG").src = document.getElementById(targetSlot + "_IMG").src;
             }
           }
           
-          document.getElementById(targetSlot).innerHTML = ((targetSlot.substring(5) == "H") ? "@ " : "") + team;
+          document.getElementById(targetSlot).innerHTML = ((targetSlot.substring(5) == "H") ? "@ " : "") + TEAM_ALIASES[team];
           document.getElementById(pickID).style.color = "#007500";
           document.getElementById(opponentID).style.color = "#BF0000";
           document.getElementById(targetSlot + "_IMG").src = document.getElementById(pickID + "_IMG").src;
@@ -223,7 +234,7 @@
         {
           // make this the pick
           var target = 'SB' + ((pickID.substring(0,1) == "a") ? "A" : "H");
-          document.getElementById(target).innerHTML = team;
+          document.getElementById(target).innerHTML = TEAM_ALIASES[team];
           document.getElementById(pickID).style.color = "#007500";
           document.getElementById(pickID.substring(0,5) + ((pickID.substring(5) == "A") ? "H" : "A")).style.color = "#BF0000";
           document.getElementById(target + '_IMG').src = document.getElementById(pickID + '_IMG').src;
@@ -232,7 +243,7 @@
         else if( pickID.substring(0,2) == 'SB' )
         {
           // make this the pick
-          document.getElementById('superBowlChampion').innerHTML = "Champion:<br>" + team;
+          document.getElementById('superBowlChampion').innerHTML = "Champion:<br>" + TEAM_ALIASES[team];
           document.getElementById('superBowlChampion').style.color = "#007500";
           document.getElementById(pickID).style.color = "#007500";
           document.getElementById(pickID.substring(0,2) + ((pickID.substring(2) == "A") ? "H" : "A")).style.color = "#BF0000";
@@ -246,7 +257,7 @@
         {
           inputTarget = inputTarget.substring(0, 6) + ((inputTarget.substring(6) == "1") ? "2" : "1");
         }
-        document.getElementById(inputTarget).value = teamAliases[team];
+        document.getElementById(inputTarget).value = team;
 
         // clean the visuals
         CombYoBeard();

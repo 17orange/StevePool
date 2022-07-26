@@ -197,22 +197,22 @@
                 }
 
                 // sort these rows
-                var compareIndex = rows[i1].cells.length - (($_SESSION["showStandingsSeason"] <= 2020) ? 24 : 25);
+                var compareIndex = rows[i1].cells.length - <?php echo (($_SESSION["showStandingsSeason"] <= 2020) ? 24 : 25); ?>;
                 if( arg == "picks" )
                 {
-                  compareIndex += (($_SESSION["showStandingsSeason"] <= 2020) ? 21 : 22);
+                  compareIndex += <?php echo (($_SESSION["showStandingsSeason"] <= 2020) ? 21 : 22); ?>;
                 }
                 else if( arg == "misses" )
                 {
-                  compareIndex += (($_SESSION["showStandingsSeason"] <= 2020) ? 20 : 21);
+                  compareIndex += <?php echo (($_SESSION["showStandingsSeason"] <= 2020) ? 20 : 21); ?>;
                 }
                 else if( arg == "wins" )
                 {
-                  compareIndex += (($_SESSION["showStandingsSeason"] <= 2020) ? 19 : 20);
+                  compareIndex += <?php echo (($_SESSION["showStandingsSeason"] <= 2020) ? 19 : 20); ?>;
                 }
                 else if( arg == "points" )
                 {
-                  compareIndex += (($_SESSION["showStandingsSeason"] <= 2020) ? 18 : 19);
+                  compareIndex += <?php echo (($_SESSION["showStandingsSeason"] <= 2020) ? 18 : 19); ?>;
                 }
                 else if( arg != "name")
                 {

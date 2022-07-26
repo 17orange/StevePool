@@ -30,7 +30,7 @@ if (!isset($_SESSION["SPgoodLogin"]) || $_SESSION["SPgoodLogin"] != session_id()
 {
 ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en">
   <head>
     <title>This isn't the page you are looking for.</title>
   </head>
@@ -107,7 +107,7 @@ else
   }
 ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en">
   <head>
     <title>Steve's Pool Admin Page</title>
   </head>
