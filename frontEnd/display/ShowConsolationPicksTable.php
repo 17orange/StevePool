@@ -7,6 +7,10 @@
     include "../util.php";
   }
 
+  // set the palette
+  $palette = ($_SESSION["cbm"] ?? false) ? ["#0072B2","#000000","#D55E00"] : ["#007500","#888800","#BF0000"];
+  $palette2 = ($_SESSION["cbm"] ?? false) ? ["#42BBFF","#888888","#FF913B"] : ["#00AA00","#FFFF00","#FF0000"];
+
   // see what this type is
   $standingsType = isset($_GET["type"]) ? $_GET["type"] : "actual";
 
@@ -227,7 +231,7 @@
 
   function ShowPick($teamID, $gameData, $points, $isMe, $poolLocked, $eliminatedTeams)
   {
-    global $logosHidden, $teamAliases;
+    global $logosHidden, $teamAliases, $palette, $palette2;
     echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">";
     if(!$poolLocked && $teamID == "" && (($gameData["status"] == 1) || ($gameData["status"] == 19)) )
     {
@@ -236,10 +240,10 @@
     else if($teamID == "")
     {
       echo "<div class=\"cellShadeOuter\">\n";
-      echo "<div class=\"cellShadeBG\" style=\"background-color:#FF0000;\"></div>\n";
+      echo "<div class=\"cellShadeBG\" style=\"background-color:" . $palette2[2] . "\"></div>\n";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\"><span class=\"blankIt\">MIS 19</span><br>";
       echo "<div class=\"imgDiv blankIt\"><img class=\"teamLogo\" src=\"" . getIcon("BUF", $_SESSION["showPicksSeason"]) . "\"/></div>";
-      echo "<div class=\"centerIt\" style=\"color:#BF0000;\">Missed<br>(" . $points . ")</div></td></tr></table>";
+      echo "<div class=\"centerIt\" style=\"color:" . $palette[2] . "\">Missed<br>(" . $points . ")</div></td></tr></table>";
       echo "</div>\n";
     }
     else if( !$isMe && !$poolLocked )
@@ -249,16 +253,16 @@
     else
     {
       echo "<div class=\"cellShadeOuter\">\n";
-      echo "<div class=\"cellShadeBG\"" . 
-          ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
-          (" style=\"background-color:#" . (($teamID == $gameData["leader"]) ? "00AA00" : 
-          ((($gameData["status"] <= 3 && $gameData["leader"] != '') || ($eliminatedTeams[$teamID] == 3)) ? "FF0000" : "FFFF00")))) . ";\"></div>\n";
-      $span = "<span" . 
-          ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" : 
-          (" style=\"color:#" . (($teamID == $gameData["leader"]) ? "007500" : 
-          ((($gameData["status"] <= 3 && $gameData["leader"] != "") || ($eliminatedTeams[$teamID] == 3)) ? "BF0000" : "888800")) . ";" . 
+      echo "<div class=\"cellShadeBG\"" .
+          ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" :
+          (" style=\"background-color:" . (($teamID == $gameData["leader"]) ? $palette2[0] :
+          ((($gameData["status"] <= 3 && $gameData["leader"] != '') || ($eliminatedTeams[$teamID] == 3)) ? $palette2[2] : $palette2[1])))) . ";\"></div>\n";
+      $span = "<span" .
+          ((!isset($eliminatedTeams[$teamID]) && (($gameData["status"] == 1) || ($gameData["status"] == 19))) ? "" :
+          (" style=\"color:" . (($teamID == $gameData["leader"]) ? $palette[0] :
+          ((($gameData["status"] <= 3 && $gameData["leader"] != "") || ($eliminatedTeams[$teamID] == 3)) ? $palette[2] : $palette[1])) . ";" .
           (($gameData["status"] == 2) ? " font-style:italic;" : "") . "\"")) . ">" . $teamAliases[$teamID] . " " . $points . "</span>";
-      echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
+      echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ?
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";
       echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($teamID, $_SESSION["showPicksSeason"]) . "\"/></div></td></tr></table>";
       echo "</div>\n";

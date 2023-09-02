@@ -14,7 +14,7 @@
   $memcache = new Memcached();
   $memcache->addServer("localhost", 11211) or die("Could not connect (memcache)");
 	
-  function RunQuery( $query, $cacheThis=true ){
+  function RunQuery( $query, $cacheThis=true, $updateCache=false ){
     global $live, $link, $realDB; 
     global $username, $password, $memcache;
 
@@ -24,7 +24,7 @@
 
     try {
       $queryHash = "QUERYLENGTH" . strlen($query) . "HASH" . md5($query);
-      if( !$cacheThis || $memcache->get($queryHash) === false ) {
+      if( !$cacheThis || $updateCache || $memcache->get($queryHash) === false ) {
         if( !mysqli_ping( $link ) ) {
           mysqli_close( $link );
           $link = mysqli_connect( "localhost",$username,$password, $realDB) or die("Connect Unsuccessful!".mysql_error());

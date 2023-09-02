@@ -11,7 +11,25 @@
   <body>
     <script type="text/javascript">
 <?php
-  if( isset($_SESSION["spsID"]) )
+  if( ($_POST["task"] ?? null) == "cbm" )
+  {
+    // clean it
+    $cbm = mysqli_real_escape_string( $link, $_POST["acctCBM"] );
+    $_SESSION["cbm"] = ($cbm == "Y");
+
+    // save their choice
+    if( isset($_SESSION["spsID"]) ) {
+      // clean it
+      $sid = mysqli_real_escape_string( $link, $_SESSION["spsID"] );
+      $results = RunQuery( "call SetColorblindMode(" . $sid . ", '" . $cbm . "')", false );
+
+      $_SESSION["cbm"] = ((RunQuery( "select colorblindMode from User join Session using (userID) where sessionID=" . $_SESSION["spsID"], true, true ))[0]["colorblindMode"] == "Y");
+    }
+?>
+      parent.location.reload();
+<?php
+  }
+  else if( isset($_SESSION["spsID"]) )
   {
     // clean it
     $sid = mysqli_real_escape_string( $link, $_SESSION["spsID"] );

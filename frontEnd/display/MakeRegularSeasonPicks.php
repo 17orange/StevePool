@@ -2,6 +2,11 @@
       <button onClick="PickAllHomeTeams()">All Home Teams</button>
       <button onClick="PickAllAwayTeams()">All Away Teams</button>
       <button onClick="PrintPicks()">Print Picks Worksheet</button>
+      <form action="helpers/changeAccountDetails.php" method="post" id="cbmForm" target="taskWindow" style="display:inline-block">
+        <input type="hidden" name="task" value="cbm" />
+        <input type="hidden" name="acctCBM" id="cbmVal" value="<?php echo (($_SESSION["cbm"] ?? "N") == "Y") ? "N" : "Y"; ?>" />
+        <button onClick="$('#cbmForm').submit();">Alternate Colors</button>
+      </form>
       <br/>
       <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
         <tr><td class="noBorder" colspan=17>&nbsp;</td></tr>
@@ -102,11 +107,11 @@
                ? " class=\"noBorder fjalla\" style=\"font-size: 20px;\""
                : " class=\"mpImgTD mpLockedSelection\"") 
              : (($picks[$i]["winner"] == $picks[$i]["awayTeam"]) || ($picks[$i]["winner"] == $picks[$i]["homeTeam"])
-               ? " class=\"mpImgTD mpValidSelection\"" 
-               : " class=\"mpImgTD mpInvalidSelection\"" );
+               ? " class=\"mpImgTD mpValidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\""
+               : " class=\"mpImgTD mpInvalidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\"" );
     if( $saveButtonEnabled )
     {
-      $saveButtonEnabled = ($style == " class=\"mpInvalidSelection\"");
+      $saveButtonEnabled = ($style == " class=\"mpInvalidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\"");
     }
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(3, " . $i . ");\"" : "";
     $text = ($i==0) 

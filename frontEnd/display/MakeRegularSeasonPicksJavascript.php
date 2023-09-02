@@ -127,9 +127,9 @@
             currentDragSelection = newDragSelection;
 
             // fix these class names
-            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mpImgTD mpValidSelection" : "mpImgTD mpAwayTeam";
-            document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpInvalidSelection" : "mpGameInfo";
-            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mpImgTD mpValidSelection" : "mpImgTD mpHomeTeam";
+            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mpImgTD mpAwayTeam";
+            document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpInvalidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mpGameInfo";
+            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mpImgTD mpHomeTeam";
 
             // assign the new point value
             if( currentDragSelection != 3 )
@@ -365,7 +365,7 @@
             }
             document.getElementById("mp1_" + i).className = "mpImgTD mpAwayTeam";
             document.getElementById("mp2_" + i).className = "mpGameInfo";
-            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection";
+            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
             document.getElementById("mp4_" + i).className = "noBorder";
             document.getElementById("mp5_" + i).className = "noBorder";
           }
@@ -408,7 +408,7 @@
             }
             document.getElementById("mp5_" + i).className = "mpImgTD mpHomeTeam";
             document.getElementById("mp4_" + i).className = "mpGameInfo";
-            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection";
+            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
             document.getElementById("mp2_" + i).className = "noBorder";
             document.getElementById("mp1_" + i).className = "noBorder";
           }
@@ -452,7 +452,7 @@
             }
             document.getElementById("mp1_" + i).className = "mobileCell mpImgTD mpMobileAwayTeam";
             document.getElementById("mp2_" + i).className = "mobileCell mpMobileGameInfo";
-            document.getElementById("mp3_" + i).className = "mobileCell mpImgTD mpValidSelection";
+            document.getElementById("mp3_" + i).className = "mobileCell mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
             document.getElementById("mp4_" + i).className = "mobileCell noBorder";
             document.getElementById("mp5_" + i).className = "mobileCell noBorder";
           }
@@ -496,7 +496,7 @@
             }
             document.getElementById("mp5_" + i).className = "mobileCell mpImgTD mpMobileHomeTeam";
             document.getElementById("mp4_" + i).className = "mobileCell mpMobileGameInfo";
-            document.getElementById("mp3_" + i).className = "mobileCell mpImgTD mpValidSelection";
+            document.getElementById("mp3_" + i).className = "mobileCell mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
             document.getElementById("mp2_" + i).className = "mobileCell noBorder";
             document.getElementById("mp1_" + i).className = "mobileCell noBorder";
           }
@@ -537,7 +537,7 @@
           var destElem = document.getElementById("mp3_" + row);
           var srcElem = document.getElementById("mp" + (offset + 3) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
-          destElem.className = "mpImgTD mpValidSelection";
+          destElem.className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
           destElem.onclick = null;
 
           // arrow
@@ -575,7 +575,7 @@
           var destElem = document.getElementById("mp3_" + row);
           var srcElem = document.getElementById("mp" + (offset + 1) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
-          destElem.className = "mpImgTD mpValidSelection";
+          destElem.className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
           destElem.onclick = null;
 
           // arrow
@@ -816,9 +816,9 @@
                 $("#mp" + i + "_" + dropZone.currY).attr("class", $("#mp" + (i + 1) + "_" + dropZone.currY).attr("class"));
                 if(i==3) {
                   if($("#mp1_" + dropZone.currY).hasClass("noBorder")) {
-                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpInvalidSelection");
+                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpInvalidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>");
                   } else {
-                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpValidSelection");
+                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>");
                     var str = $("#mp3_" + dropZone.currY + " td:nth-child(1)").html();
                     str = str.substr(0, str.indexOf("<br>") + 4) + (17 - dropZone.currY);
                     $("#mp3_" + dropZone.currY + " td:nth-child(1)").html(str);
@@ -848,9 +848,9 @@
                 $("#mp" + i + "_" + dropZone.currY).attr("class", $("#mp" + (i - 1) + "_" + dropZone.currY).attr("class"));
                 if(i==3) {
                   if($("#mp5_" + dropZone.currY).hasClass("noBorder")) {
-                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpInvalidSelection");
+                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpInvalidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>");
                   } else {
-                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpValidSelection");
+                    $("#mp3_" + dropZone.currY).attr("class", "mobileCell mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>");
                     var str = $("#mp3_" + dropZone.currY + " td:nth-child(1)").html();
                     str = str.substr(0, str.indexOf("<br>") + 4) + (17 - dropZone.currY);
                     $("#mp3_" + dropZone.currY + " td:nth-child(1)").html(str);

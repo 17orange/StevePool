@@ -47,6 +47,8 @@
       $results = RunQuery( "select sessionID from Session where userID=" . $uid, false );
       $_SESSION["spsID"] = $results[0]["sessionID"];
       $_SESSION["browserInfo"] = $bInfo;
+      // see if we're in colorblind mode
+      $_SESSION["cbm"] = ((RunQuery( "select colorblindMode from User join Session using (userID) where sessionID=" . $_SESSION["spsID"] ))[0]["colorblindMode"] == "Y");
 
       setcookie("spsID", $_SESSION["spsID"], time() + 3600 * 24 * 30, "/", $_SERVER["SERVER_NAME"]);
       setcookie("browserInfo", $_SESSION["browserInfo"], time() + 3600 * 24 * 30, "/", $_SERVER["SERVER_NAME"]);

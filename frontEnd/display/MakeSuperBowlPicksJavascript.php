@@ -55,16 +55,16 @@
             currentDragSelection = newDragSelection;
 
             // fix these class names
-            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mobileRow mpImgTD mpValidSelection" : "mobileRow mpImgTD mpAwayTeam";
+            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mobileRow mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mobileRow mpImgTD mpAwayTeam";
             if( document.getElementById("drag3").innerHTML.substr(0,3) == "TIE" )
             {
-              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mobileRow mpValidSelection" : "mobileRow mpGameInfo";
+              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mobileRow mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mobileRow mpGameInfo";
             }
             else
             {
-              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mobileRow mpInvalidSelection" : "mobileRow mpGameInfo";
+              document.getElementById("drag3").className = (currentDragSelection == 3) ? "mobileRow mpInvalidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mobileRow mpGameInfo";
             }
-            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mobileRow mpImgTD mpValidSelection" : "mobileRow mpImgTD mpHomeTeam";
+            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mobileRow mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mobileRow mpImgTD mpHomeTeam";
 
             // assign the new point value
             if( currentDragPos > 1 && (currentDragSelection != 3 || document.getElementById("drag" + currentDragSelection).innerHTML.substr(0,3) == "TIE"))
@@ -295,7 +295,7 @@
             }
             document.getElementById("mp1_" + i).className = "mpImgTD mpAwayTeam";
             document.getElementById("mp2_" + i).className = "mpGameInfo";
-            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection";
+            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
             document.getElementById("mp4_" + i).className = "noBorder";
             document.getElementById("mp5_" + i).className = "noBorder";
           }
@@ -335,7 +335,7 @@
             }
             document.getElementById("mp5_" + i).className = "mpImgTD mpHomeTeam";
             document.getElementById("mp4_" + i).className = "mpGameInfo";
-            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection";
+            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
             document.getElementById("mp2_" + i).className = "noBorder";
             document.getElementById("mp1_" + i).className = "noBorder";
           }
@@ -393,7 +393,7 @@
           destElem = document.getElementById("mp3_" + row);
           srcElem = document.getElementById("mp" + (offset + 2) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
-          destElem.className = "mpValidSelection";
+          destElem.className = "mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
           destElem.onclick = null;
 
           // wall team
@@ -455,7 +455,7 @@
           destElem = document.getElementById("mp3_" + row);
           srcElem = document.getElementById("mp" + (offset + 3) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
-          destElem.className = "mpImgTD mpValidSelection";
+          destElem.className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
           destElem.onclick = null;
 
           // arrow
@@ -508,7 +508,7 @@
           var destElem = document.getElementById("mp3_" + row);
           var srcElem = document.getElementById("mp" + (offset + 1) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
-          destElem.className = "mpImgTD mpValidSelection";
+          destElem.className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
           destElem.onclick = null;
 
           // arrow

@@ -77,13 +77,20 @@
 ?> of <?php echo $_SESSION["showPicksSeason"]; ?> Season</span>
           </td>
           <td class="noBorder fjalla" style="width:15%; text-align:center;">
+            <table>
+              <tr><td>
+                <form action="helpers/changeAccountDetails.php" method="post" id="cbmForm" target="taskWindow">
+                  <input type="hidden" name="task" value="cbm" />
+                  <input type="hidden" name="acctCBM" id="cbmVal" value="<?php echo (($_SESSION["cbm"] ?? "N") == "Y") ? "N" : "Y"; ?>" />
+                  <button onClick="$('#cbmForm').submit();">Alternate Colors</button>
+                </form>
+              </td></tr>
 <?php
   $logosHidden = false;
   if( isset($_SESSION["spsID"]) )
   {
     $logosHidden = (isset($_SESSION["spHideLogos"]) && $_SESSION["spHideLogos"] == "TRUE");
 ?>
-            <table>
               <tr>
                 <td class="noBorder"><button onClick="$('html, body').scrollTop($('#myPicks').offset().top);">Jump to me</button></td>
               </tr>
@@ -95,10 +102,10 @@
                   </form>
                 </td>
               </tr>
-            </table>
 <?php
   }
 ?>
+            </table>
           </td>
           <td class="noBorder fjalla" style="width:50%; text-align:right;">
             <form action="." method="post" id="changeShowPicksWeek">

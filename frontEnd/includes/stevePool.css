@@ -294,6 +294,10 @@ a.wash:link, a.wash:visited, a.wash:hover, a.wash:active {
   border-bottom:4px solid #007500;
 }
 
+.mpValidSelection.CBM .mpSBCaption {
+  border-bottom:4px solid #0072B2 !important;
+}
+
 @media only screen and (max-width: 1023px) {
   .mpSBCaption {
     font-size:12px;
@@ -395,11 +399,19 @@ a.wash:link, a.wash:visited, a.wash:hover, a.wash:active {
   color: #0A1F42;
 }
 
+.mpValidSelection.CBM {
+  border: 5px solid #0072B2 !important;
+}
+
 .mpInvalidSelection {
-  border: 5px solid #AF0000;
+  border: 5px solid #BF0000;
   cursor: pointer;
   background-color: #D9DCE3;
   color: #0A1F42;
+}
+
+.mpInvalidSelection.CBM {
+  border: 5px solid #D55E00 !important;
 }
 
 .mpGameInfo {
@@ -634,8 +646,12 @@ td {
 .sliderTD {
   width:100%; 
   position:relative;
-  background:#AF0000;
+  background:#BF0000;
   border:2px solid #d9dce3;
+}
+
+.sliderTD.CBM {
+  background: #D55E00 !important;
 }
 
 .sliderGood {
@@ -644,12 +660,20 @@ td {
   height:2.5em;
 }
 
+.sliderGood.CBM {
+  background: #0072B2 !important;
+}
+
 .sliderDummy {
   width:5.5em;
   height:2.5em;
   font-size:14px;
   background:#007500;
   position:absolute;
+}
+
+.sliderDummy.CBM {
+  background: #0072B2 !important;
 }
 
 .sliderReal {

@@ -83,8 +83,17 @@
 ?>
             <table>
               <tr>
-                <td class="noBorder"><button onClick="$('html, body').scrollTop($('#myPicks').offset().top);">Jump to me</button></td>
+                <td>
+                  <form action="helpers/changeAccountDetails.php" method="post" id="cbmForm" target="taskWindow">
+                    <input type="hidden" name="task" value="cbm" />
+                    <input type="hidden" name="acctCBM" id="cbmVal" value="<?php echo (($_SESSION["cbm"] ?? "N") == "Y") ? "N" : "Y"; ?>" />
+                    <button onClick="$('#cbmForm').submit();">Alternate Colors</button>
+                  </form>
+                </td>
                 <td class="noBorder"><button onClick="ReloadPage('best');">Best Outcome</button></td>
+              </tr><tr>
+                <td class="noBorder"><button onClick="$('html, body').scrollTop($('#myPicks').offset().top);">Jump to me</button></td>
+                <td class="noBorder"><button onClick="ReloadPage('actual');">Actual Results</button></td>
               </tr><tr>
                 <td class="noBorder">
                   <button onClick="document.getElementById('hideLogosForm').submit();"><?php echo ($logosHidden ? "Show" : "Hide"); ?> logos</button>
@@ -92,9 +101,6 @@
                     <input type="hidden" name="doIt" value="<?php echo ($logosHidden ? "false" : "true"); ?>" />
                   </form>
                 </td>
-                <td class="noBorder"><button onClick="ReloadPage('actual');">Actual Results</button></td>
-              </tr><tr>
-                <td class="noBorder"></td>
                 <td class="noBorder"><button onClick="ReloadPage('worst');">Worst Outcome</button></td>
               </tr>
             </table>

@@ -11,40 +11,57 @@ allDone = True
 # function to gather this info
 def GrabWeekGames(week, season):
 	# grab the live scores from espn
-	liveScores = str(urllib.request.urlopen("https://www.espn.com/nfl/schedule/_/week/" + week + "/year/" + season).read())
+	espnWeek = week
+	espnType = "2"
+	if( int(week) > 18 ):
+		espnWeek = str(int(week) - 18)
+		espnType = "3"
+	liveScores = str(urllib.request.urlopen("https://www.espn.com/nfl/schedule/_/week/" + espnWeek + "/year/" + season + "/seasontype/" + espnType).read())
 
-	start = liveScores.find("<table class=\"schedule has-team-logos")
+	start = liveScores.find("<table style=\"border-collapse:collapse;border-spacing:0\" class=\"Table\">")#"<table class=\"schedule has-team-logos")
 	tableEnd = liveScores.find("</table>", start)
 	start = liveScores.find("<tr class=", start)
 	while( start != -1 ):
-		start = liveScores.find("<abbr", start) + 5
-		start = liveScores.find(">", start) + 1
-		awayEnd = liveScores.find("</abbr>", start)
-		awayTeam = liveScores[start:awayEnd]
+		start = liveScores.find("<span class=\"Table__Team away\">", start)
+		start = liveScores.find("href=\"/nfl/team/_/name/", start) + 23
+		awayEnd = liveScores.find("/", start)
+		awayTeam = liveScores[start:awayEnd].upper()
 		if( awayTeam == "WSH" ):
 			awayTeam = "WAS"
 		elif( awayTeam == "LAR" ):
 			awayTeam = "LA"
 
-		start = liveScores.find("<abbr", start) + 5
-		start = liveScores.find(">", start) + 1
-		homeEnd = liveScores.find("</abbr>", start)
-		homeTeam = liveScores[start:homeEnd]
+		start = liveScores.find("<span class=\"Table__Team\">", start)
+		start = liveScores.find("href=\"/nfl/team/_/name/", start) + 23
+		homeEnd = liveScores.find("/", start)
+		homeTeam = liveScores[start:homeEnd].upper()
 		if( homeTeam == "WSH" ):
 			homeTeam = "WAS"
 		elif( homeTeam == "LAR" ):
 			homeTeam = "LA"
-		
-		start2 = liveScores.find("href=\"/nfl/game?gameId=", start)
-		start = liveScores.find("href=\"/nfl/game/_/gameId/", start) + 25
-		if( start2 != -1 and ((start == 24) or (start2 < start)) ):
-			start = start2 + 23
-		linkEnd = liveScores.find("\"", start)
-		gameLink = liveScores[start:linkEnd]
-		gameLink = "https://www.espn.com/nfl/boxscore?gameId=" + gameLink
-		pbpLink = "https://www.espn.com/nfl/playbyplay?gameId=" + gameLink[-9:]
+		###print( awayTeam + "@" + homeTeam )
 
-		boxScore = str(urllib.request.urlopen(gameLink).read())
+		# skip Damar Hamlin game
+		if( homeTeam == "CIN" and awayTeam == "BUF" and week == "17" and season == "2022" ):
+			start = -1
+			continue
+
+		# get the CBS page to parse this info
+		cur.execute("select gameID, concat('NFL_', date_format(gameTime, '%Y%m%d'), '_', if(((season%2) = 1) and (weekNumber=23), homeTeam, awayTeam),'@', if(((season%2) = 1) and (weekNumber=23), awayTeam, homeTeam)) as URL from Game where season=" + str(season) + " and weekNumber=" + str(week) + " and homeTeam='" + homeTeam + "' and awayTeam='" + awayTeam + "'")
+		dbInfo = cur.fetchall()[0]
+		###print( "http://www.cbssports.com/nfl/gametracker/live/" + dbInfo[1].replace("JAX", "JAC").replace("LAC", "QXV").replace("LA", "LAR").replace("QXV", "LAC"))
+		analyzePage = str(urllib.request.urlopen("http://www.cbssports.com/nfl/gametracker/live/" + dbInfo[1].replace("JAX", "JAC").replace("LAC", "QXV").replace("LA", "LAR").replace("QXV", "LAC")).read())
+
+		#start2 = liveScores.find("href=\"/nfl/game?gameId=", start)
+		#start = liveScores.find("href=\"/nfl/game/_/gameId/", start) + 25
+		#if( start2 != -1 and ((start == 24) or (start2 < start)) ):
+		#	start = start2 + 23
+		#linkEnd = liveScores.find("\"", start)
+		#gameLink = liveScores[start:linkEnd]
+		#gameLink = "https://www.espn.com/nfl/boxscore?gameId=" + gameLink
+		###pbpLink = "https://www.espn.com/nfl/playbyplay?gameId=" + gameLink[-9:]
+
+		#boxScore = str(urllib.request.urlopen(gameLink).read())
 		quarter = 1
 		homePass = 0
 		awayPass = 0
@@ -55,76 +72,99 @@ def GrabWeekGames(week, season):
 		homeScore = [0, 0, 0, 0]
 		awayScore = [0, 0, 0, 0]
 		timeLeft = ""
-		
+
 		# game time
-		timeStart = boxScore.find("status-detail\">")
-		lineScore = boxScore.find("<table id=\"linescore\"")
+		#timeStart = boxScore.find("status-detail\">")
+		#timeStart = boxScore.find("class=\"ScoreCell__Time")
+		#lineScore = boxScore.find("<table id=\"linescore\"")
+		timeStart = analyzePage.find("<div class=\"time\"")
+		lineScore = analyzePage.find("<table class=\"linescore\">")
+		####lineScore = boxScore.find("class=\"ResponsiveTable Gamestrip__Table\"")
 		if( timeStart != -1 and lineScore != -1 ):
-			timeEnd = boxScore.find("</span>", timeStart)
-			timeLeft = boxScore[(timeStart + 15):timeEnd]
-			brk = timeLeft.find(" - ")
-			if timeLeft[1:8].lower() == "alftime":
-				timeLeft = "Halftime"
-			elif timeLeft[1:5].lower() == "inal":
+			pregameStatus = analyzePage.find("SCHEDULED-status")
+			inProgressStatus = analyzePage.find("INPROGRESS-status")
+			finalStatus = analyzePage.find("FINAL-status")
+			if( finalStatus != -1 ):
 				timeLeft = "FINAL"
-			elif brk != -1:
-				timeLeft = "Q" + timeLeft[(brk + 3)] + " " + timeLeft[:brk]
+			elif( inProgressStatus != -1 ):
+				quarter = analyzePage.find("<div class=\"quarter")
+				quarter = analyzePage.find(">", quarter)
+				timeEnd = analyzePage.find("</div>", timeStart)
+				timeLeft = "Q" + analyzePage[(quarter+1):(quarter+2)] + " " + analyzePage[(timeStart + 18):timeEnd]
+				if( timeLeft == "QE 2nd" ):
+					timeLeft = "Halftime"
+				elif( timeLeft == "QE 4th" ):
+					timeLeft = "End Reg"
+				elif( timeLeft[:2] == "QO" ):
+					timeLeft = "OT" + timeLeft[2:]
 			else:
 				timeLeft = ""
 
-			# score by quarters
-			lineScore = boxScore.find("<tbody", lineScore)
-			lineScore = boxScore.find("<td>", lineScore) + 4
-			scoreEnd = boxScore.find("</td>", lineScore)
-			if( lineScore < scoreEnd ):
-				awayScore[0] = int(boxScore[lineScore:scoreEnd])
-				awayScore[1] = int(boxScore[lineScore:scoreEnd])
-				awayScore[2] = int(boxScore[lineScore:scoreEnd])
-			lineScore = boxScore.find("<td>", lineScore) + 4
-			scoreEnd = boxScore.find("</td>", lineScore)
-			if( lineScore < scoreEnd ):
-				awayScore[1] += int(boxScore[lineScore:scoreEnd])
-				awayScore[2] += int(boxScore[lineScore:scoreEnd])
-			lineScore = boxScore.find("<td>", lineScore) + 4
-			scoreEnd = boxScore.find("</td>", lineScore)
-			if( lineScore < scoreEnd ):
-				awayScore[2] += int(boxScore[lineScore:scoreEnd])
-			lineScore = boxScore.find("<td class=\"final-score\">", lineScore) + 24
-			scoreEnd = boxScore.find("</td>", lineScore)
-			awayScore[3] = int(boxScore[lineScore:scoreEnd])
-			lineScore = boxScore.find("<td>", lineScore) + 4
-			scoreEnd = boxScore.find("</td>", lineScore)
-			if( lineScore < scoreEnd ):
-				homeScore[0] = int(boxScore[lineScore:scoreEnd])
-				homeScore[1] = int(boxScore[lineScore:scoreEnd])
-				homeScore[2] = int(boxScore[lineScore:scoreEnd])
-			lineScore = boxScore.find("<td>", lineScore) + 4
-			scoreEnd = boxScore.find("</td>", lineScore)
-			if( lineScore < scoreEnd ):
-				homeScore[1] += int(boxScore[lineScore:scoreEnd])
-				homeScore[2] += int(boxScore[lineScore:scoreEnd])
-			lineScore = boxScore.find("<td>", lineScore) + 4
-			scoreEnd = boxScore.find("</td>", lineScore)
-			if( lineScore < scoreEnd ):
-				homeScore[2] += int(boxScore[lineScore:scoreEnd])
-			lineScore = boxScore.find("<td class=\"final-score\">", lineScore) + 24
-			scoreEnd = boxScore.find("</td>", lineScore)
-			homeScore[3] = int(boxScore[lineScore:scoreEnd])
+			#timeEnd = boxScore.find("</span>", timeStart)
+			#timeLeft = boxScore[(timeStart + 15):(timeEnd+6)]
+			#print("##" + timeLeft + "##")
+			#brk = timeLeft.find(" - ")
+			#if timeLeft[1:8].lower() == "alftime":
+			#	timeLeft = "Halftime"
+			#elif timeLeft[1:5].lower() == "inal":
+			#	timeLeft = "FINAL"
+			#elif brk != -1:
+			#	timeLeft = "Q" + timeLeft[(brk + 3)] + " " + timeLeft[:brk]
+			#else:
+			#	timeLeft = ""
 
-			# swap for super bowl home team
-			if (((int(season) % 2) == 1) and (int(week) == 22)):
-				swap = homeTeam
-				homeTeam = awayTeam
-				awayTeam = swap
-				swap = homeScore
-				homeScore = awayScore
-				awayScore = swap
-				swap = homeRushYds
+			if( pregameStatus == -1 ):
+				# score by quarters
+				lineScore = analyzePage.find("<td class=\"score\">", lineScore) + 18
+				scoreEnd = analyzePage.find("</td>", lineScore)
+				if( (lineScore < scoreEnd) and analyzePage[lineScore:scoreEnd].isdigit() ):
+					awayScore[0] = int(analyzePage[lineScore:scoreEnd])
+					awayScore[1] = int(analyzePage[lineScore:scoreEnd])
+					awayScore[2] = int(analyzePage[lineScore:scoreEnd])
+				lineScore = analyzePage.find("<td class=\"score\">", lineScore) + 18
+				scoreEnd = analyzePage.find("</td>", lineScore)
+				if( (lineScore < scoreEnd) and analyzePage[lineScore:scoreEnd].isdigit() ):
+					awayScore[1] += int(analyzePage[lineScore:scoreEnd])
+					awayScore[2] += int(analyzePage[lineScore:scoreEnd])
+				lineScore = analyzePage.find("<td class=\"score\">", lineScore) + 18
+				scoreEnd = analyzePage.find("</td>", lineScore)
+				if( (lineScore < scoreEnd) and analyzePage[lineScore:scoreEnd].isdigit() ):
+					awayScore[2] += int(analyzePage[lineScore:scoreEnd])
+				lineScore = analyzePage.find("<td class=\"total-score\">", lineScore) + 24
+				scoreEnd = analyzePage.find("</td>", lineScore)
+				awayScore[3] = int(analyzePage[lineScore:scoreEnd])
+				lineScore = analyzePage.find("<td class=\"score\">", lineScore) + 18
+				scoreEnd = analyzePage.find("</td>", lineScore)
+				if( (lineScore < scoreEnd) and analyzePage[lineScore:scoreEnd].isdigit() ):
+					homeScore[0] = int(analyzePage[lineScore:scoreEnd])
+					homeScore[1] = int(analyzePage[lineScore:scoreEnd])
+					homeScore[2] = int(analyzePage[lineScore:scoreEnd])
+				lineScore = analyzePage.find("<td class=\"score\">", lineScore) + 18
+				scoreEnd = analyzePage.find("</td>", lineScore)
+				if( (lineScore < scoreEnd) and analyzePage[lineScore:scoreEnd].isdigit() ):
+					homeScore[1] += int(analyzePage[lineScore:scoreEnd])
+					homeScore[2] += int(analyzePage[lineScore:scoreEnd])
+				lineScore = analyzePage.find("<td class=\"score\">", lineScore) + 18
+				scoreEnd = analyzePage.find("</td>", lineScore)
+				if( (lineScore < scoreEnd) and analyzePage[lineScore:scoreEnd].isdigit() ):
+					homeScore[2] += int(analyzePage[lineScore:scoreEnd])
+				lineScore = analyzePage.find("<td class=\"total-score\">", lineScore) + 24
+				scoreEnd = analyzePage.find("</td>", lineScore)
+				homeScore[3] = int(analyzePage[lineScore:scoreEnd])
+
+		# swap for super bowl home team
+		if (((int(season) % 2) == 1) and (int(week) == 23)):
+			swap = homeTeam
+			homeTeam = awayTeam
+			awayTeam = swap
+			swap = homeScore
+			homeScore = awayScore
+			awayScore = swap
 
 		# punch it into the database
 		cur.execute("select gameID, status, (gameTime - now()) from Game where season=" + season + " and weekNumber=" + week + " and homeTeam='" + homeTeam + "' and awayTeam='" + awayTeam + "'");
 		gameID = cur.fetchall()
-					
+
 		# this game is already in the database, so just update it
 		if len(gameID) > 0:
 			# its over, so make it show that
@@ -137,17 +177,17 @@ def GrabWeekGames(week, season):
 			if gameID[0][1] == statsUtil.IN_PROGRESS and timeLeft[:5] != "FINAL":
 				allDone = False
 		# its not in there yet, so we need to enter it
-		else:
-			datadate = boxScore.find(" data-date=\"") + 12
-			datadate = boxScore[datadate:(datadate + 17)]
-			gameTime = datetime.datetime.strptime(datadate, "%Y-%m-%dT%H:%MZ")
+		#else:
+			#datadate = boxScore.find(" data-date=\"") + 12
+			#datadate = boxScore[datadate:(datadate + 17)]
+			#gameTime = datetime.datetime.strptime(datadate, "%Y-%m-%dT%H:%MZ")
 			# its over, so just give it a dummy gametime
-			if timeLeft[:5] == "FINAL":
+			#if timeLeft[:5] == "FINAL":
 #				if day[4:6] == "01":
 #					gameTime = datetime.datetime.strptime((season + 1) + " " + day + " 01:00 PM", "%Y %a, %b %d %I:%M %p")
 #				else:
 #					gameTime = datetime.datetime.strptime(season + " " + day + " 01:00 PM", "%Y %a, %b %d %I:%M %p")
-				status = statsUtil.FINAL
+				#status = statsUtil.FINAL
 #			# weird bug fix for the one london game with AM PM
 #			elif timeLeft[-9:] == "AM  PM ET":
 #				if day[:3] == "Jan":
@@ -157,21 +197,18 @@ def GrabWeekGames(week, season):
 #				status = statsUtil.FUTURE
 			# its in the future (we dont have any in progress logic, because im not 
 			#                    waiting until games are happening to load the database)
-			else:
+			#else:
 #				if day[4:6] == "01":
 #					###gameTime = datetime.datetime.strptime((season + 1) + " " + day + " " + timeLeft[:-4], "%Y %a, %b %d %I:%M %p")
 #					gameTime = datetime.datetime.strptime(day + " " + ("0" if (len(clock) == 4) else "") + clock + " PM", "%Y%m%d %I:%M %p")
 #				else:
 #					###gameTime = datetime.datetime.strptime(season + " " + day + " " + timeLeft[:-4], "%Y %a, %b %d %I:%M %p")
 #					gameTime = datetime.datetime.strptime(day + " " + ("0" if (len(clock) == 4) else "") + clock + " PM", "%Y%m%d %I:%M %p")
-				status = statsUtil.FUTURE
+				#status = statsUtil.FUTURE
 			# add it to the database (THESE ARE IN ZULU TIME!! YOU NEED TO CORRECT THEM BY HAND FOR EST/EDT)
-			cur.execute("insert into Game (season, weekNumber, homeTeam, homeScore1Q, homeScore2Q, homeScore3Q, homeScore, awayTeam, awayScore1Q, awayScore2Q, awayScore3Q, awayScore, gameTime, lockTime, status, NFLgameID) values (" + season + "," + week + ",'" + homeTeam + "'," + str(homeScore[0]) + "," + str(homeScore[1]) + "," + str(homeScore[2]) + "," + str(homeScore[3]) + ",'" + awayTeam + "'," + str(awayScore[0]) + "," + str(awayScore[1]) + "," + str(awayScore[2]) + "," + str(awayScore[3]) + ",'" + gameTime.strftime("%Y-%m-%d %H:%M:00") + "','" + gameTime.strftime("%Y-%m-%d %H:%M:00") + "'," + str(status) + ",0)")
+			#cur.execute("insert into Game (season, weekNumber, homeTeam, homeScore1Q, homeScore2Q, homeScore3Q, homeScore, awayTeam, awayScore1Q, awayScore2Q, awayScore3Q, awayScore, gameTime, lockTime, status, NFLgameID) values (" + season + "," + week + ",'" + homeTeam + "'," + str(homeScore[0]) + "," + str(homeScore[1]) + "," + str(homeScore[2]) + "," + str(homeScore[3]) + ",'" + awayTeam + "'," + str(awayScore[0]) + "," + str(awayScore[1]) + "," + str(awayScore[2]) + "," + str(awayScore[3]) + ",'" + gameTime.strftime("%Y-%m-%d %H:%M:00") + "','" + gameTime.strftime("%Y-%m-%d %H:%M:00") + "'," + str(status) + ",0)")
 		if (len(gameID) > 0): # or status != statsUtil.FUTURE):
 			# grab the yardage totals and touchdown counts
-			cur.execute("select gameID, concat('NFL_', date_format(gameTime, '%Y%m%d'), '_', if(((season%2) = 1) and (weekNumber=23), homeTeam, awayTeam),'@', if(((season%2) = 1) and (weekNumber=23), awayTeam, homeTeam)) as URL from Game where season=" + str(season) + " and weekNumber=" + str(week) + " and homeTeam='" + homeTeam + "' and awayTeam='" + awayTeam + "'")
-			dbInfo = cur.fetchall()[0]
-			analyzePage = str(urllib.request.urlopen("http://www.cbssports.com/nfl/gametracker/live/" + dbInfo[1].replace("JAX", "JAC").replace("LAC", "QXV").replace("LA", "LAR").replace("QXV", "LAC")).read())
 			preHalftime = ((timeLeft == "Halftime") or ((timeLeft[:1] == "Q") and timeLeft[1:2].isnumeric() and (int(timeLeft[1:2]) < 3)))
 			
 			# away rushing yardage
@@ -238,7 +275,7 @@ def GrabWeekGames(week, season):
 				homeTDs = "null"
 
 			# swap for super bowl home team
-			if ((int(season) % 2) == 1) and (int(week) == 22):
+			if ((int(season) % 2) == 1) and (int(week) == 23):
 				swap = homeRushYds
 				homeRushYds = awayRushYds
 				awayRushYds = swap
@@ -265,12 +302,9 @@ def GrabWeekGames(week, season):
 #			yardQuery = yardQuery + " where gameID=" + str(gameID[0][0]);
 #			cur.execute(yardQuery)
 
-		nextRow = liveScores.find("<tr class=", start)
-		nextAbbr = liveScores.find("<abbr", start)
-		if( nextAbbr == -1 ):
-			start = nextAbbr
-		elif( nextRow > tableEnd ):
-			start = liveScores.find("<table class=\"schedule has-team-logos", tableEnd)
+		nextRow = liveScores.find("<span class=\"Table__Team away\">", start)
+		if( nextRow > tableEnd ):
+			start = liveScores.find("<table style=\"border-collapse:collapse;border-spacing:0\" class=\"Table\">", tableEnd)
 			tableEnd = liveScores.find("</table>", start)
 			byeWeek = liveScores.find("byeweek", start)
 			start = liveScores.find("<tr class=", start)
@@ -305,7 +339,7 @@ if __name__ == "__main__":
 	GrabWeekGames(week, season);
 
 	# update the stats
-	if( int(week) < 18 ):
+	if( int(week) < 19 ):
 		statsUtil.updateStats(week, season)
 	else:
 		statsUtil.updatePlayoffStats(week, season)
@@ -353,7 +387,7 @@ if __name__ == "__main__":
 	cur.execute("update Constants set value=now() where name='lastUpdate'")
 	
 	# clear the cache
-	urllib.request.urlopen("http://localhost/stevePool/helm/flushCache.php").read()
+	urllib.request.urlopen("https://bradplusplus.com/stevePool/helm/flushCache.php").read()
 
 	# commit the changes
 	statsUtil.db.commit()

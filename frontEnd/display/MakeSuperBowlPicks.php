@@ -1,4 +1,9 @@
       <span>Making Picks for Super Bowl</span>
+      <form action="helpers/changeAccountDetails.php" method="post" id="cbmForm" target="taskWindow" style="display:inline-block;margin-left:200px">
+        <input type="hidden" name="task" value="cbm" />
+        <input type="hidden" name="acctCBM" id="cbmVal" value="<?php echo (($_SESSION["cbm"] ?? "N") == "Y") ? "N" : "Y"; ?>" />
+        <button onClick="$('#cbmForm').submit();">Alternate Colors</button>
+      </form>
       <br/>
       <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
         <tr><td class="noBorder" colspan=11>&nbsp;</td></tr>
@@ -97,11 +102,11 @@
              : ((($picks[$i]["winner"] == $picks[$i]["awayTeam"]) || 
                  ($picks[$i]["winner"] == $picks[$i]["homeTeam"]) || 
                  ($i > 1))
-               ? " class=\"mpImgTD mpValidSelection\"" 
-               : " class=\"mpImgTD mpInvalidSelection\"" );
+               ? " class=\"mpImgTD mpValidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\""
+               : " class=\"mpImgTD mpInvalidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\"" );
     if( $saveButtonEnabled )
     {
-      $saveButtonEnabled = ($style == " class=\"mpInvalidSelection\"");
+      $saveButtonEnabled = ($style == " class=\"mpInvalidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\"");
     }
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(3, " . $i . ");\"" : "";
     $text = ($i==0) 

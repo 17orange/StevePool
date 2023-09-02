@@ -22,6 +22,7 @@
     // save the session ID for future use
     unset($_SESSION["spsID"]);
     unset($_SESSION["playerName"]);
+    unset($_SESSION["cbm"]);
     setcookie("spsID", "", time() - 3600 * 24 * 30, "/", $_SERVER["SERVER_NAME"]);
 
     if( isset($_SESSION["pageName"]) && $_SESSION["pageName"] != "makePicks" && $_SESSION["pageName"] != "possibleOutcomes" )

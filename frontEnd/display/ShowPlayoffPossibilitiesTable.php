@@ -7,6 +7,10 @@
     include "../util.php";
   }
 
+  // set the palette
+  $palette = ($_SESSION["cbm"] ?? false) ? ["#0072B2","#000000","#D55E00"] : ["#007500","#888800","#BF0000"];
+  $palette2 = ($_SESSION["cbm"] ?? false) ? ["#42BBFF","#888888","#FF913B", "#0072B2"] : ["#00AA00","#FFFF00","#FF0000", "#409840"];
+
   // see what this type is
   $standingsType = isset($_GET["type"]) ? $_GET["type"] : "actual";
 
@@ -210,18 +214,18 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-TDs2Q\">\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs2Q','" . $games[$i]["awayTeam"] . "');\">\n";
-            echo "                <td class=\"posTop\" style=\"background-color:" . 
-                (($games[$i]["awayTDs2Q"] > $games[$i]["homeTDs2Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            echo "                <td class=\"posTop\" style=\"background-color:" .
+                (($games[$i]["awayTDs2Q"] > $games[$i]["homeTDs2Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs2Q','TIE');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayTDs2Q"] == $games[$i]["homeTDs2Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayTDs2Q"] == $games[$i]["homeTDs2Q"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs2Q','" . $games[$i]["homeTeam"] . "');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayTDs2Q"] < $games[$i]["homeTDs2Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayTDs2Q"] < $games[$i]["homeTDs2Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
                 $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
@@ -233,18 +237,18 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-TDs\">\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs','" . $games[$i]["awayTeam"] . "');\">\n";
-            echo "                <td class=\"posTop\" style=\"background-color:" . 
-                (($games[$i]["awayTDs"] > $games[$i]["homeTDs"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            echo "                <td class=\"posTop\" style=\"background-color:" .
+                (($games[$i]["awayTDs"] > $games[$i]["homeTDs"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs','TIE');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayTDs"] == $games[$i]["homeTDs"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayTDs"] == $games[$i]["homeTDs"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-TDs','" . $games[$i]["homeTeam"] . "');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayTDs"] < $games[$i]["homeTDs"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayTDs"] < $games[$i]["homeTDs"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
                 $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
@@ -256,18 +260,18 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-RushYds2Q\">\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds2Q','" . $games[$i]["awayTeam"] . "');\">\n";
-            echo "                <td class=\"posTop\" style=\"background-color:" . 
-                (($games[$i]["awayRushYds2Q"] > $games[$i]["homeRushYds2Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            echo "                <td class=\"posTop\" style=\"background-color:" .
+                (($games[$i]["awayRushYds2Q"] > $games[$i]["homeRushYds2Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds2Q','TIE');\">\n";
             echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayRushYds2Q"] == $games[$i]["homeRushYds2Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+                (($games[$i]["awayRushYds2Q"] == $games[$i]["homeRushYds2Q"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds2Q','" . $games[$i]["homeTeam"] . "');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayRushYds2Q"] < $games[$i]["homeRushYds2Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayRushYds2Q"] < $games[$i]["homeRushYds2Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
                 $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
@@ -279,18 +283,18 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-RushYds\">\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds','" . $games[$i]["awayTeam"] . "');\">\n";
-            echo "                <td class=\"posTop\" style=\"background-color:" . 
-                (($games[$i]["awayRushYds"] > $games[$i]["homeRushYds"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            echo "                <td class=\"posTop\" style=\"background-color:" .
+                (($games[$i]["awayRushYds"] > $games[$i]["homeRushYds"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds','TIE');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayRushYds"] == $games[$i]["homeRushYds"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayRushYds"] == $games[$i]["homeRushYds"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-RushYds','" . $games[$i]["homeTeam"] . "');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayRushYds"] < $games[$i]["homeRushYds"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayRushYds"] < $games[$i]["homeRushYds"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
                 $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
@@ -302,18 +306,18 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-PassYds2Q\">\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds2Q','" . $games[$i]["awayTeam"] . "');\">\n";
-            echo "                <td class=\"posTop\" style=\"background-color:" . 
-                (($games[$i]["awayPassYds2Q"] > $games[$i]["homePassYds2Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            echo "                <td class=\"posTop\" style=\"background-color:" .
+                (($games[$i]["awayPassYds2Q"] > $games[$i]["homePassYds2Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds2Q','TIE');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayPassYds2Q"] == $games[$i]["homePassYds2Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayPassYds2Q"] == $games[$i]["homePassYds2Q"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds2Q','" . $games[$i]["homeTeam"] . "');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayPassYds2Q"] < $games[$i]["homePassYds2Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayPassYds2Q"] < $games[$i]["homePassYds2Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
                 $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
@@ -325,18 +329,18 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-PassYds\">\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds','" . $games[$i]["awayTeam"] . "');\">\n";
-            echo "                <td class=\"posTop\" style=\"background-color:" . 
-                (($games[$i]["awayPassYds"] > $games[$i]["homePassYds"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            echo "                <td class=\"posTop\" style=\"background-color:" .
+                (($games[$i]["awayPassYds"] > $games[$i]["homePassYds"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds','TIE');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayPassYds"] == $games[$i]["homePassYds"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayPassYds"] == $games[$i]["homePassYds"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-PassYds','" . $games[$i]["homeTeam"] . "');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayPassYds"] < $games[$i]["homePassYds"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayPassYds"] < $games[$i]["homePassYds"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
                 $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
@@ -348,18 +352,18 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-Score1Q\">\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score1Q','" . $games[$i]["awayTeam"] . "');\">\n";
-            echo "                <td class=\"posTop\" style=\"background-color:" . 
-                (($games[$i]["awayScore1Q"] > $games[$i]["homeScore1Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            echo "                <td class=\"posTop\" style=\"background-color:" .
+                (($games[$i]["awayScore1Q"] > $games[$i]["homeScore1Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score1Q','TIE');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayScore1Q"] == $games[$i]["homeScore1Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayScore1Q"] == $games[$i]["homeScore1Q"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score1Q','" . $games[$i]["homeTeam"] . "');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayScore1Q"] < $games[$i]["homeScore1Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayScore1Q"] < $games[$i]["homeScore1Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
                 $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
@@ -369,23 +373,23 @@
             echo "            </table>\n";
             echo "          </td>\n";
           }
-          echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;" . 
+          echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;" .
               (($_SESSION["showPicksWeek"]==(($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? " border-right:none;" : "") . "\">\n";
           echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-Score2Q\">\n";
           echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score2Q','" . $games[$i]["awayTeam"] . "');\">\n";
-          echo "                <td class=\"posTop\" style=\"background-color:" . 
-              (($games[$i]["awayScore2Q"] > $games[$i]["homeScore2Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-              $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+          echo "                <td class=\"posTop\" style=\"background-color:" .
+              (($games[$i]["awayScore2Q"] > $games[$i]["homeScore2Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+              $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
               getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
           echo "              </tr>\n";
           echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score2Q','TIE');\">\n";
-          echo "                <td class=\"posOther\" style=\"background-color:" . 
-              (($games[$i]["awayScore2Q"] == $games[$i]["homeScore2Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+          echo "                <td class=\"posOther\" style=\"background-color:" .
+              (($games[$i]["awayScore2Q"] == $games[$i]["homeScore2Q"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
           echo "              </tr>\n";
           echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score2Q','" . $games[$i]["homeTeam"] . "');\">\n";
-          echo "                <td class=\"posOther\" style=\"background-color:" . 
-              (($games[$i]["awayScore2Q"] < $games[$i]["homeScore2Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-              $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+          echo "                <td class=\"posOther\" style=\"background-color:" .
+              (($games[$i]["awayScore2Q"] < $games[$i]["homeScore2Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+              $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
               getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
           echo "              </tr>\n";
           echo "              <tr>\n";
@@ -413,18 +417,18 @@
             echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px;\">\n";
             echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "-Score3Q\">\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score3Q','" . $games[$i]["awayTeam"] . "');\">\n";
-            echo "                <td class=\"posTop\" style=\"background-color:" . 
-                (($games[$i]["awayScore3Q"] > $games[$i]["homeScore3Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . 
+            echo "                <td class=\"posTop\" style=\"background-color:" .
+                (($games[$i]["awayScore3Q"] > $games[$i]["homeScore3Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+                $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score3Q','TIE');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayScore3Q"] == $games[$i]["homeScore3Q"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayScore3Q"] == $games[$i]["homeScore3Q"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
             echo "              </tr>\n";
             echo "              <tr onClick=\"ForceWinner('" . $games[$i]["gameID"] . "-Score3Q','" . $games[$i]["homeTeam"] . "');\">\n";
-            echo "                <td class=\"posOther\" style=\"background-color:" . 
-                (($games[$i]["awayScore3Q"] < $games[$i]["homeScore3Q"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
+            echo "                <td class=\"posOther\" style=\"background-color:" .
+                (($games[$i]["awayScore3Q"] < $games[$i]["homeScore3Q"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
                 $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" .
                 getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . "\"/></div></div></td>\n";
             echo "              </tr>\n";
@@ -438,19 +442,19 @@
         echo "          <td class=\"headerBackgroundTable\" style=\"width:4.5%; font-size:10px; border-right:none;\">\n";
         echo "            <table class=\"gameScoreTable\" name=\"game" . $games[$i]["gameID"] . "\">\n";
         echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'" . $games[$i]["awayTeam"] . "');\">\n";
-        echo "                <td class=\"posTop\" style=\"background-color:" . 
-            (($games[$i]["awayScore"] > $games[$i]["homeScore"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-            $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) . 
+        echo "                <td class=\"posTop\" style=\"background-color:" .
+            (($games[$i]["awayScore"] > $games[$i]["homeScore"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+            $teamAliases[$games[$i]["awayTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["awayTeam"], $_SESSION["showPicksSeason"]) .
             "\"/></div></div></td>\n";
         echo "              </tr>\n";
         echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'TIE');\">\n";
-        echo "                <td class=\"posOther\" style=\"background-color:" . 
-            (($games[$i]["awayScore"] == $games[$i]["homeScore"]) ? "#409840" : "#D9DCE3") . ";\">Tie</td>\n";
+        echo "                <td class=\"posOther\" style=\"background-color:" .
+            (($games[$i]["awayScore"] == $games[$i]["homeScore"]) ? $palette2[3] : "#D9DCE3") . ";\">Tie</td>\n";
         echo "              </tr>\n";
         echo "              <tr onClick=\"ForceWinner(" . $games[$i]["gameID"] . ",'" . $games[$i]["homeTeam"] . "');\">\n";
-        echo "                <td class=\"posOther\" style=\"background-color:" . 
-            (($games[$i]["awayScore"] < $games[$i]["homeScore"]) ? "#409840" : "#D9DCE3") . ";\"><div class=\"posTeam\">" . 
-            $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) . 
+        echo "                <td class=\"posOther\" style=\"background-color:" .
+            (($games[$i]["awayScore"] < $games[$i]["homeScore"]) ? $palette2[3] : "#D9DCE3") . ";\"><div class=\"posTeam\">" .
+            $teamAliases[$games[$i]["homeTeam"]] . "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . getIcon($games[$i]["homeTeam"], $_SESSION["showPicksSeason"]) .
             "\"/></div></div></td>\n";
         echo "              </tr>\n";
         if( $_SESSION["showPicksWeek"] >= (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
@@ -511,17 +515,17 @@
       $possibleMax = 0;
 
       $userID = $thisPick["userID"];
-      echo "        </tr>\n        <tr class=\"" . (($myID == $thisPick["userID"]) ? "my" : "table") . "Row\" style=\"color:#" . 
-          (($thisPick["advances"] == "Y") ? "007500" : (($thisPick["advances"] == "N") ? "AF0000" : "888800")) . 
-          "\">\n          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : $currRank) . 
-          "</td>\n          " . "<td class=\"lightBackgroundTable" . (($myID == $thisPick["userID"]) ? " myName\" id=\"myPicks" : "") . 
+      echo "        </tr>\n        <tr class=\"" . (($myID == $thisPick["userID"]) ? "my" : "table") . "Row\" style=\"color:" .
+          (($thisPick["advances"] == "Y") ? $palette[0] : (($thisPick["advances"] == "N") ? $palette[2] : $palette[1])) .
+          "\">\n          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : $currRank) .
+          "</td>\n          " . "<td class=\"lightBackgroundTable" . (($myID == $thisPick["userID"]) ? " myName\" id=\"myPicks" : "") .
           "\">" . $thisPick["pName"] . "</td>\n";
       echo "          <td class=\"lightBackgroundTable\">" . $thisPick["sPts"] . "</td>\n";
 
       // show wild card score
       if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) )
       {
-        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] == 0) 
+        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] == 0)
             ? "Bye" : (($thisPick["prevWeek1"] < 0) ? (($thisPick["prevWeek1"] + 1) * -1) : $thisPick["prevWeek1"])). "</td>\n";
       }
       // show divisional score
@@ -533,8 +537,8 @@
       // show conference score
       if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
       {
-        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . 
-            ((($thisPick["prevWeek1"] < 0) || ($thisPick["prevWeek2"] < 0)) ? "--&nbsp;" : 
+        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" .
+            ((($thisPick["prevWeek1"] < 0) || ($thisPick["prevWeek2"] < 0)) ? "--&nbsp;" :
             (($thisPick["prevWeek3"] < 0) ? (($thisPick["prevWeek3"] + 1) * -1) : $thisPick["prevWeek3"])) . "</td>\n";
         echo "          <td style=\"display:none;\">" . $thisPick["weeklyWins"] . "</td>\n";
       }
@@ -553,10 +557,10 @@
     else if($thisPick["winner"] == "")
     {
       echo "<div class=\"cellShadeOuter\">\n";
-      echo "<div class=\"cellShadeBG\" style=\"background-color:#FF0000;\"></div>\n";
+      echo "<div class=\"cellShadeBG\" style=\"background-color:" . $palette2[2] . "\"></div>\n";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\"><span class=\"blankIt\">MIS 19</span><br>";
       echo "<div class=\"imgDiv blankIt\"><img class=\"teamLogo\" src=\"" . getIcon("BUF", $_SESSION["showPicksSeason"]) . "\"/></div>";
-      echo "<div class=\"centerIt\" style=\"color:#BF0000;\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
+      echo "<div class=\"centerIt\" style=\"color:" . $palette[2] . "\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
       echo "</div>\n";
     }
     else if( !$poolLocked && $thisPick["userID"] != $myID )
@@ -566,17 +570,17 @@
     else
     {
       echo "<div class=\"cellShadeOuter\">\n";
-      echo "<div class=\"cellShadeBG\"" . ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "" : 
-          (" style=\"background-color:#" . 
-          (($thisPick["winner"] == $thisPick["leader"]) ? "00AA00": "FF0000") . ";\"")) . "></div>\n";
-      $span = "<span style=\"color:#" . 
-          ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "0A1F42" : 
-          (($thisPick["winner"] == $thisPick["leader"]) ? "007500": "BF0000")) . ";\">" . $teamAliases[$thisPick["winner"]] . 
+      echo "<div class=\"cellShadeBG\"" . ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "" :
+          (" style=\"background-color:" .
+          (($thisPick["winner"] == $thisPick["leader"]) ? $palette2[0] : $palette2[2]) . ";\"")) . "></div>\n";
+      $span = "<span style=\"color:" .
+          ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "#0A1F42" :
+          (($thisPick["winner"] == $thisPick["leader"]) ? $palette[0] : $palette[2])) . ";\">" . $teamAliases[$thisPick["winner"]] .
           (($thisPick["pPts"] > 0) ? (" " . $thisPick["pPts"]) : "") . "</span>";
-      echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
+      echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ?
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";
-      echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . (($thisPick["winner"] != "TIE") ? 
-          getIcon($thisPick["winner"], $_SESSION["showPicksSeason"]) : 
+      echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . (($thisPick["winner"] != "TIE") ?
+          getIcon($thisPick["winner"], $_SESSION["showPicksSeason"]) :
           getIcon("", $_SESSION["showPicksSeason"])) . "\"/></div>";
       echo ($logosHidden ? "</div>" : "") . "</td></tr></table>";
       echo "</div>\n";
@@ -1056,11 +1060,11 @@
                       }
                       var aTeam = t.rows[0].cells[0].firstElementChild.innerHTML;
                       aTeam = aTeam.slice(0, aTeam.indexOf("<"));
-                      t.rows[0].cells[0].style.backgroundColor = (teamAliases[winner] == aTeam) ? "#409840" : "#D9DCE3";
-                      t.rows[1].cells[0].style.backgroundColor = (winner == "TIE") ? "#409840" : "#D9DCE3";
+                      t.rows[0].cells[0].style.backgroundColor = (teamAliases[winner] == aTeam) ? "<?php echo $palette2[3]; ?>" : "#D9DCE3";
+                      t.rows[1].cells[0].style.backgroundColor = (winner == "TIE") ? "<?php echo $palette2[3]; ?>" : "#D9DCE3";
                       var hTeam = t.rows[2].cells[0].firstElementChild.innerHTML;
                       hTeam = hTeam.slice(0, hTeam.indexOf("<"));
-                      t.rows[2].cells[0].style.backgroundColor = (teamAliases[winner] == hTeam) ? "#409840" : "#D9DCE3";
+                      t.rows[2].cells[0].style.backgroundColor = (teamAliases[winner] == hTeam) ? "<?php echo $palette2[3]; ?>" : "#D9DCE3";
                     }
                   }
                 }
@@ -1087,8 +1091,8 @@
                     var wasWrong = (BG.style.backgroundColor == "rgb(255, 0, 0)");
                     var nowRight = (txt.innerHTML.slice(0, teamAliases[winner].length) == teamAliases[winner]);
                     //var nowRight = (txt.innerHTML.slice(0, teamAliases[winner.length]) == ((winner == "NONE") ? "TIE " : teamAliases[winner]));
-                    BG.style.backgroundColor = (nowRight ? "#00AA00": "#FF0000");
-                    txt.style.color = (nowRight ? "#007500": "#AF0000");
+                    BG.style.backgroundColor = (nowRight ? "<?php echo $palette2[0]; ?>": "<?php echo $palette2[2]; ?>");
+                    txt.style.color = (nowRight ? "<?php echo $palette[0]; ?>": "<?php echo $palette[2]; ?>");
                     // update their scores if we need to
                     if( ((wasRight != nowRight) || (!wasWrong && !wasRight)) <?php 
   echo (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23)) ? " && checkIndex != 16" : ""); ?> )
@@ -1140,7 +1144,7 @@
                     BG = rows[j].cells[16].firstElementChild.firstElementChild;
                     txt = BG.nextElementSibling.rows[0].cells[0].firstElementChild<?php echo ($logosHidden ? ".firstElementChild" : ""); ?>;
                     nowRight = (txt.innerHTML.slice(0, teamAliases[sbWinner].length) == teamAliases[sbWinner]);
-                    rows[j].style.color = (nowRight ? "#007500": "#AF0000");
+                    rows[j].style.color = (nowRight ? "<?php echo $palette[0]; ?>": "<?php echo $palette[2]; ?>");
                   }
                 }
 
@@ -1247,12 +1251,12 @@
                   if( mostRecentSort == "points" )
                   {
                     advance = (j - i1) < <?php
-  echo ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? 5 : 
-       (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20)) ? 10 : 
+  echo ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? (($_SESSION["showPicksSeason"] <= 2021) ? 5 : 6) :
+       (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20)) ? (($_SESSION["showPicksSeason"] <= 2021) ? 10 : 11) :
        (($_SESSION["showPicksSeason"] < 2017) ? 20 : (($_SESSION["showPicksSeason"] <= 2020) ? 21 : 22))); ?>;
                     rows[j].cells[rows[j].cells.length - 1].innerHTML = (advance ? "Yes" : "No");
                   }
-                  rows[j].style.color = (advance ? "#007500": "#AF0000");
+                  rows[j].style.color = (advance ? "<?php echo $palette[0]; ?>": "<?php echo $palette[2]; ?>");
                 }
                 
                 i1 = i2;

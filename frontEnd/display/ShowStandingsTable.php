@@ -7,6 +7,9 @@
     include "../util.php";
   }
 
+  // set the palette
+  $palette = ($_SESSION["cbm"] ?? false) ? ["#0072B2","#000000","#D55E00"] : ["#007500","#888800","#BF0000"];
+
   // see what this type is
   $standingsType = isset($_GET["type"]) ? $_GET["type"] : "actual";
 
@@ -131,9 +134,9 @@
       }
 
       $userID = $thisWeek["userID"];
-      echo "        </tr>\n        <tr class=\"" . (($myID == $thisWeek["userID"]) ? "my" : "table") . "Row\" style=\"color:" . 
-          (($thisWeek["inPlayoffs"] == "Y") ? "#007500" : (($thisWeek["inPlayoffs"] == "N") ? "#AF0000" : "#888800")) . "\"" . 
-          ">\n          <td class=\"lightBackgroundTable\">" . $currRank . "</td>\n          <td class=\"lightBackgroundTable" . 
+      echo "        </tr>\n        <tr class=\"" . (($myID == $thisWeek["userID"]) ? "my" : "table") . "Row\" style=\"color:" .
+          (($thisWeek["inPlayoffs"] == "Y") ? $palette[0] : (($thisWeek["inPlayoffs"] == "N") ? $palette[2] : $palette[1])) . "\"" .
+          ">\n          <td class=\"lightBackgroundTable\">" . $currRank . "</td>\n          <td class=\"lightBackgroundTable" .
           (($myID == $thisWeek["userID"]) ? " myName\" id=\"myStanding" : "") . "\">" . $thisWeek["pName"] . "</td>\n";
     }
 
@@ -295,7 +298,7 @@
                 {
                   var advance = (rows[j].cells[rows[j].cells.length - 2].innerHTML == "Yes");
                   var maybe = (rows[j].cells[rows[j].cells.length - 2].innerHTML == "Maybe");
-                  rows[j].style.color = (advance ? "#007500": (maybe ? "888800" : "#AF0000"));
+                  rows[j].style.color = (advance ? "<?php echo $palette[0]; ?>": (maybe ? "<?php echo $palette[1]; ?>" : "<?php echo $palette[2]; ?>"));
                 }
                 
                 i1 = i2;
@@ -334,7 +337,9 @@
               {
                 // tack on the new elements
                 document.getElementById("reloadableTable").innerHTML = xmlhttp.responseText;
-                SortTable(mostRecentSort);
+                if( typeof mostRecentSort !== 'undefined' ) {
+                  SortTable(mostRecentSort);
+                }
                 setTimeout(function() { ReloadPage("<?php echo $standingsType; ?>") }, <?php echo $delayTime; ?>);
               }
             }

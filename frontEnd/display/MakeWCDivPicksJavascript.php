@@ -53,9 +53,9 @@
             currentDragSelection = newDragSelection;
 
             // fix these class names
-            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mpImgTD mpValidSelection" : "mpImgTD mpWCDivAwayTeam";
-            document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpInvalidSelection" : "mpWCDivGameInfo";
-            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mpImgTD mpValidSelection" : "mpImgTD mpWCDivHomeTeam";
+            document.getElementById("drag2").className = (currentDragSelection == 2) ? "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mpImgTD mpWCDivAwayTeam";
+            document.getElementById("drag3").className = (currentDragSelection == 3) ? "mpInvalidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mpWCDivGameInfo";
+            document.getElementById("drag4").className = (currentDragSelection == 4) ? "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>" : "mpImgTD mpWCDivHomeTeam";
 
             // update the slider handle
             adjustSliders(null,null);
@@ -296,7 +296,7 @@
             }
             document.getElementById("mp1_" + i).className = "mpImgTD mpAwayTeam";
             document.getElementById("mp2_" + i).className = "mpGameInfo";
-            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection";
+            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
             document.getElementById("mp4_" + i).className = "noBorder";
             document.getElementById("mp5_" + i).className = "noBorder";
           }
@@ -336,7 +336,7 @@
             }
             document.getElementById("mp5_" + i).className = "mpImgTD mpHomeTeam";
             document.getElementById("mp4_" + i).className = "mpGameInfo";
-            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection";
+            document.getElementById("mp3_" + i).className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
             document.getElementById("mp2_" + i).className = "noBorder";
             document.getElementById("mp1_" + i).className = "noBorder";
           }
@@ -391,7 +391,7 @@
           var destElem = document.getElementById("mp3_" + row);
           var srcElem = document.getElementById("mp" + (offset + 3) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
-          destElem.className = "mpImgTD mpValidSelection";
+          destElem.className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
           destElem.onclick = null;
 
           // arrow
@@ -429,7 +429,7 @@
           var destElem = document.getElementById("mp3_" + row);
           var srcElem = document.getElementById("mp" + (offset + 1) + "_" + row);
           destElem.innerHTML = srcElem.innerHTML;
-          destElem.className = "mpImgTD mpValidSelection";
+          destElem.className = "mpImgTD mpValidSelection<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>";
           destElem.onclick = null;
 
           // arrow

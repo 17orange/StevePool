@@ -8,6 +8,7 @@ drop procedure if exists SaveDivisionalPicks;
 drop procedure if exists SaveConferencePicks;
 drop procedure if exists SaveSuperBowlPicks;
 drop procedure if exists EditAccount;
+drop procedure if exists SetColorblindMode;
 
 ##### StevePoolAdmin functions
 drop procedure if exists AddUser;
@@ -510,6 +511,15 @@ begin
   insert into Event (userID, type, atTime) values (_userID, 'userEdited', now());
 end;  //
 
+create procedure SetColorblindMode( in _sessID          int unsigned ,
+                                    in _colorblindMode  char(1)      )
+begin
+  # update this parameter
+  update User join Session using (userID)
+    set colorblindMode=if(_colorblindMode='Y','Y','N')
+    where sessionID=_sessID;
+end; //
+
 
 
 
@@ -903,6 +913,7 @@ grant execute on procedure StevePool.SaveDivisionalPicks to 'StevePoolUser'@'loc
 grant execute on procedure StevePool.SaveConferencePicks to 'StevePoolUser'@'localhost';  //
 grant execute on procedure StevePool.SaveSuperBowlPicks to 'StevePoolUser'@'localhost';  //
 grant execute on procedure StevePool.EditAccount to 'StevePoolUser'@'localhost';  //
+grant execute on procedure StevePool.SetColorblindMode to 'StevePoolUser'@'localhost';  //
 
 ##### admin permissions   
 ##### production pword: $t3v3P00l4dm!n

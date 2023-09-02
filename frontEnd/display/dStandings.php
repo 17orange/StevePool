@@ -5,6 +5,11 @@
             <span>Showing Standings for <?php echo $_SESSION["showStandingsSeason"]; ?> Season</span>
           </td>
           <td class="noBorder fjalla" style="width:15%; text-align:center;">
+            <form action="helpers/changeAccountDetails.php" method="post" id="cbmForm" target="taskWindow">
+              <input type="hidden" name="task" value="cbm" />
+              <input type="hidden" name="acctCBM" id="cbmVal" value="<?php echo (($_SESSION["cbm"] ?? "N") == "Y") ? "N" : "Y"; ?>" />
+              <button onClick="$('#cbmForm').submit();">Alternate Colors</button>
+            </form>
 <?php
   if( isset($_SESSION["spsID"]) )
   {

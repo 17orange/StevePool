@@ -7,6 +7,10 @@
     include "../util.php";
   }
 
+  // set the palette
+  $palette = ($_SESSION["cbm"] ?? false) ? ["#0072B2","#000000","#D55E00"] : ["#007500","#888800","#BF0000"];
+  $palette2 = ($_SESSION["cbm"] ?? false) ? ["#42BBFF","#888888","#FF913B"] : ["#00AA00","#FFFF00","#FF0000"];
+
   // see what this type is
   $standingsType = isset($_GET["type"]) ? $_GET["type"] : "actual";
 
@@ -402,30 +406,30 @@
       $possibleMax = 0;
 
       $userID = $thisPick["userID"];
-      echo "        </tr>\n        <tr class=\"" . (($myID == $thisPick["userID"]) ? "my" : "table") . "Row\" style=\"color:#" . 
-          (($thisPick["advances"] == "Y") ? "007500" : (($thisPick["advances"] == "N") ? "AF0000" : "888800")) . 
-          "\">\n          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : $currRank) . "</td>\n          " . 
-          "<td class=\"lightBackgroundTable" . (($myID == $thisPick["userID"]) ? " myName\" id=\"myPicks" : "") . 
+      echo "        </tr>\n        <tr class=\"" . (($myID == $thisPick["userID"]) ? "my" : "table") . "Row\" style=\"color:" .
+          (($thisPick["advances"] == "Y") ? $palette[0] : (($thisPick["advances"] == "N") ? $palette[2] : $palette[1])) .
+          "\">\n          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : $currRank) . "</td>\n          " .
+          "<td class=\"lightBackgroundTable" . (($myID == $thisPick["userID"]) ? " myName\" id=\"myPicks" : "") .
           "\">" . $thisPick["pName"] . "</td>\n";
       echo "          <td class=\"lightBackgroundTable\">" . $thisPick["sPts"] . "</td>\n";
 
       // show wild card score
       if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19) )
       {
-        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] == 0) 
-            ? "Bye" : (($thisPick["prevWeek1"] < 0) ? (($thisPick["prevWeek1"] + 1) * -1) : $thisPick["prevWeek1"])). "</td>\n";
+        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] == 0)
+            ? "Bye" : (($thisPick["prevWeek1"] < 0) ? (($thisPick["prevWeek1"] + 1) * -1) : $thisPick["prevWeek1"])) . "</td>\n";
       }
       // show divisional score
       if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20) )
       {
-        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] < 0) 
+        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . (($thisPick["prevWeek1"] < 0)
             ? "--&nbsp;" : (($thisPick["prevWeek2"] < 0) ? (($thisPick["prevWeek2"] + 1) * -1) : $thisPick["prevWeek2"])) . "</td>\n";
       }
       // show conference score
       if( $_SESSION["showPicksWeek"] > (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21) )
       {
-        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" . 
-            ((($thisPick["prevWeek1"] < 0) || ($thisPick["prevWeek2"] < 0)) ? "--&nbsp;" : 
+        echo "          <td class=\"lightBackgroundTable\" style=\"height:100%;\">" .
+            ((($thisPick["prevWeek1"] < 0) || ($thisPick["prevWeek2"] < 0)) ? "--&nbsp;" :
             (($thisPick["prevWeek3"] < 0) ? (($thisPick["prevWeek3"] + 1) * -1) : $thisPick["prevWeek3"])) . "</td>\n";
         echo "          <td style=\"display:none;\">" . $thisPick["weeklyWins"] . "</td>\n";
       }
@@ -444,10 +448,10 @@
     else if($thisPick["winner"] == "")
     {
       echo "<div class=\"cellShadeOuter\">\n";
-      echo "<div class=\"cellShadeBG\" style=\"background-color:#FF0000;\"></div>\n";
+      echo "<div class=\"cellShadeBG\" style=\"background-color:" . $palette2[2] . "\"></div>\n";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\"><span class=\"blankIt\">MIS 19</span><br>";
       echo "<div class=\"imgDiv blankIt\"><img class=\"teamLogo\" src=\"" . getIcon("BUF", $_SESSION["showPicksSeason"]) . "\"/></div>";
-      echo "<div class=\"centerIt\" style=\"color:#BF0000;\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
+      echo "<div class=\"centerIt\" style=\"color:" . $palette[2] . "\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
       echo "</div>\n";
     }
     else if( !$poolLocked && $thisPick["userID"] != $myID && $standingsType == "actual" )
@@ -457,18 +461,18 @@
     else
     {
       echo "<div class=\"cellShadeOuter\">\n";
-      echo "<div class=\"cellShadeBG\"" . ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "" : 
-          (" style=\"background-color:#" . (($thisPick["winner"] == $thisPick["leader"]) ? "00AA00" : 
-          (($thisPick["leader"] == "TIE" && $thisPick["gStatus"] != 3) ? "FFFF00" : "FF0000")) . ";\"")) . "></div>\n";
-      $span = "<span style=\"color:#" . 
-          ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "0A1F42" : 
-          (($thisPick["winner"] == $thisPick["leader"]) ? "007500": 
-          (($thisPick["leader"] == "TIE" && $thisPick["gStatus"] != 3) ? "888800" : "BF0000"))) . ";" . 
-          (($thisPick["gStatus"] == 2) ? " font-style:italic;" : "") . "\">" . 
+      echo "<div class=\"cellShadeBG\"" . ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "" :
+          (" style=\"background-color:" . (($thisPick["winner"] == $thisPick["leader"]) ? $palette2[0] :
+          (($thisPick["leader"] == "TIE" && $thisPick["gStatus"] != 3) ? $palette2[1] : $palette2[2])) . ";\"")) . "></div>\n";
+      $span = "<span style=\"color:" .
+          ((($thisPick["gStatus"] == 1) || ($thisPick["gStatus"] == 19)) ? "#0A1F42" :
+          (($thisPick["winner"] == $thisPick["leader"]) ? $palette[0] :
+          (($thisPick["leader"] == "TIE" && $thisPick["gStatus"] != 3) ? $palette[1] : $palette[2]))) . ";" .
+          (($thisPick["gStatus"] == 2) ? " font-style:italic;" : "") . "\">" .
           $teamAliases[$thisPick["winner"]] . (($thisPick["pPts"] > 0) ? (" " . $thisPick["pPts"]) : "") . "</span>";
-      echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? 
+      echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ?
             ("<div class=\"centerIt\">" . $span . "</div><div class=\"blankIt\">") : "") . $span . "<br>";
-      echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . (($thisPick["winner"] != "TIE") ? 
+      echo "<div class=\"imgDiv\"><img class=\"teamLogo\" src=\"" . (($thisPick["winner"] != "TIE") ?
           getIcon($thisPick["winner"], $_SESSION["showPicksSeason"]) : getIcon("", $_SESSION["showPicksSeason"])) . "\"/></div>";
       echo ($logosHidden ? "</div>" : "") . "</td></tr></table>";
       echo "</div>\n";
@@ -495,11 +499,11 @@
       // show their score pick
       $radix = ((($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 18 : 19)) && ($_SESSION["showPicksSeason"] > 2019)) ? 6 : 4);
       $toggle = (($jk - $baseJK) % $radix);
-      $toggle = (($toggle == 1) && ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21))) ? 2 : 
+      $toggle = (($toggle == 1) && ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21))) ? 2 :
                 ((($toggle == 2) && ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21))) ? 1 : $toggle);
       $tbName = "tieBreaker" . ($radix - ($toggle % $radix));
-      echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick[$tbName] == "0") 
-          ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID) 
+      echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick[$tbName] == "0")
+          ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID)
                    ? "X" : $thisPick[$tbName]))) . "</td>\n";
     }
 
@@ -508,8 +512,8 @@
     {
       if( $_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
       {
-        echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick["tieBreaker1"] == "0") 
-            ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID) 
+        echo "          <td class=\"lightBackgroundTable\">" . (($hasBye || $eliminated) ? "--" : (($thisPick["tieBreaker1"] == "0")
+            ? "--" : ((!$poolLocked && $thisPick["userID"] != $myID)
                      ? "X" : $thisPick["tieBreaker1"]))) . "</td>\n";
       }
       echo "          <td style=\"display:none\">" . $thisPick["tb1"] . "</td>\n";
@@ -519,8 +523,8 @@
       echo "          <td class=\"lightBackgroundTable\">" . ($hasBye ? "--" : ($eliminated ? "--&nbsp;" : $possibleMax)) . "</td>\n";
       if( $_SESSION["showPicksWeek"] < (($_SESSION["showPicksSeason"] <= 2020) ? 22 : 23) )
       {
-        echo "          <td class=\"lightBackgroundTable\" style=\"color:#" . (($thisPick["advances"] == "Y") ? "007500" : 
-            (($thisPick["advances"] == "N") ? "AF0000" : "888800")) . "\">" . (($thisPick["advances"] == "Y") ? "Yes" : 
+        echo "          <td class=\"lightBackgroundTable\" style=\"color:" . (($thisPick["advances"] == "Y") ? $palette[0] :
+            (($thisPick["advances"] == "N") ? $palette[2] : $palette[1])) . "\">" . (($thisPick["advances"] == "Y") ? "Yes" :
             (($thisPick["advances"] == "N") ? "No" : "Maybe")) . "</td>\n";
       }
     }

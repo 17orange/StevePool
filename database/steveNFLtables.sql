@@ -23,7 +23,8 @@ create table User (userID int unsigned not null primary key auto_increment,
                    password char(32) not null, 
                    firstName varchar(36) not null, 
                    lastName varchar(36) not null, 
-                   email varchar(200) not null unique);
+                   email varchar(200) not null unique,
+                   colorblindMode enum('Y','N') not null default 'N');
 
 create table Team (teamID char(3) not null primary key, 
                    alias char(3) not null, 

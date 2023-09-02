@@ -7,6 +7,10 @@
     include "../util.php";
   }
 
+  // set the palette
+  $palette = ($_SESSION["cbm"] ?? false) ? ["#0072B2","#000000","#D55E00"] : ["#007500","#888800","#BF0000"];
+  $palette2 = ($_SESSION["cbm"] ?? false) ? ["#42BBFF","#888888","#FF913B"] : ["#00AA00","#FFFF00","#FF0000"];
+
   // see what this type is
   $standingsType = isset($_GET["type"]) ? $_GET["type"] : "actual";
 
@@ -134,7 +138,11 @@
         echo "              </tr>\n";
         echo "              <tr>\n";
         echo "                <td colspan=\"2\" class=\"noBorder\" style=\"height:35px;\">";
-        if( $games[$i]["status"] == "3" )
+        if( $games[$i]["status"] == "4" )
+        {
+          echo "PPD";
+        }
+        else if( $games[$i]["status"] == "3" )
         {
           echo "Final";
         }
@@ -188,10 +196,10 @@
     else if($thisPick["winner"] == "")
     {
       echo "<div class=\"cellShadeOuter\">\n";
-      echo "<div class=\"cellShadeBG\" style=\"background-color:#FF0000;\"></div>\n";
+      echo "<div class=\"cellShadeBG\" style=\"background-color:" . $palette2[2] . "\"></div>\n";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\"><span class=\"blankIt\">MIS 19</span><br>";
       echo "<div class=\"imgDiv blankIt\"><img class=\"teamLogo\" src=\"" . getIcon("BUF", $_SESSION["showPicksSeason"]) . "\"/></div>";
-      echo "<div class=\"centerIt pickText\" style=\"color:#BF0000;\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
+      echo "<div class=\"centerIt pickText\" style=\"color:" . $palette[2] . "\">Missed<br>(" . $thisPick["pPts"] . ")</div></td></tr></table>";
       echo "</div>\n";
     }
     else if( $thisPick["status"] == 1 && $thisPick["userID"] != $myID && $standingsType == "actual" )
@@ -201,13 +209,13 @@
     else
     {
       echo "<div class=\"cellShadeOuter\">\n";
-      echo "<div class=\"cellShadeBG\" style=\"background-color:#" . (($thisPick["winner"] == $thisPick["leader"]) ? "00AA00" : 
-          (($thisPick["inFuture"] == 1) ? "D9DCE3" : ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) 
-          ? "FFFF00" : "FF0000"))) . ";\"></div>\n";
-      $span = "<span class=\"pickText\" style=\"color:#" . 
-          (($thisPick["winner"] == $thisPick["leader"]) ? "007500" : (($thisPick["inFuture"] == 1) ? "0A1F42" : 
-          ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) ? "888800" : "BF0000"))) . ";" . 
-          ((!$thisPick["inFuture"] && !$thisPick["isFinal"]) ? " font-style:italic;" : "") . "\">" . $teamAliases[$thisPick["winner"]] . 
+      echo "<div class=\"cellShadeBG\" style=\"background-color:" . (($thisPick["winner"] == $thisPick["leader"]) ? $palette2[0] :
+          (($thisPick["inFuture"] == 1) ? "#D9DCE3" : ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"]))
+          ? $palette2[1] : $palette2[2]))) . ";\"></div>\n";
+      $span = "<span class=\"pickText\" style=\"color:" .
+          (($thisPick["winner"] == $thisPick["leader"]) ? $palette[0] : (($thisPick["inFuture"] == 1) ? "#0A1F42" :
+          ((!$thisPick["isFinal"] && ($thisPick["homeScore"] == $thisPick["awayScore"])) ? $palette[1] : $palette[2]))) . ";" .
+          ((!$thisPick["inFuture"] && !$thisPick["isFinal"]) ? " font-style:italic;" : "") . "\">" . $teamAliases[$thisPick["winner"]] .
           " " . $thisPick["pPts"] . "</span>";
       echo "<table class=\"cellShadeTable\"><tr><td class=\"noBorder\">" . ($logosHidden ? "<div class=\"blankIt\">" : "") . $span . "<br>";
       echo "<div class=\"imgDiv\"><img class=\"teamLogo" . ($logosHidden ? " blankIt" : "") . "\" src=\"" . 
@@ -372,7 +380,9 @@
       $delayTime = 86400000;
     }
 ?>
-                SortTable(mostRecentSort);
+                if( typeof mostRecentSort !== 'undefined' ) {
+                  SortTable(mostRecentSort);
+                }
                 setTimeout(function() { ReloadPage("<?php echo $standingsType; ?>") }, <?php echo $delayTime; ?>);
 <?php
   }

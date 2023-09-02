@@ -1,4 +1,9 @@
       <span>Making Picks for <?php echo (($result["weekNumber"] == 19) ? "Wild Card" : "Divisional"); ?> Round</span>
+      <form action="helpers/changeAccountDetails.php" method="post" id="cbmForm" target="taskWindow" style="display:inline-block;margin-left:200px">
+        <input type="hidden" name="task" value="cbm" />
+        <input type="hidden" name="acctCBM" id="cbmVal" value="<?php echo (($_SESSION["cbm"] ?? "N") == "Y") ? "N" : "Y"; ?>" />
+        <button onClick="$('#cbmForm').submit();">Alternate Colors</button>
+      </form>
       <br/>
       <table style="width:100%; border-spacing:0px; text-align:center; font-size: 14px;">
         <tr>
@@ -81,11 +86,11 @@
     $style = (!isset($picks[$i]) || ($picks[$i]["canChange"] == 0))
              ? " class=\"mpImgTD mpLockedSelection\""
              : (($picks[$i]["winner"] == $picks[$i]["awayTeam"]) || ($picks[$i]["winner"] == $picks[$i]["homeTeam"])
-               ? " class=\"mpImgTD mpValidSelection\"" 
-               : " class=\"mpImgTD mpInvalidSelection\"" );
+               ? " class=\"mpImgTD mpValidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\""
+               : " class=\"mpImgTD mpInvalidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\"" );
     if( $saveButtonEnabled )
     {
-      $saveButtonEnabled = ($style == " class=\"mpInvalidSelection\"");
+      $saveButtonEnabled = ($style == " class=\"mpInvalidSelection" . ($_SESSION["cbm"] ? " CBM" : "") .  "\"");
     }
     $drag = (isset($picks[$i]) && ($picks[$i]["canChange"] != 0)) ? " onMouseDown=\"startDrag(3, " . $i . ");\"" : "";
     $text = !isset($picks[$i])
@@ -129,9 +134,9 @@
       <table style="width:100%; font-size: 30px;"><tr>
         <td class="noBorder" style="min-width:32px;text-align:right">0</td>
         <td class="noBorder" style="min-width:5px">&nbsp;</td>
-        <td class="noBorder sliderTD">
-          <div class="sliderDummy"></div>
-          <div class="sliderReal"><div class="pointSlider" id="slider<?php echo $i; ?>"><div class="sliderGood"></div></div></div>
+        <td class="noBorder sliderTD<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>">
+          <div class="sliderDummy<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>"></div>
+          <div class="sliderReal"><div class="pointSlider" id="slider<?php echo $i; ?>"><div class="sliderGood<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>"></div></div></div>
         </td>
         <td class="noBorder" style="min-width:5px">&nbsp;</td>
         <td class="noBorder" style="width:50px"><?php echo ($totalPoints + 1 - $sliderCount);?></td>

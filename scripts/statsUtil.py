@@ -80,17 +80,17 @@ def updateStats(week, season):
 		leaders = cur.fetchall()
 		for player in leaders:
 			# see if this row is ahead of the current one
-			if winnerCount < 5 and (player[1] < currRow[1] or (player[1] == currRow[1] and (player[2] < currRow[2] or (player[2] == currRow[2] and ((currRow[3] == 0 and player[3] > 0) or player[4] < currRow[4]))))):
+			if winnerCount < 6 and (player[1] < currRow[1] or (player[1] == currRow[1] and (player[2] < currRow[2] or (player[2] == currRow[2] and ((currRow[3] == 0 and player[3] > 0) or player[4] < currRow[4]))))):
 				winnerCount = winnerCount + len(winnerIDs)
 				for winner in winnerIDs:
-					cur.execute("update SeasonResult set inPlayoffs=if(" + str(winnerCount) + " <= 5, 'Y', 'R') where season=" + season + " and userID=" + str(winner))
+					cur.execute("update SeasonResult set inPlayoffs=if(" + str(winnerCount) + " <= 6, 'Y', 'R') where season=" + season + " and userID=" + str(winner))
 				winnerIDs = [player[0]]
 				currRow = player
 			else:
 				winnerIDs.append( player[0] )
 
 		# see if we ran out of people (should only be at the beginning of the season)
-		if winnerCount < 5:
+		if winnerCount < 6:
 			for winner in winnerIDs:
 				cur.execute("update SeasonResult set inPlayoffs='R' where season=" + season + " and userID=" + str(winner))
 
@@ -98,7 +98,7 @@ def updateStats(week, season):
 	cur.execute("select distinct(confID) from SeasonResult join Division using(divID) where season=" + season )
 	conferences = cur.fetchall()
 	for conf in conferences:
-		# grab the top 5 division winners
+		# grab the top 6 division winners
 		winnerCount = 0
 		winnerIDs = []
 		currRow = [0,50000,0,0,0]
@@ -106,17 +106,17 @@ def updateStats(week, season):
 		leaders = cur.fetchall()
 		for player in leaders:
 			# see if this row is ahead of the current one
-			if winnerCount < 5 and (player[1] < currRow[1] or (player[1] == currRow[1] and (player[2] < currRow[2] or (player[2] == currRow[2] and ((currRow[3] == 0 and player[3] > 0) or player[4] < currRow[4]))))):
+			if winnerCount < 6 and (player[1] < currRow[1] or (player[1] == currRow[1] and (player[2] < currRow[2] or (player[2] == currRow[2] and ((currRow[3] == 0 and player[3] > 0) or player[4] < currRow[4]))))):
 				winnerCount = winnerCount + len(winnerIDs)
 				for winner in winnerIDs:
-					cur.execute("update SeasonResult set firstRoundBye=if(" + str(winnerCount) + " <= 5, 'Y', 'R') where season=" + season + " and userID=" + str(winner))
+					cur.execute("update SeasonResult set firstRoundBye=if(" + str(winnerCount) + " <= 6, 'Y', 'R') where season=" + season + " and userID=" + str(winner))
 				winnerIDs = [player[0]]
 				currRow = player
 			else:
 				winnerIDs.append( player[0] )
 		
 		# see if we ran out of people (should only be at the beginning of the season)
-		if winnerCount < 5:
+		if winnerCount < 6:
 			for winner in winnerIDs:
 				cur.execute("update SeasonResult set firstRoundBye='R' where season=" + season + " and userID=" + str(winner))
 
@@ -132,17 +132,17 @@ def updateStats(week, season):
 		leaders = cur.fetchall()
 		for player in leaders:
 			# see if this row is ahead of the current one
-			if winnerCount < 37 and (player[1] < currRow[1] or (player[1] == currRow[1] and (player[2] < currRow[2] or (player[2] == currRow[2] and ((currRow[3] == 0 and player[3] > 0) or player[4] < currRow[4]))))):
+			if winnerCount < 42 and (player[1] < currRow[1] or (player[1] == currRow[1] and (player[2] < currRow[2] or (player[2] == currRow[2] and ((currRow[3] == 0 and player[3] > 0) or player[4] < currRow[4]))))):
 				winnerCount = winnerCount + len(winnerIDs)
 				for winner in winnerIDs:
-					cur.execute("update SeasonResult set inPlayoffs=if(" + str(winnerCount) + " <= 37, 'Y', 'R') where season=" + season + " and userID=" + str(winner))
+					cur.execute("update SeasonResult set inPlayoffs=if(" + str(winnerCount) + " <= 42, 'Y', 'R') where season=" + season + " and userID=" + str(winner))
 				winnerIDs = [player[0]]
 				currRow = player
 			else:
 				winnerIDs.append( player[0] )
 
 		# see if we ran out of people (should only be at the beginning of the season)
-		if winnerCount < 37:
+		if winnerCount < 42:
 			for winner in winnerIDs:
 				cur.execute("update SeasonResult set inPlayoffs='R' where season=" + season + " and userID=" + str(winner))
 
@@ -184,7 +184,7 @@ def updatePlayoffStats(week, season):
 		cur.execute("select distinct(confID) from SeasonResult join Division using (divID) where season=" + season )
 		conferences = cur.fetchall()
 		for conf in conferences:
-			# grab the top 16
+			# grab the top 18
 			winnerCount = 0
 			winnerIDs = []
 			currRow = [0,50000,0,0,0,0,0,0,0,0]
@@ -192,19 +192,19 @@ def updatePlayoffStats(week, season):
 			leaders = cur.fetchall()
 			for player in leaders:
 				# see if this row is ahead of the current one
-				if winnerCount < 16 and (player[1] < currRow[1] or (player[1] == currRow[1] and gameScores[0][1]  == 3 and (player[2] > currRow[2] or (player[2] == currRow[2] and (player[3] > currRow[3] or (player[3] == currRow[3] and (player[4] > currRow[4] or (player[4] == currRow[4] and (player[5] > currRow[5] or (player[5] == currRow[5] and (player[6] > currRow[6] or (player[6] == currRow[6] and (player[7] > currRow[7] or (player[7] == currRow[7] and (player[8] > currRow[8] or (player[8] == currRow[8] and (player[9] > currRow[9] or (player[9] == currRow[9] and (player[10] > currRow[10] or (player[10] == currRow[10] and (player[11] > currRow[11] or (player[11] == currRow[11] and (player[12] > currRow[12] or (player[12] == currRow[12] and (player[13] > currRow[13]))))))))))))))))))))))))):
+				if winnerCount < 18 and (player[1] < currRow[1] or (player[1] == currRow[1] and gameScores[0][1]  == 3 and (player[2] > currRow[2] or (player[2] == currRow[2] and (player[3] > currRow[3] or (player[3] == currRow[3] and (player[4] > currRow[4] or (player[4] == currRow[4] and (player[5] > currRow[5] or (player[5] == currRow[5] and (player[6] > currRow[6] or (player[6] == currRow[6] and (player[7] > currRow[7] or (player[7] == currRow[7] and (player[8] > currRow[8] or (player[8] == currRow[8] and (player[9] > currRow[9] or (player[9] == currRow[9] and (player[10] > currRow[10] or (player[10] == currRow[10] and (player[11] > currRow[11] or (player[11] == currRow[11] and (player[12] > currRow[12] or (player[12] == currRow[12] and (player[13] > currRow[13]))))))))))))))))))))))))):
 					winnerCount = winnerCount + len(winnerIDs)
 					for winner in winnerIDs:
-						cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 16, 'Y', 'R') where weekNumber=19 and season=" + season + " and userID=" + str(winner))
+						cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 18, 'Y', 'R') where weekNumber=19 and season=" + season + " and userID=" + str(winner))
 					winnerIDs = [player[0]]
 					currRow = player
 				else:
 					winnerIDs.append( player[0] )
 			# tied guys
-			if( winnerCount < 16 ):
+			if( winnerCount < 18 ):
 				winnerCount = winnerCount + len(winnerIDs)
 				for winner in winnerIDs:
-					cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 16, 'Y', 'R') where weekNumber=19 and season=" + season + " and userID=" + str(winner))
+					cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 18, 'Y', 'R') where weekNumber=19 and season=" + season + " and userID=" + str(winner))
 
 		# see if the round is final
 		cur.execute("select sum(status<" + str(FINAL) + ") from Game where season=" + season + " and weekNumber=19")
@@ -234,7 +234,7 @@ def updatePlayoffStats(week, season):
 		cur.execute("select distinct(confID) from SeasonResult join Division using (divID) where season=" + season )
 		conferences = cur.fetchall()
 		for conf in conferences:
-			# grab the top 10
+			# grab the top 12
 			winnerCount = 0
 			winnerIDs = []
 			currRow = [0,50000,0,0,0,0,0,0,0,0]
@@ -242,19 +242,19 @@ def updatePlayoffStats(week, season):
 			leaders = cur.fetchall()
 			for player in leaders:
 				# see if this row is ahead of the current one
-				if winnerCount < 10 and (player[1] < currRow[1] or (player[1] == currRow[1] and gameScores[0][1] == 3 and (player[2] > currRow[2] or (player[2] == currRow[2] and (player[3] > currRow[3] or (player[3] == currRow[3] and (player[4] > currRow[4] or (player[4] == currRow[4] and (player[5] > currRow[5] or (player[5] == currRow[5] and (player[6] > currRow[6] or (player[6] == currRow[6] and (player[7] > currRow[7] or (player[7] == currRow[7] and (player[8] > currRow[8] or (player[8] == currRow[8] and (player[9] > currRow[9]))))))))))))))))):
+				if winnerCount < 12 and (player[1] < currRow[1] or (player[1] == currRow[1] and gameScores[0][1] == 3 and (player[2] > currRow[2] or (player[2] == currRow[2] and (player[3] > currRow[3] or (player[3] == currRow[3] and (player[4] > currRow[4] or (player[4] == currRow[4] and (player[5] > currRow[5] or (player[5] == currRow[5] and (player[6] > currRow[6] or (player[6] == currRow[6] and (player[7] > currRow[7] or (player[7] == currRow[7] and (player[8] > currRow[8] or (player[8] == currRow[8] and (player[9] > currRow[9]))))))))))))))))):
 					winnerCount = winnerCount + len(winnerIDs)
 					for winner in winnerIDs:
-						cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 10, 'Y', 'R') where weekNumber=20 and season=" + season + " and userID=" + str(winner))
+						cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 12, 'Y', 'R') where weekNumber=20 and season=" + season + " and userID=" + str(winner))
 					winnerIDs = [player[0]]
 					currRow = player
 				else:
 					winnerIDs.append( player[0] )
 			# tied guys
-			if( winnerCount < 10 ):
+			if( winnerCount < 12 ):
 				winnerCount = winnerCount + len(winnerIDs)
 				for winner in winnerIDs:
-					cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 10, 'Y', 'R') where weekNumber=20 and season=" + season + " and userID=" + str(winner))
+					cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 12, 'Y', 'R') where weekNumber=20 and season=" + season + " and userID=" + str(winner))
 				
 
 		# see if the round is final
@@ -286,7 +286,7 @@ def updatePlayoffStats(week, season):
 		cur.execute("select distinct(confID) from SeasonResult join Division using (divID) where season=" + season )
 		conferences = cur.fetchall()
 		for conf in conferences:
-			# grab the top 5
+			# grab the top 6
 			winnerCount = 0
 			winnerIDs = []
 			currRow = [0,50000,0,0,0,0,0,0,0,0]
@@ -294,19 +294,19 @@ def updatePlayoffStats(week, season):
 			leaders = cur.fetchall()
 			for player in leaders:
 				# see if this row is ahead of the current one
-				if winnerCount < 5 and (player[1] < currRow[1] or (player[1] == currRow[1] and gameScores[0][2] == 3 and (player[2] > currRow[2] or (player[2] == currRow[2] and (player[3] > currRow[3] or (player[3] == currRow[3] and (player[4] > currRow[4] or (player[4] == currRow[4] and (player[5] > currRow[5] or (player[5] == currRow[5] and (player[6] > currRow[6] or (player[6] == currRow[6] and (player[7] > currRow[7] or (player[7] == currRow[7] and (player[8] > currRow[8] or (player[8] == currRow[8] and (player[9] > currRow[9]))))))))))))))))):
+				if winnerCount < 6 and (player[1] < currRow[1] or (player[1] == currRow[1] and gameScores[0][2] == 3 and (player[2] > currRow[2] or (player[2] == currRow[2] and (player[3] > currRow[3] or (player[3] == currRow[3] and (player[4] > currRow[4] or (player[4] == currRow[4] and (player[5] > currRow[5] or (player[5] == currRow[5] and (player[6] > currRow[6] or (player[6] == currRow[6] and (player[7] > currRow[7] or (player[7] == currRow[7] and (player[8] > currRow[8] or (player[8] == currRow[8] and (player[9] > currRow[9]))))))))))))))))):
 					winnerCount = winnerCount + len(winnerIDs)
 					for winner in winnerIDs:
-						cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 5, 'Y', 'R') where weekNumber=21 and season=" + season + " and userID=" + str(winner))
+						cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 6, 'Y', 'R') where weekNumber=21 and season=" + season + " and userID=" + str(winner))
 					winnerIDs = [player[0]]
 					currRow = player
 				else:
 					winnerIDs.append( player[0] )
 			# tied guys
-			if( winnerCount < 5 ):
+			if( winnerCount < 6 ):
 				winnerCount = winnerCount + len(winnerIDs)
 				for winner in winnerIDs:
-					cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 5, 'Y', 'R') where weekNumber=21 and season=" + season + " and userID=" + str(winner))
+					cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 6, 'Y', 'R') where weekNumber=21 and season=" + season + " and userID=" + str(winner))
 				
 
 		# see if the round is final
@@ -348,4 +348,4 @@ def updateConsolationStats(season):
 	wc1AFC = cur.fetchall()
 	
 	# reset playoff pool stats for this week
-	cur.execute("update ConsolationResult join Game as WC1AFC on (WC1AFC.season=ConsolationResult.season and WC1AFC.gameID=(" + str(wc1AFC[0][0]) + "+0)) join Game as WC2AFC on (WC2AFC.season=ConsolationResult.season and WC2AFC.gameID=(" + str(wc1AFC[0][0]) + "+1)) join Game as WC3AFC on (WC3AFC.season=ConsolationResult.season and WC3AFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+2)) join Game as WC1NFC on (WC1NFC.season=ConsolationResult.season and WC1NFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+3)) join Game as WC2NFC on (WC2NFC.season=ConsolationResult.season and WC2NFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+4)) join Game as WC3NFC on (WC3NFC.season=ConsolationResult.season and WC3NFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+5)) join Game as DIV1AFC on (DIV1AFC.season=ConsolationResult.season and DIV1AFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+6)) join Game as DIV2AFC on (DIV2AFC.season=ConsolationResult.season and DIV2AFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+7)) join Game as DIV1NFC on (DIV1NFC.season=ConsolationResult.season and DIV1NFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+8)) join Game as DIV2NFC on (DIV2NFC.season=ConsolationResult.season and DIV2NFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+9)) join Game as CONFAFC on (CONFAFC.season=ConsolationResult.season and CONFAFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+10)) join Game as CONFNFC on (CONFNFC.season=ConsolationResult.season and CONFNFC.gameID=(select gameID from Game where season=(" + str(wc1AFC[0][0]) + "+11)) join Game as SB on (SB.season=ConsolationResult.season and SB.gameID=(select gameID from Game where season=" + str(season) + " and weekNumber>18 order by gameID limit 12,1)) set points = if((wc1AFC=WC1AFC.homeTeam and WC1AFC.homeScore>WC1AFC.awayScore) or (wc1AFC=WC1AFC.awayTeam and WC1AFC.awayScore>WC1AFC.homeScore), 1, 0) + if((wc2AFC=WC2AFC.homeTeam and WC2AFC.homeScore>WC2AFC.awayScore) or (wc2AFC=WC2AFC.awayTeam and WC2AFC.awayScore>WC2AFC.homeScore), 1, 0) + if((wc3AFC=WC3AFC.homeTeam and WC3AFC.homeScore>WC3AFC.awayScore) or (wc3AFC=WC3AFC.awayTeam and WC3AFC.awayScore>WC3AFC.homeScore), 1, 0) + if((wc1NFC=WC1NFC.homeTeam and WC1NFC.homeScore>WC1NFC.awayScore) or (wc1NFC=WC1NFC.awayTeam and WC1NFC.awayScore>WC1NFC.homeScore), 1, 0) + if((wc2NFC=WC2NFC.homeTeam and WC2NFC.homeScore>WC2NFC.awayScore) or (wc2NFC=WC2NFC.awayTeam and WC2NFC.awayScore>WC2NFC.homeScore), 1, 0) + if((wc3NFC=WC3NFC.homeTeam and WC3NFC.homeScore>WC3NFC.awayScore) or (wc3NFC=WC3NFC.awayTeam and WC3NFC.awayScore>WC3NFC.homeScore), 1, 0) + if((div1AFC=DIV1AFC.homeTeam and DIV1AFC.homeScore>DIV1AFC.awayScore) or (div1AFC=DIV1AFC.awayTeam and DIV1AFC.awayScore>DIV1AFC.homeScore) or (div1AFC=DIV2AFC.homeTeam and DIV2AFC.homeScore>DIV2AFC.awayScore) or (div1AFC=DIV2AFC.awayTeam and DIV2AFC.awayScore>DIV2AFC.homeScore), 2, 0) + if((div2AFC=DIV2AFC.homeTeam and DIV2AFC.homeScore>DIV2AFC.awayScore) or (div2AFC=DIV2AFC.awayTeam and DIV2AFC.awayScore>DIV2AFC.homeScore) or (div2AFC=DIV1AFC.homeTeam and DIV1AFC.homeScore>DIV1AFC.awayScore) or (div2AFC=DIV1AFC.awayTeam and DIV1AFC.awayScore>DIV1AFC.homeScore), 2, 0) + if((div1NFC=DIV1NFC.homeTeam and DIV1NFC.homeScore>DIV1NFC.awayScore) or (div1NFC=DIV1NFC.awayTeam and DIV1NFC.awayScore>DIV1NFC.homeScore) or (div1NFC=DIV2NFC.homeTeam and DIV2NFC.homeScore>DIV2NFC.awayScore) or (div1NFC=DIV2NFC.awayTeam and DIV2NFC.awayScore>DIV2NFC.homeScore), 2, 0) + if((div2NFC=DIV2NFC.homeTeam and DIV2NFC.homeScore>DIV2NFC.awayScore) or (div2NFC=DIV2NFC.awayTeam and DIV2NFC.awayScore>DIV2NFC.homeScore) or (div2NFC=DIV1NFC.homeTeam and DIV1NFC.homeScore>DIV1NFC.awayScore) or (div2NFC=DIV1NFC.awayTeam and DIV1NFC.awayScore>DIV1NFC.homeScore), 2, 0) + if((confAFC=CONFAFC.homeTeam and CONFAFC.homeScore>CONFAFC.awayScore) or (confAFC=CONFAFC.awayTeam and CONFAFC.awayScore>CONFAFC.homeScore), 4, 0) + if((confNFC=CONFNFC.homeTeam and CONFNFC.homeScore>CONFNFC.awayScore) or (confNFC=CONFNFC.awayTeam and CONFNFC.awayScore>CONFNFC.homeScore), 4, 0) + if((superBowl=SB.homeTeam and SB.homeScore>SB.awayScore) or (superBowl=SB.awayTeam and SB.awayScore>SB.homeScore), 8, 0), picksCorrect=if((wc1AFC=WC1AFC.homeTeam and WC1AFC.homeScore>WC1AFC.awayScore) or (wc1AFC=WC1AFC.awayTeam and WC1AFC.awayScore>WC1AFC.homeScore), 1, 0) + if((wc2AFC=WC2AFC.homeTeam and WC2AFC.homeScore>WC2AFC.awayScore) or (wc2AFC=WC2AFC.awayTeam and WC2AFC.awayScore>WC2AFC.homeScore), 1, 0) + if((wc3AFC=WC3AFC.homeTeam and WC3AFC.homeScore>WC3AFC.awayScore) or (wc3AFC=WC3AFC.awayTeam and WC3AFC.awayScore>WC3AFC.homeScore), 1, 0) + if((wc1NFC=WC1NFC.homeTeam and WC1NFC.homeScore>WC1NFC.awayScore) or (wc1NFC=WC1NFC.awayTeam and WC1NFC.awayScore>WC1NFC.homeScore), 1, 0) + if((wc2NFC=WC2NFC.homeTeam and WC2NFC.homeScore>WC2NFC.awayScore) or (wc2NFC=WC2NFC.awayTeam and WC2NFC.awayScore>WC2NFC.homeScore), 1, 0) + if((wc3NFC=WC3NFC.homeTeam and WC3NFC.homeScore>WC3NFC.awayScore) or (wc3NFC=WC3NFC.awayTeam and WC3NFC.awayScore>WC3NFC.homeScore), 1, 0) + if((div1AFC=DIV1AFC.homeTeam and DIV1AFC.homeScore>DIV1AFC.awayScore) or (div1AFC=DIV1AFC.awayTeam and DIV1AFC.awayScore>DIV1AFC.homeScore) or (div1AFC=DIV2AFC.homeTeam and DIV2AFC.homeScore>DIV2AFC.awayScore) or (div1AFC=DIV2AFC.awayTeam and DIV2AFC.awayScore>DIV2AFC.homeScore), 1, 0) + if((div2AFC=DIV2AFC.homeTeam and DIV2AFC.homeScore>DIV2AFC.awayScore) or (div2AFC=DIV2AFC.awayTeam and DIV2AFC.awayScore>DIV2AFC.homeScore) or (div2AFC=DIV1AFC.homeTeam and DIV1AFC.homeScore>DIV1AFC.awayScore) or (div2AFC=DIV1AFC.awayTeam and DIV1AFC.awayScore>DIV1AFC.homeScore), 1, 0) + if((div1NFC=DIV1NFC.homeTeam and DIV1NFC.homeScore>DIV1NFC.awayScore) or (div1NFC=DIV1NFC.awayTeam and DIV1NFC.awayScore>DIV1NFC.homeScore) or (div1NFC=DIV2NFC.homeTeam and DIV2NFC.homeScore>DIV2NFC.awayScore) or (div1NFC=DIV2NFC.awayTeam and DIV2NFC.awayScore>DIV2NFC.homeScore), 1, 0) + if((div2NFC=DIV2NFC.homeTeam and DIV2NFC.homeScore>DIV2NFC.awayScore) or (div2NFC=DIV2NFC.awayTeam and DIV2NFC.awayScore>DIV2NFC.homeScore) or (div2NFC=DIV1NFC.homeTeam and DIV1NFC.homeScore>DIV1NFC.awayScore) or (div2NFC=DIV1NFC.awayTeam and DIV1NFC.awayScore>DIV1NFC.homeScore), 1, 0) + if((confAFC=CONFAFC.homeTeam and CONFAFC.homeScore>CONFAFC.awayScore) or (confAFC=CONFAFC.awayTeam and CONFAFC.awayScore>CONFAFC.homeScore), 1, 0) + if((confNFC=CONFNFC.homeTeam and CONFNFC.homeScore>CONFNFC.awayScore) or (confNFC=CONFNFC.awayTeam and CONFNFC.awayScore>CONFNFC.homeScore), 1, 0) + if((superBowl=SB.homeTeam and SB.homeScore>SB.awayScore) or (superBowl=SB.awayTeam and SB.awayScore>SB.homeScore), 1, 0) where ConsolationResult.season=" + season)
+	cur.execute("update ConsolationResult join Game as WC1AFC on (WC1AFC.gameID=(" + str(wc1AFC[0][0]) + "+0)) join Game as WC2AFC on (WC2AFC.gameID=(" + str(wc1AFC[0][0]) + "+1)) join Game as WC3AFC on (WC3AFC.gameID=(" + str(wc1AFC[0][0]) + "+2)) join Game as WC1NFC on (WC1NFC.gameID=(" + str(wc1AFC[0][0]) + "+3)) join Game as WC2NFC on (WC2NFC.gameID=(" + str(wc1AFC[0][0]) + "+4)) join Game as WC3NFC on (WC3NFC.gameID=(" + str(wc1AFC[0][0]) + "+5)) join Game as DIV1AFC on (DIV1AFC.gameID=(" + str(wc1AFC[0][0]) + "+6)) join Game as DIV2AFC on (DIV2AFC.gameID=(" + str(wc1AFC[0][0]) + "+7)) join Game as DIV1NFC on (DIV1NFC.gameID=(" + str(wc1AFC[0][0]) + "+8)) join Game as DIV2NFC on (DIV2NFC.gameID=(" + str(wc1AFC[0][0]) + "+9)) join Game as CONFAFC on (CONFAFC.gameID=(" + str(wc1AFC[0][0]) + "+10)) join Game as CONFNFC on (CONFNFC.gameID=(" + str(wc1AFC[0][0]) + "+11)) join Game as SB on (SB.gameID=(select gameID from Game where season=" + str(season) + " and weekNumber>18 order by gameID limit 12,1)) set points = if((wc1AFC=WC1AFC.homeTeam and WC1AFC.homeScore>WC1AFC.awayScore) or (wc1AFC=WC1AFC.awayTeam and WC1AFC.awayScore>WC1AFC.homeScore), 1, 0) + if((wc2AFC=WC2AFC.homeTeam and WC2AFC.homeScore>WC2AFC.awayScore) or (wc2AFC=WC2AFC.awayTeam and WC2AFC.awayScore>WC2AFC.homeScore), 1, 0) + if((wc3AFC=WC3AFC.homeTeam and WC3AFC.homeScore>WC3AFC.awayScore) or (wc3AFC=WC3AFC.awayTeam and WC3AFC.awayScore>WC3AFC.homeScore), 1, 0) + if((wc1NFC=WC1NFC.homeTeam and WC1NFC.homeScore>WC1NFC.awayScore) or (wc1NFC=WC1NFC.awayTeam and WC1NFC.awayScore>WC1NFC.homeScore), 1, 0) + if((wc2NFC=WC2NFC.homeTeam and WC2NFC.homeScore>WC2NFC.awayScore) or (wc2NFC=WC2NFC.awayTeam and WC2NFC.awayScore>WC2NFC.homeScore), 1, 0) + if((wc3NFC=WC3NFC.homeTeam and WC3NFC.homeScore>WC3NFC.awayScore) or (wc3NFC=WC3NFC.awayTeam and WC3NFC.awayScore>WC3NFC.homeScore), 1, 0) + if((div1AFC=DIV1AFC.homeTeam and DIV1AFC.homeScore>DIV1AFC.awayScore) or (div1AFC=DIV1AFC.awayTeam and DIV1AFC.awayScore>DIV1AFC.homeScore) or (div1AFC=DIV2AFC.homeTeam and DIV2AFC.homeScore>DIV2AFC.awayScore) or (div1AFC=DIV2AFC.awayTeam and DIV2AFC.awayScore>DIV2AFC.homeScore), 2, 0) + if((div2AFC=DIV2AFC.homeTeam and DIV2AFC.homeScore>DIV2AFC.awayScore) or (div2AFC=DIV2AFC.awayTeam and DIV2AFC.awayScore>DIV2AFC.homeScore) or (div2AFC=DIV1AFC.homeTeam and DIV1AFC.homeScore>DIV1AFC.awayScore) or (div2AFC=DIV1AFC.awayTeam and DIV1AFC.awayScore>DIV1AFC.homeScore), 2, 0) + if((div1NFC=DIV1NFC.homeTeam and DIV1NFC.homeScore>DIV1NFC.awayScore) or (div1NFC=DIV1NFC.awayTeam and DIV1NFC.awayScore>DIV1NFC.homeScore) or (div1NFC=DIV2NFC.homeTeam and DIV2NFC.homeScore>DIV2NFC.awayScore) or (div1NFC=DIV2NFC.awayTeam and DIV2NFC.awayScore>DIV2NFC.homeScore), 2, 0) + if((div2NFC=DIV2NFC.homeTeam and DIV2NFC.homeScore>DIV2NFC.awayScore) or (div2NFC=DIV2NFC.awayTeam and DIV2NFC.awayScore>DIV2NFC.homeScore) or (div2NFC=DIV1NFC.homeTeam and DIV1NFC.homeScore>DIV1NFC.awayScore) or (div2NFC=DIV1NFC.awayTeam and DIV1NFC.awayScore>DIV1NFC.homeScore), 2, 0) + if((confAFC=CONFAFC.homeTeam and CONFAFC.homeScore>CONFAFC.awayScore) or (confAFC=CONFAFC.awayTeam and CONFAFC.awayScore>CONFAFC.homeScore), 4, 0) + if((confNFC=CONFNFC.homeTeam and CONFNFC.homeScore>CONFNFC.awayScore) or (confNFC=CONFNFC.awayTeam and CONFNFC.awayScore>CONFNFC.homeScore), 4, 0) + if((superBowl=SB.homeTeam and SB.homeScore>SB.awayScore) or (superBowl=SB.awayTeam and SB.awayScore>SB.homeScore), 8, 0), picksCorrect=if((wc1AFC=WC1AFC.homeTeam and WC1AFC.homeScore>WC1AFC.awayScore) or (wc1AFC=WC1AFC.awayTeam and WC1AFC.awayScore>WC1AFC.homeScore), 1, 0) + if((wc2AFC=WC2AFC.homeTeam and WC2AFC.homeScore>WC2AFC.awayScore) or (wc2AFC=WC2AFC.awayTeam and WC2AFC.awayScore>WC2AFC.homeScore), 1, 0) + if((wc3AFC=WC3AFC.homeTeam and WC3AFC.homeScore>WC3AFC.awayScore) or (wc3AFC=WC3AFC.awayTeam and WC3AFC.awayScore>WC3AFC.homeScore), 1, 0) + if((wc1NFC=WC1NFC.homeTeam and WC1NFC.homeScore>WC1NFC.awayScore) or (wc1NFC=WC1NFC.awayTeam and WC1NFC.awayScore>WC1NFC.homeScore), 1, 0) + if((wc2NFC=WC2NFC.homeTeam and WC2NFC.homeScore>WC2NFC.awayScore) or (wc2NFC=WC2NFC.awayTeam and WC2NFC.awayScore>WC2NFC.homeScore), 1, 0) + if((wc3NFC=WC3NFC.homeTeam and WC3NFC.homeScore>WC3NFC.awayScore) or (wc3NFC=WC3NFC.awayTeam and WC3NFC.awayScore>WC3NFC.homeScore), 1, 0) + if((div1AFC=DIV1AFC.homeTeam and DIV1AFC.homeScore>DIV1AFC.awayScore) or (div1AFC=DIV1AFC.awayTeam and DIV1AFC.awayScore>DIV1AFC.homeScore) or (div1AFC=DIV2AFC.homeTeam and DIV2AFC.homeScore>DIV2AFC.awayScore) or (div1AFC=DIV2AFC.awayTeam and DIV2AFC.awayScore>DIV2AFC.homeScore), 1, 0) + if((div2AFC=DIV2AFC.homeTeam and DIV2AFC.homeScore>DIV2AFC.awayScore) or (div2AFC=DIV2AFC.awayTeam and DIV2AFC.awayScore>DIV2AFC.homeScore) or (div2AFC=DIV1AFC.homeTeam and DIV1AFC.homeScore>DIV1AFC.awayScore) or (div2AFC=DIV1AFC.awayTeam and DIV1AFC.awayScore>DIV1AFC.homeScore), 1, 0) + if((div1NFC=DIV1NFC.homeTeam and DIV1NFC.homeScore>DIV1NFC.awayScore) or (div1NFC=DIV1NFC.awayTeam and DIV1NFC.awayScore>DIV1NFC.homeScore) or (div1NFC=DIV2NFC.homeTeam and DIV2NFC.homeScore>DIV2NFC.awayScore) or (div1NFC=DIV2NFC.awayTeam and DIV2NFC.awayScore>DIV2NFC.homeScore), 1, 0) + if((div2NFC=DIV2NFC.homeTeam and DIV2NFC.homeScore>DIV2NFC.awayScore) or (div2NFC=DIV2NFC.awayTeam and DIV2NFC.awayScore>DIV2NFC.homeScore) or (div2NFC=DIV1NFC.homeTeam and DIV1NFC.homeScore>DIV1NFC.awayScore) or (div2NFC=DIV1NFC.awayTeam and DIV1NFC.awayScore>DIV1NFC.homeScore), 1, 0) + if((confAFC=CONFAFC.homeTeam and CONFAFC.homeScore>CONFAFC.awayScore) or (confAFC=CONFAFC.awayTeam and CONFAFC.awayScore>CONFAFC.homeScore), 1, 0) + if((confNFC=CONFNFC.homeTeam and CONFNFC.homeScore>CONFNFC.awayScore) or (confNFC=CONFNFC.awayTeam and CONFNFC.awayScore>CONFNFC.homeScore), 1, 0) + if((superBowl=SB.homeTeam and SB.homeScore>SB.awayScore) or (superBowl=SB.awayTeam and SB.awayScore>SB.homeScore), 1, 0) where ConsolationResult.season=" + season)

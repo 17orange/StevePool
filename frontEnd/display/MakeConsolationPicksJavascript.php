@@ -1,5 +1,9 @@
     <script type="text/javascript">
 <?php
+  // set the palette
+  $palette = ($_SESSION["cbm"] ?? false) ? ["#0072B2","#000000","#D55E00"] : ["#007500","#888800","#BF0000"];
+  $palette2 = ($_SESSION["cbm"] ?? false) ? ["#42BBFF","#888888","#FF913B"] : ["#00AA00","#FFFF00","#FF0000"];
+
   echo "      var emptyImg = \"icons/" . $result["season"] . "/nfl.png\";\n";
   // fill in the seed data
   $afcSeed1 = RunQuery( "select homeTeam from Game where season=" . $result["season"] . 
@@ -100,22 +104,22 @@
 
           // make this the pick
           document.getElementById(pickID.substring(0,3) + 'Div1' + (isHome ? "H" : "A")).innerHTML = (isHome ? "@ " : "") + team;
-          document.getElementById(pickID).style.color = "#007500";
-          document.getElementById(pickID.substring(0,6) + (isHome ? "A" : "H")).style.color = "#BF0000";
+          document.getElementById(pickID).style.color = "<?php echo $palette[0]; ?>";
+          document.getElementById(pickID.substring(0,6) + (isHome ? "A" : "H")).style.color = "<?php echo $palette[2]; ?>";
           document.getElementById(pickID.substring(0,3) + 'Div1' + (isHome ? "H" : "A") + '_IMG').src = document.getElementById(pickID + '_IMG').src;
         }
         else if( pickID.substring(1,5) == 'fcWC' )
         {
           // make this the pick
           var opponentID = pickID.substring(0,6) + ((pickID.substring(6) == "A") ? "H" : "A");
-          document.getElementById(pickID).style.color = "#007500";
-          document.getElementById(opponentID).style.color = "#BF0000";
+          document.getElementById(pickID).style.color = "<?php echo $palette[0]; ?>";
+          document.getElementById(opponentID).style.color = "<?php echo $palette[2]; ?>";
           
           // see if they need to be swapped
           var seeds = (pickID.substring(0,3) == "afc") ? ["", AS1, AS2, AS3, AS4, AS5, AS6, AS7] : ["", NS1, NS2, NS3, NS4, NS5, NS6, NS7];
           var images = (pickID.substring(0,3) == "afc") ? [emptyImg, null, "afcWC1H", "afcWC2H", "afcWC3H", "afcWC3A", "afcWC2A", "afcWC1A"] 
                                                         : [emptyImg, null, "nfcWC1H", "nfcWC2H", "nfcWC3H", "nfcWC3A", "nfcWC2A", "nfcWC1A"];
-          var needsSwapped = (document.getElementById(pickID.substring(0,3) + "WC1H").style.color == "#BF0000");
+          var needsSwapped = (document.getElementById(pickID.substring(0,3) + "WC1H").style.color == "<?php echo $palette[2]; ?>");
           if( needsSwapped ^ (document.getElementById(pickID.substring(0,3) + 'Div2H').innerHTML != ("@ " + seeds[1])) ) {
             var temp = document.getElementById(pickID.substring(0,3) + 'Div1H').innerHTML;
             document.getElementById(pickID.substring(0,3) + 'Div1H').innerHTML = document.getElementById(pickID.substring(0,3) + 'Div2H').innerHTML;
@@ -225,8 +229,8 @@
           }
           
           document.getElementById(targetSlot).innerHTML = ((targetSlot.substring(5) == "H") ? "@ " : "") + TEAM_ALIASES[team];
-          document.getElementById(pickID).style.color = "#007500";
-          document.getElementById(opponentID).style.color = "#BF0000";
+          document.getElementById(pickID).style.color = "<?php echo $palette[0]; ?>";
+          document.getElementById(opponentID).style.color = "<?php echo $palette[2]; ?>";
           document.getElementById(targetSlot + "_IMG").src = document.getElementById(pickID + "_IMG").src;
           CleanPick(pickID.substring(0,3) + 'CC', true);
         }
@@ -235,8 +239,8 @@
           // make this the pick
           var target = 'SB' + ((pickID.substring(0,1) == "a") ? "A" : "H");
           document.getElementById(target).innerHTML = TEAM_ALIASES[team];
-          document.getElementById(pickID).style.color = "#007500";
-          document.getElementById(pickID.substring(0,5) + ((pickID.substring(5) == "A") ? "H" : "A")).style.color = "#BF0000";
+          document.getElementById(pickID).style.color = "<?php echo $palette[0]; ?>";
+          document.getElementById(pickID.substring(0,5) + ((pickID.substring(5) == "A") ? "H" : "A")).style.color = "<?php echo $palette[2]; ?>";
           document.getElementById(target + '_IMG').src = document.getElementById(pickID + '_IMG').src;
           CleanPick('SB');
         }
@@ -244,9 +248,9 @@
         {
           // make this the pick
           document.getElementById('superBowlChampion').innerHTML = "Champion:<br>" + TEAM_ALIASES[team];
-          document.getElementById('superBowlChampion').style.color = "#007500";
-          document.getElementById(pickID).style.color = "#007500";
-          document.getElementById(pickID.substring(0,2) + ((pickID.substring(2) == "A") ? "H" : "A")).style.color = "#BF0000";
+          document.getElementById('superBowlChampion').style.color = "<?php echo $palette[0]; ?>";
+          document.getElementById(pickID).style.color = "<?php echo $palette[0]; ?>";
+          document.getElementById(pickID.substring(0,2) + ((pickID.substring(2) == "A") ? "H" : "A")).style.color = "<?php echo $palette[2]; ?>";
           document.getElementById('superBowlChampion_IMG').src = document.getElementById(pickID + '_IMG').src;
         }
 
@@ -340,56 +344,56 @@
         var SBH = document.getElementById('SBH');
 
         // clean AFC championship
-        if( afcCCA.innerHTML != "" && 
-            ((afcCCA.innerHTML != afcDiv1A.innerHTML) && (afcDiv1A.style.color != "#007500")) && 
-            ((afcCCA.innerHTML != afcDiv1H.innerHTML.substring(2)) && (afcDiv1H.style.color != "#007500")) && 
-            ((afcCCA.innerHTML != afcDiv2A.innerHTML) && (afcDiv2A.style.color != "#007500")) && 
-            ((afcCCA.innerHTML != afcDiv2H.innerHTML.substring(2)) && (afcDiv2H.style.color != "#007500")) )
+        if( afcCCA.innerHTML != "" &&
+            ((afcCCA.innerHTML != afcDiv1A.innerHTML) && (afcDiv1A.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((afcCCA.innerHTML != afcDiv1H.innerHTML.substring(2)) && (afcDiv1H.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((afcCCA.innerHTML != afcDiv2A.innerHTML) && (afcDiv2A.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((afcCCA.innerHTML != afcDiv2H.innerHTML.substring(2)) && (afcDiv2H.style.color != "<?php echo $palette[0]; ?>")) )
         {
           document.getElementById('afcCCA').innerHTML = "";
           document.getElementById('afcCCA_IMG').src = emptyImg;
         }
-        if( afcCCH.innerHTML != "@ " && 
-            ((afcCCH.innerHTML.substring(2) != afcDiv1A.innerHTML) && (afcDiv1A.style.color != "#007500")) && 
-            ((afcCCH.innerHTML.substring(2) != afcDiv1H.innerHTML.substring(2)) && (afcDiv1H.style.color != "#007500")) && 
-            ((afcCCH.innerHTML.substring(2) != afcDiv2A.innerHTML) && (afcDiv2A.style.color != "#007500")) && 
-            ((afcCCH.innerHTML.substring(2) != afcDiv2H.innerHTML.substring(2)) && (afcDiv2H.style.color != "#007500")) )
+        if( afcCCH.innerHTML != "@ " &&
+            ((afcCCH.innerHTML.substring(2) != afcDiv1A.innerHTML) && (afcDiv1A.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((afcCCH.innerHTML.substring(2) != afcDiv1H.innerHTML.substring(2)) && (afcDiv1H.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((afcCCH.innerHTML.substring(2) != afcDiv2A.innerHTML) && (afcDiv2A.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((afcCCH.innerHTML.substring(2) != afcDiv2H.innerHTML.substring(2)) && (afcDiv2H.style.color != "<?php echo $palette[0]; ?>")) )
         {
           document.getElementById('afcCCH').innerHTML = "@ ";
           document.getElementById('afcCCH_IMG').src = emptyImg;
         }
 
         // clean NFC championship
-        if( nfcCCA.innerHTML != "" && 
-            ((nfcCCA.innerHTML != nfcDiv1A.innerHTML) && (nfcDiv1A.style.color != "#007500")) && 
-            ((nfcCCA.innerHTML != nfcDiv1H.innerHTML.substring(2)) && (nfcDiv1H.style.color != "#007500")) && 
-            ((nfcCCA.innerHTML != nfcDiv2A.innerHTML) && (nfcDiv2A.style.color != "#007500")) && 
-            ((nfcCCA.innerHTML != nfcDiv2H.innerHTML.substring(2)) && (nfcDiv2H.style.color != "#007500")) )
+        if( nfcCCA.innerHTML != "" &&
+            ((nfcCCA.innerHTML != nfcDiv1A.innerHTML) && (nfcDiv1A.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((nfcCCA.innerHTML != nfcDiv1H.innerHTML.substring(2)) && (nfcDiv1H.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((nfcCCA.innerHTML != nfcDiv2A.innerHTML) && (nfcDiv2A.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((nfcCCA.innerHTML != nfcDiv2H.innerHTML.substring(2)) && (nfcDiv2H.style.color != "<?php echo $palette[0]; ?>")) )
         {
           document.getElementById('nfcCCA').innerHTML = "";
           document.getElementById('nfcCCA_IMG').src = emptyImg;
         }
-        if( nfcCCH.innerHTML != "@ " && 
-            ((nfcCCH.innerHTML.substring(2) != nfcDiv1A.innerHTML) && (nfcDiv1A.style.color != "#007500")) && 
-            ((nfcCCH.innerHTML.substring(2) != nfcDiv1H.innerHTML.substring(2)) && (nfcDiv1H.style.color != "#007500")) && 
-            ((nfcCCH.innerHTML.substring(2) != nfcDiv2A.innerHTML) && (nfcDiv2A.style.color != "#007500")) && 
-            ((nfcCCH.innerHTML.substring(2) != nfcDiv2H.innerHTML.substring(2)) && (nfcDiv2H.style.color != "#007500")) )
+        if( nfcCCH.innerHTML != "@ " &&
+            ((nfcCCH.innerHTML.substring(2) != nfcDiv1A.innerHTML) && (nfcDiv1A.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((nfcCCH.innerHTML.substring(2) != nfcDiv1H.innerHTML.substring(2)) && (nfcDiv1H.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((nfcCCH.innerHTML.substring(2) != nfcDiv2A.innerHTML) && (nfcDiv2A.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((nfcCCH.innerHTML.substring(2) != nfcDiv2H.innerHTML.substring(2)) && (nfcDiv2H.style.color != "<?php echo $palette[0]; ?>")) )
         {
           document.getElementById('nfcCCH').innerHTML = "@ ";
           document.getElementById('nfcCCH_IMG').src = emptyImg;
         }
 
         // clean super bowl
-        if( SBA.innerHTML != "" && 
-            ((SBA.innerHTML != afcCCA.innerHTML) && (afcCCA.style.color != "#007500")) && 
-            ((SBA.innerHTML != afcCCH.innerHTML.substring(2)) && (afcCCH.style.color != "#007500")) )
+        if( SBA.innerHTML != "" &&
+            ((SBA.innerHTML != afcCCA.innerHTML) && (afcCCA.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((SBA.innerHTML != afcCCH.innerHTML.substring(2)) && (afcCCH.style.color != "<?php echo $palette[0]; ?>")) )
         {
           document.getElementById('SBA').innerHTML = "";
           document.getElementById('SBA_IMG').src = emptyImg;
         }
-        if( SBH.innerHTML != "" && 
-            ((SBH.innerHTML != nfcCCA.innerHTML) && (nfcCCA.style.color != "#007500")) && 
-            ((SBH.innerHTML != nfcCCH.innerHTML.substring(2)) && (nfcCCH.style.color != "#007500")) )
+        if( SBH.innerHTML != "" &&
+            ((SBH.innerHTML != nfcCCA.innerHTML) && (nfcCCA.style.color != "<?php echo $palette[0]; ?>")) &&
+            ((SBH.innerHTML != nfcCCH.innerHTML.substring(2)) && (nfcCCH.style.color != "<?php echo $palette[0]; ?>")) )
         {
           document.getElementById('SBH').innerHTML = "";
           document.getElementById('SBH_IMG').src = emptyImg;

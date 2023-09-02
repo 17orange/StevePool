@@ -1,4 +1,9 @@
       <span>Making Picks for Consolation Pool</span>
+      <form action="helpers/changeAccountDetails.php" method="post" id="cbmForm" target="taskWindow" style="display:inline-block;margin-left:200px">
+        <input type="hidden" name="task" value="cbm" />
+        <input type="hidden" name="acctCBM" id="cbmVal" value="<?php echo (($_SESSION["cbm"] ?? "N") == "Y") ? "N" : "Y"; ?>" />
+        <button onClick="$('#cbmForm').submit();">Alternate Colors</button>
+      </form>
       <br/>
       <br/>
       <span style="font-size:20px;">Click your selection for the winner of each game to move them to the next round!</span>
@@ -18,6 +23,10 @@
         </tr>
         <tr style="height:15px"><td class="noBorder" colspan="9">&nbsp;</td></tr>
 <?php
+  // set the palette
+  $palette = ($_SESSION["cbm"] ?? false) ? ["#0072B2","#000000","#D55E00"] : ["#007500","#888800","#BF0000"];
+  $palette2 = ($_SESSION["cbm"] ?? false) ? ["#42BBFF","#888888","#FF913B"] : ["#00AA00","#FFFF00","#FF0000"];
+
   $playoffGames = RunQuery( "select * from Game where weekNumber>18 and season=" . $result["season"] .
                             " order by weekNumber, gameID" );
   $myPicks = RunQuery( "select * from ConsolationResult join Session using (userID) where season=" .
@@ -124,69 +133,69 @@
 ?>
         <tr>
           <td class="noBorder" rowspan=2>
-            <span id="afcWC1A" style="font-size:24px;color:#<?php 
-  echo (($myPicks[0]["wc1AFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc1AFC"] == $afcWC1["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["wc1AFC"] == $afcWC1["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$afcWC1["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC1A');" . 
+            <span id="afcWC1A" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc1AFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc1AFC"] == $afcWC1["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc1AFC"] == $afcWC1["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$afcWC1["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC1A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcWC1A_IMG\" src=\"" . getIcon($afcWC1["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="afcWC1H" style="font-size:24px;color:#<?php
-  echo (($myPicks[0]["wc1AFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc1AFC"] == $afcWC1["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["wc1AFC"] == $afcWC1["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$afcWC1["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC1H');" . 
+            <span id="afcWC1H" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc1AFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc1AFC"] == $afcWC1["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc1AFC"] == $afcWC1["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$afcWC1["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC1H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcWC1H_IMG\" src=\"" . getIcon($afcWC1["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
           <td class="noBorder">&nbsp;</td>
           <td class="noBorder" rowspan=3>
-            <span id="afcDiv1A" style="font-size:36px;color:#<?php 
+            <span id="afcDiv1A" style="font-size:36px;color:<?php
   $pickToCompare = ($WCswapAFC ? $myPicks[0]["div2AFC"] : $myPicks[0]["div1AFC"]);
-  echo (($pickToCompare == "") ? "D9DCE3" : (($pickToCompare == $afcDiv1["awayTeam"]) ? "007500" : 
-      (($pickToCompare == $afcDiv1["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$afcDiv1["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcDiv1A');" . 
+  echo (($pickToCompare == "") ? "#D9DCE3" : (($pickToCompare == $afcDiv1["awayTeam"]) ? $palette[0] :
+      (($pickToCompare == $afcDiv1["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$afcDiv1["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcDiv1A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcDiv1A_IMG\" src=\"" . getIcon($afcDiv1["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="afcDiv1H" style="font-size:36px;color:#<?php
-  echo (($pickToCompare == "") ? "D9DCE3" : (($pickToCompare == $afcDiv1["homeTeam"]) ? "007500" : 
-      (($pickToCompare == $afcDiv1["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$afcDiv1["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcDiv1H');" . 
+            <span id="afcDiv1H" style="font-size:36px;color:<?php
+  echo (($pickToCompare == "") ? "#D9DCE3" : (($pickToCompare == $afcDiv1["homeTeam"]) ? $palette[0] :
+      (($pickToCompare == $afcDiv1["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$afcDiv1["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcDiv1H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcDiv1H_IMG\" src=\"" . getIcon($afcDiv1["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
           <td class="noBorder">&nbsp;</td>
           <td class="noBorder" rowspan=6>
-            <span id="afcCCA" style="font-size:48px;color:#<?php 
-  echo (($myPicks[0]["confAFC"] == "") ? "D9DCE3" : (($myPicks[0]["confAFC"] == $afcCC["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["confAFC"] == $afcCC["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$afcCC["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcCCA');" . 
+            <span id="afcCCA" style="font-size:48px;color:<?php
+  echo (($myPicks[0]["confAFC"] == "") ? "#D9DCE3" : (($myPicks[0]["confAFC"] == $afcCC["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["confAFC"] == $afcCC["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$afcCC["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcCCA');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcCCA_IMG\" src=\"" . getIcon($afcCC["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="afcCCH" style="font-size:48px;color:#<?php
-  echo (($myPicks[0]["confAFC"] == "") ? "D9DCE3" : (($myPicks[0]["confAFC"] == $afcCC["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["confAFC"] == $afcCC["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$afcCC["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcCCH');" . 
+            <span id="afcCCH" style="font-size:48px;color:<?php
+  echo (($myPicks[0]["confAFC"] == "") ? "#D9DCE3" : (($myPicks[0]["confAFC"] == $afcCC["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["confAFC"] == $afcCC["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$afcCC["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcCCH');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcCCH_IMG\" src=\"" . getIcon($afcCC["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
           <td class="noBorder">&nbsp;</td>
           <td class="noBorder" rowspan=12>
-            <span id="SBA" style="font-size:60px;color:#<?php 
-  echo (($myPicks[0]["superBowl"] == "") ? "D9DCE3" : (($myPicks[0]["superBowl"] == $superBowl["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["superBowl"] == $superBowl["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$superBowl["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('SBA');" . 
+            <span id="SBA" style="font-size:60px;color:<?php
+  echo (($myPicks[0]["superBowl"] == "") ? "#D9DCE3" : (($myPicks[0]["superBowl"] == $superBowl["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["superBowl"] == $superBowl["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$superBowl["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('SBA');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"SBA_IMG\" src=\"" . getIcon($superBowl["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="SBH" style="font-size:60px;color:#<?php
-  echo (($myPicks[0]["superBowl"] == "") ? "D9DCE3" : (($myPicks[0]["superBowl"] == $superBowl["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["superBowl"] == $superBowl["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$superBowl["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('SBH');" . 
+            <span id="SBH" style="font-size:60px;color:<?php
+  echo (($myPicks[0]["superBowl"] == "") ? "#D9DCE3" : (($myPicks[0]["superBowl"] == $superBowl["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["superBowl"] == $superBowl["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$superBowl["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('SBH');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"SBH_IMG\" src=\"" . getIcon($superBowl["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
           <td class="noBorder">&nbsp;</td>
           <td class="noBorder" rowspan=12>
-            <span id="superBowlChampion" style="font-size:72px;color:#<?php 
-  echo (($myPicks[0]["superBowl"] != "") ? "007500" : "D9DCE3") . ";\">Champion:<br>" . $teamAliases[$myPicks[0]["superBowl"]];
+            <span id="superBowlChampion" style="font-size:72px;color:<?php
+  echo (($myPicks[0]["superBowl"] != "") ? $palette[0] : "#D9DCE3") . ";\">Champion:<br>" . $teamAliases[$myPicks[0]["superBowl"]];
   ?></span><br>
             <div class="imgDiv mouseEnabled"><img class="teamLogo" id="superBowlChampion_IMG" src="<?php 
   echo getIcon($myPicks[0]["superBowl"], $result["season"]); 
@@ -216,16 +225,16 @@
         <tr></tr>
         <tr>
           <td class="noBorder" rowspan=2>
-            <span id="afcWC2A" style="font-size:24px;color:#<?php 
-  echo (($myPicks[0]["wc2AFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc2AFC"] == $afcWC2["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["wc2AFC"] == $afcWC2["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$afcWC2["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC2A');" . 
+            <span id="afcWC2A" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc2AFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc2AFC"] == $afcWC2["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc2AFC"] == $afcWC2["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$afcWC2["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC2A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcWC2A_IMG\" src=\"" . getIcon($afcWC2["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="afcWC2H" style="font-size:24px;color:#<?php
-  echo (($myPicks[0]["wc2AFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc2AFC"] == $afcWC2["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["wc2AFC"] == $afcWC2["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$afcWC2["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC2H');" . 
+            <span id="afcWC2H" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc2AFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc2AFC"] == $afcWC2["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc2AFC"] == $afcWC2["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$afcWC2["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC2H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcWC2H_IMG\" src=\"" . getIcon($afcWC2["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
@@ -234,17 +243,17 @@
         <tr>
           <td class="noBorder">&nbsp;</td>
           <td class="noBorder" rowspan=3>
-            <span id="afcDiv2A" style="font-size:36px;color:#<?php 
+            <span id="afcDiv2A" style="font-size:36px;color:<?php
   $pickToCompare = ($WCswapAFC ? $myPicks[0]["div1AFC"] : $myPicks[0]["div2AFC"]);
-  echo (($pickToCompare == "") ? "D9DCE3" : (($pickToCompare == $afcDiv2["awayTeam"]) ? "007500" : 
-      (($pickToCompare == $afcDiv2["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$afcDiv2["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcDiv2A');" . 
+  echo (($pickToCompare == "") ? "#D9DCE3" : (($pickToCompare == $afcDiv2["awayTeam"]) ? $palette[0] :
+      (($pickToCompare == $afcDiv2["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$afcDiv2["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcDiv2A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcDiv2A_IMG\" src=\"" . getIcon($afcDiv2["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="afcDiv2H" style="font-size:36px;color:#<?php
-  echo (($pickToCompare == "") ? "D9DCE3" : (($pickToCompare == $afcDiv2["homeTeam"]) ? "007500" : 
-      (($pickToCompare == $afcDiv2["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$afcDiv2["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcDiv2H');" . 
+            <span id="afcDiv2H" style="font-size:36px;color:<?php
+  echo (($pickToCompare == "") ? "#D9DCE3" : (($pickToCompare == $afcDiv2["homeTeam"]) ? $palette[0] :
+      (($pickToCompare == $afcDiv2["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$afcDiv2["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcDiv2H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcDiv2H_IMG\" src=\"" . getIcon($afcDiv2["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
@@ -252,16 +261,16 @@
         </tr>
         <tr>
           <td class="noBorder" rowspan=2>
-            <span id="afcWC3A" style="font-size:24px;color:#<?php 
-  echo (($myPicks[0]["wc3AFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc3AFC"] == $afcWC3["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["wc3AFC"] == $afcWC3["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$afcWC3["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC3A');" . 
+            <span id="afcWC3A" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc3AFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc3AFC"] == $afcWC3["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc3AFC"] == $afcWC3["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$afcWC3["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC3A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcWC3A_IMG\" src=\"" . getIcon($afcWC3["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="afcWC3H" style="font-size:24px;color:#<?php
-  echo (($myPicks[0]["wc3AFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc3AFC"] == $afcWC3["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["wc3AFC"] == $afcWC3["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$afcWC3["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC3H');" . 
+            <span id="afcWC3H" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc3AFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc3AFC"] == $afcWC3["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc3AFC"] == $afcWC3["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$afcWC3["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('afcWC3H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"afcWC3H_IMG\" src=\"" . getIcon($afcWC3["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
@@ -270,47 +279,47 @@
         <tr></tr>
         <tr>
           <td class="noBorder" rowspan=2>
-            <span id="nfcWC1A" style="font-size:24px;color:#<?php 
-  echo (($myPicks[0]["wc1NFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc1NFC"] == $nfcWC1["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["wc1NFC"] == $nfcWC1["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$nfcWC1["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC1A');" . 
+            <span id="nfcWC1A" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc1NFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc1NFC"] == $nfcWC1["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc1NFC"] == $nfcWC1["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$nfcWC1["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC1A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcWC1A_IMG\" src=\"" . getIcon($nfcWC1["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="nfcWC1H" style="font-size:24px;color:#<?php
-  echo (($myPicks[0]["wc1NFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc1NFC"] == $nfcWC1["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["wc1NFC"] == $nfcWC1["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$nfcWC1["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC1H');" . 
+            <span id="nfcWC1H" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc1NFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc1NFC"] == $nfcWC1["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc1NFC"] == $nfcWC1["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$nfcWC1["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC1H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcWC1H_IMG\" src=\"" . getIcon($nfcWC1["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
           <td class="noBorder">&nbsp;</td>
           <td class="noBorder" rowspan=3>
-            <span id="nfcDiv1A" style="font-size:36px;color:#<?php 
+            <span id="nfcDiv1A" style="font-size:36px;color:<?php
   $pickToCompare = ($WCswapNFC ? $myPicks[0]["div2NFC"] : $myPicks[0]["div1NFC"]);
-  echo (($pickToCompare == "") ? "D9DCE3" : (($pickToCompare == $nfcDiv1["awayTeam"]) ? "007500" : 
-      (($pickToCompare == $nfcDiv1["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$nfcDiv1["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcDiv1A');" . 
+  echo (($pickToCompare == "") ? "#D9DCE3" : (($pickToCompare == $nfcDiv1["awayTeam"]) ? $palette[0] :
+      (($pickToCompare == $nfcDiv1["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$nfcDiv1["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcDiv1A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcDiv1A_IMG\" src=\"" . getIcon($nfcDiv1["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="nfcDiv1H" style="font-size:36px;color:#<?php
-  echo (($pickToCompare == "") ? "D9DCE3" : (($pickToCompare == $nfcDiv1["homeTeam"]) ? "007500" : 
-      (($pickToCompare == $nfcDiv1["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$nfcDiv1["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcDiv1H');" . 
+            <span id="nfcDiv1H" style="font-size:36px;color:<?php
+  echo (($pickToCompare == "") ? "#D9DCE3" : (($pickToCompare == $nfcDiv1["homeTeam"]) ? $palette[0] :
+      (($pickToCompare == $nfcDiv1["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$nfcDiv1["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcDiv1H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcDiv1H_IMG\" src=\"" . getIcon($nfcDiv1["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
           <td class="noBorder">&nbsp;</td>
           <td class="noBorder" rowspan=6>
-            <span id="nfcCCA" style="font-size:48px;color:#<?php 
-  echo (($myPicks[0]["confNFC"] == "") ? "D9DCE3" : (($myPicks[0]["confNFC"] == $nfcCC["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["confNFC"] == $nfcCC["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$nfcCC["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcCCA');" . 
+            <span id="nfcCCA" style="font-size:48px;color:<?php
+  echo (($myPicks[0]["confNFC"] == "") ? "#D9DCE3" : (($myPicks[0]["confNFC"] == $nfcCC["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["confNFC"] == $nfcCC["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$nfcCC["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcCCA');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcCCA_IMG\" src=\"" . getIcon($nfcCC["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="nfcCCH" style="font-size:48px;color:#<?php
-  echo (($myPicks[0]["confNFC"] == "") ? "D9DCE3" : (($myPicks[0]["confNFC"] == $nfcCC["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["confNFC"] == $nfcCC["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$nfcCC["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcCCH');" . 
+            <span id="nfcCCH" style="font-size:48px;color:<?php
+  echo (($myPicks[0]["confNFC"] == "") ? "#D9DCE3" : (($myPicks[0]["confNFC"] == $nfcCC["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["confNFC"] == $nfcCC["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$nfcCC["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcCCH');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcCCH_IMG\" src=\"" . getIcon($nfcCC["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
@@ -319,16 +328,16 @@
         <tr></tr>
         <tr>
           <td class="noBorder" rowspan=2>
-            <span id="nfcWC2A" style="font-size:24px;color:#<?php 
-  echo (($myPicks[0]["wc2NFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc2NFC"] == $nfcWC2["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["wc2NFC"] == $nfcWC2["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$nfcWC2["awayTeam"]] . 
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC2A');" . 
+            <span id="nfcWC2A" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc2NFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc2NFC"] == $nfcWC2["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc2NFC"] == $nfcWC2["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$nfcWC2["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC2A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcWC2A_IMG\" src=\"" . getIcon($nfcWC2["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="nfcWC2H" style="font-size:24px;color:#<?php
-  echo (($myPicks[0]["wc2NFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc2NFC"] == $nfcWC2["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["wc2NFC"] == $nfcWC2["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$nfcWC2["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC2H');" . 
+            <span id="nfcWC2H" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc2NFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc2NFC"] == $nfcWC2["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc2NFC"] == $nfcWC2["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$nfcWC2["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC2H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcWC2H_IMG\" src=\"" . getIcon($nfcWC2["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
@@ -337,17 +346,17 @@
         <tr>
           <td class="noBorder">&nbsp;</td>
           <td class="noBorder" rowspan=3>
-            <span id="nfcDiv2A" style="font-size:36px;color:#<?php 
+            <span id="nfcDiv2A" style="font-size:36px;color:<?php
   $pickToCompare = ($WCswapNFC ? $myPicks[0]["div1NFC"] : $myPicks[0]["div2NFC"]);
-  echo (($pickToCompare == "") ? "D9DCE3" : (($pickToCompare == $nfcDiv2["awayTeam"]) ? "007500" : 
-      (($pickToCompare == $nfcDiv2["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$nfcDiv2["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcDiv2A');" . 
+  echo (($pickToCompare == "") ? "#D9DCE3" : (($pickToCompare == $nfcDiv2["awayTeam"]) ? $palette[0] :
+      (($pickToCompare == $nfcDiv2["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$nfcDiv2["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcDiv2A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcDiv2A_IMG\" src=\"" . getIcon($nfcDiv2["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="nfcDiv2H" style="font-size:36px;color:#<?php
-  echo (($pickToCompare == "") ? "D9DCE3" : (($pickToCompare == $nfcDiv2["homeTeam"]) ? "007500" : 
-      (($pickToCompare == $nfcDiv2["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$nfcDiv2["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcDiv2H');" . 
+            <span id="nfcDiv2H" style="font-size:36px;color:<?php
+  echo (($pickToCompare == "") ? "#D9DCE3" : (($pickToCompare == $nfcDiv2["homeTeam"]) ? $palette[0] :
+      (($pickToCompare == $nfcDiv2["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$nfcDiv2["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcDiv2H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcDiv2H_IMG\" src=\"" . getIcon($nfcDiv2["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
@@ -355,16 +364,16 @@
         </tr>
         <tr>
           <td class="noBorder" rowspan=2>
-            <span id="nfcWC3A" style="font-size:24px;color:#<?php 
-  echo (($myPicks[0]["wc3NFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc3NFC"] == $nfcWC3["awayTeam"]) ? "007500" : 
-      (($myPicks[0]["wc3NFC"] == $nfcWC3["homeTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">" . $teamAliases[$nfcWC3["awayTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC3A');" . 
+            <span id="nfcWC3A" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc3NFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc3NFC"] == $nfcWC3["awayTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc3NFC"] == $nfcWC3["homeTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">" . $teamAliases[$nfcWC3["awayTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC3A');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcWC3A_IMG\" src=\"" . getIcon($nfcWC3["awayTeam"], $result["season"]); 
   ?>" draggable="false" ondragstart="return false;" /></div>
-            <span id="nfcWC3H" style="font-size:24px;color:#<?php
-  echo (($myPicks[0]["wc3NFC"] == "") ? "D9DCE3" : (($myPicks[0]["wc3NFC"] == $nfcWC3["homeTeam"]) ? "007500" : 
-      (($myPicks[0]["wc3NFC"] == $nfcWC3["awayTeam"]) ? "BF0000" : "D9DCE3"))) . ";\">@ " . $teamAliases[$nfcWC3["homeTeam"]] .
-      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC3H');" . 
+            <span id="nfcWC3H" style="font-size:24px;color:<?php
+  echo (($myPicks[0]["wc3NFC"] == "") ? "#D9DCE3" : (($myPicks[0]["wc3NFC"] == $nfcWC3["homeTeam"]) ? $palette[0] :
+      (($myPicks[0]["wc3NFC"] == $nfcWC3["awayTeam"]) ? $palette[2] : "#D9DCE3"))) . ";\">@ " . $teamAliases[$nfcWC3["homeTeam"]] .
+      "</span><br>\n            <div class=\"imgDiv mouseEnabled\" style=\"cursor:pointer;\" onClick=\"MakePick('nfcWC3H');" .
       " ToggleSaveButton();\"><img class=\"teamLogo\" id=\"nfcWC3H_IMG\" src=\"" . getIcon($nfcWC3["homeTeam"], $result["season"]);
   ?>" draggable="false" ondragstart="return false;" /></div><br><br>
           </td>
