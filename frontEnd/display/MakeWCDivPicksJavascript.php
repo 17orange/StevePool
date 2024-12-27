@@ -167,7 +167,8 @@
           }
           echo "19:19";
         ?>};
-        var canSave = (document.getElementById("pointsLeft").innerHTML == "0 points remaining");
+        var canSave = testUniqueness();
+        canSave &= (document.getElementById("pointsLeft").innerHTML == "0 points remaining");
         for( var i=1; i<=sliderCount && canSave; i++ )
         {
           var testElem = document.getElementById("mp3_" + i);
@@ -514,7 +515,7 @@
       function adjustSliders(event, ui) {
         var pointsLeft = <?php echo (($result["weekNumber"] == 19) ? 30 : 20); ?>;
         var total = <?php echo (($result["weekNumber"] == 19) ? 30 : 20); ?>;
-        var absoluteMax = <?php echo (($result["weekNumber"] == 19) ? 25 : 17); ?>;
+        var absoluteMax = <?php echo (($result["weekNumber"] == 19) ? 15 : 14); ?>;
         $(".pointSlider").each( function() {
           total -= ($(this).slider("value") ? $(this).slider("value") : 1);
           pointsLeft -= $(this).slider("value");
@@ -560,6 +561,25 @@
         if( $(event.target).find(".handleGuts").find("img").length == 0 ) {
           $(event.target).find(".handleGuts").html("TIE " + ui.value + "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"icons/2016/nfl.png\" draggable=\"false\" ondragstart=\"return false;\" ontouchstart=\"return false;\"></div>");
         }
+
+        testUniqueness();
+      }
+
+      function testUniqueness() {
+        // adjust the warnings
+        var pointVals = [];
+        $(".uniqueWeight").css("display", "none");
+        for( var i=1; i<=sliderCount; i++ )
+        {
+          // check to see whether we have unique point values
+          var testVal = $("#pts" + i).attr("value");
+          if( pointVals.includes(testVal) ) {
+            $(".uniqueWeight").css("display", "block");
+            return false;
+          }
+          pointVals.push(testVal);
+        }
+        return true;
       }
 
       //this will hold reference to the tr we have dragged and its helper

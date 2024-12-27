@@ -132,17 +132,17 @@ def updateStats(week, season):
 		leaders = cur.fetchall()
 		for player in leaders:
 			# see if this row is ahead of the current one
-			if winnerCount < 42 and (player[1] < currRow[1] or (player[1] == currRow[1] and (player[2] < currRow[2] or (player[2] == currRow[2] and ((currRow[3] == 0 and player[3] > 0) or player[4] < currRow[4]))))):
+			if winnerCount < 44 and (player[1] < currRow[1] or (player[1] == currRow[1] and (player[2] < currRow[2] or (player[2] == currRow[2] and ((currRow[3] == 0 and player[3] > 0) or player[4] < currRow[4]))))):
 				winnerCount = winnerCount + len(winnerIDs)
 				for winner in winnerIDs:
-					cur.execute("update SeasonResult set inPlayoffs=if(" + str(winnerCount) + " <= 42, 'Y', 'R') where season=" + season + " and userID=" + str(winner))
+					cur.execute("update SeasonResult set inPlayoffs=if(" + str(winnerCount) + " <= 44, 'Y', 'R') where season=" + season + " and userID=" + str(winner))
 				winnerIDs = [player[0]]
 				currRow = player
 			else:
 				winnerIDs.append( player[0] )
 
 		# see if we ran out of people (should only be at the beginning of the season)
-		if winnerCount < 42:
+		if winnerCount < 44:
 			for winner in winnerIDs:
 				cur.execute("update SeasonResult set inPlayoffs='R' where season=" + season + " and userID=" + str(winner))
 
@@ -184,7 +184,7 @@ def updatePlayoffStats(week, season):
 		cur.execute("select distinct(confID) from SeasonResult join Division using (divID) where season=" + season )
 		conferences = cur.fetchall()
 		for conf in conferences:
-			# grab the top 18
+			# grab the top 19
 			winnerCount = 0
 			winnerIDs = []
 			currRow = [0,50000,0,0,0,0,0,0,0,0]
@@ -192,19 +192,19 @@ def updatePlayoffStats(week, season):
 			leaders = cur.fetchall()
 			for player in leaders:
 				# see if this row is ahead of the current one
-				if winnerCount < 18 and (player[1] < currRow[1] or (player[1] == currRow[1] and gameScores[0][1]  == 3 and (player[2] > currRow[2] or (player[2] == currRow[2] and (player[3] > currRow[3] or (player[3] == currRow[3] and (player[4] > currRow[4] or (player[4] == currRow[4] and (player[5] > currRow[5] or (player[5] == currRow[5] and (player[6] > currRow[6] or (player[6] == currRow[6] and (player[7] > currRow[7] or (player[7] == currRow[7] and (player[8] > currRow[8] or (player[8] == currRow[8] and (player[9] > currRow[9] or (player[9] == currRow[9] and (player[10] > currRow[10] or (player[10] == currRow[10] and (player[11] > currRow[11] or (player[11] == currRow[11] and (player[12] > currRow[12] or (player[12] == currRow[12] and (player[13] > currRow[13]))))))))))))))))))))))))):
+				if winnerCount < 19 and (player[1] < currRow[1] or (player[1] == currRow[1] and gameScores[0][1]  == 3 and (player[2] > currRow[2] or (player[2] == currRow[2] and (player[3] > currRow[3] or (player[3] == currRow[3] and (player[4] > currRow[4] or (player[4] == currRow[4] and (player[5] > currRow[5] or (player[5] == currRow[5] and (player[6] > currRow[6] or (player[6] == currRow[6] and (player[7] > currRow[7] or (player[7] == currRow[7] and (player[8] > currRow[8] or (player[8] == currRow[8] and (player[9] > currRow[9] or (player[9] == currRow[9] and (player[10] > currRow[10] or (player[10] == currRow[10] and (player[11] > currRow[11] or (player[11] == currRow[11] and (player[12] > currRow[12] or (player[12] == currRow[12] and (player[13] > currRow[13]))))))))))))))))))))))))):
 					winnerCount = winnerCount + len(winnerIDs)
 					for winner in winnerIDs:
-						cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 18, 'Y', 'R') where weekNumber=19 and season=" + season + " and userID=" + str(winner))
+						cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 19, 'Y', 'R') where weekNumber=19 and season=" + season + " and userID=" + str(winner))
 					winnerIDs = [player[0]]
 					currRow = player
 				else:
 					winnerIDs.append( player[0] )
 			# tied guys
-			if( winnerCount < 18 ):
+			if( winnerCount < 19 ):
 				winnerCount = winnerCount + len(winnerIDs)
 				for winner in winnerIDs:
-					cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 18, 'Y', 'R') where weekNumber=19 and season=" + season + " and userID=" + str(winner))
+					cur.execute("update PlayoffResult set advances=if(" + str(winnerCount) + " <= 19, 'Y', 'R') where weekNumber=19 and season=" + season + " and userID=" + str(winner))
 
 		# see if the round is final
 		cur.execute("select sum(status<" + str(FINAL) + ") from Game where season=" + season + " and weekNumber=19")

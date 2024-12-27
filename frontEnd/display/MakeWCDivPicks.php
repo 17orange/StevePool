@@ -49,7 +49,11 @@
     <td class="noBorder" style="min-width:78px; font-size:20px">Winner</td>
     <td class="noBorder" style="min-width:68px">&nbsp;</td>
     <td class="noBorder" style="min-width:68px">&nbsp;</td>
-    <td class="noBorder" colspan="2" style="min-width:68px; font-size:20px">Confidence Points</td>
+    <td class="noBorder" colspan="2" style="min-width:68px; font-size:20px">
+      <span class="uniqueWeight" style="font-size:14px;float:left">Weights must be unique!</span>
+      Confidence Points
+      <span class="uniqueWeight" style="font-size:14px;float:right">Weights must be unique!</span>
+    </td>
   </tr>
 <?php
   for($i=1; $i<=$sliderCount; $i++) {
@@ -139,7 +143,7 @@
           <div class="sliderReal"><div class="pointSlider" id="slider<?php echo $i; ?>"><div class="sliderGood<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>"></div></div></div>
         </td>
         <td class="noBorder" style="min-width:5px">&nbsp;</td>
-        <td class="noBorder" style="width:50px"><?php echo ($totalPoints + 1 - $sliderCount);?></td>
+        <td class="noBorder" style="width:50px"><?php echo ($totalPoints - ($sliderCount * ($sliderCount - 1) / 2));?></td>
       </tr></table>
     </td>
     <td class="noBorder" colspan=1 style="display:none; text-align:center; font-size: 20px;"><?php echo $picks[$i]["points"]?> points</td>
@@ -246,7 +250,7 @@
     $(document).ready( function() {
       <?php for($i=1; $i<=$sliderCount; $i++ ) { ?>
         $("#slider<?php echo $i; ?>").slider({ 
-          value:<?php echo $picks[$i]["points"]?>, min:0, max:<?php echo ($totalPoints + 1 - $sliderCount)?>, slide:fixCaption, stop:adjustSliders });
+          value:<?php echo $picks[$i]["points"]?>, min:0, max:<?php echo ($totalPoints - ($sliderCount * ($sliderCount - 1) / 2))?>, slide:fixCaption, stop:adjustSliders });
         $("#sliderHandle<?php echo $i; ?>").find("div").css({"min-width":"68px","height":"65px"});
         $("#slider<?php echo $i; ?>").find(".ui-slider-handle").append($("#sliderHandle<?php echo $i; ?>"));
       <?php } ?>

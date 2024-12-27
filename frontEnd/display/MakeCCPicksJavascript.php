@@ -167,7 +167,8 @@
 
       function ToggleSaveButton()
       {
-        var canSave = (document.getElementById("pointsLeft").innerHTML == "0 points remaining");
+        var canSave = testUniqueness();
+        canSave &= (document.getElementById("pointsLeft").innerHTML == "0 points remaining");
         for( var i=1; i<5 && canSave; i++ )
         {
           var testElem = document.getElementById("mp3_" + i);
@@ -691,8 +692,8 @@
         } );
         $(".pointSlider").each( function() {
           var max = ($(this).slider("value") ? $(this).slider("value") : 1) + total;
-          if( max > 17 ) {
-            max = 17;
+          if( max > 14 ) {
+            max = 14;
           }
           if( max < 1 ) {
             max = 1;
@@ -700,7 +701,7 @@
           $(this).slider("option", "max", max);
           $(this).slider("value", $(this).slider("value"));
           fixCaption({"target":$(this)}, {"value":$(this).slider("value")});
-          $(this).css({"width":((max * 100 / 17) + "%")});
+          $(this).css({"width":((max * 100 / 14) + "%")});
         } );
         $('#pointsLeft').html(pointsLeft + " point" + ((pointsLeft == 1) ? "" : "s") + " remaining");
 
@@ -730,6 +731,25 @@
         if( $(event.target).find(".handleGuts").find("img").length == 0 ) {
           $(event.target).find(".handleGuts").html("TIE " + ui.value + "<br><div class=\"imgDiv\"><img class=\"teamLogo\" src=\"icons/2016/nfl.png\" draggable=\"false\" ondragstart=\"return false;\" ontouchstart=\"return false;\"></div>");
         }
+
+        testUniqueness();
+      }
+
+      function testUniqueness() {
+        // adjust the warnings
+        var pointVals = [];
+        $(".uniqueWeight").css("display", "none");
+        for( var i=1; i<=4; i++ )
+        {
+          // check to see whether we have unique point values
+          var testVal = $("#pts" + i).attr("value");
+          if( pointVals.includes(testVal) ) {
+            $(".uniqueWeight").css("display", "block");
+            return false;
+          }
+          pointVals.push(testVal);
+        }
+        return true;
       }
 
       //this will hold reference to the tr we have dragged and its helper

@@ -64,7 +64,11 @@
     <td class="noBorder" style="min-width:78px; font-size:20px">Winner</td>
     <td class="noBorder" style="min-width:68px">&nbsp;</td>
     <td class="noBorder" style="min-width:68px">&nbsp;</td>
-    <td class="noBorder" colspan="2" style="min-width:68px; font-size:20px">Confidence Points</td>
+    <td class="noBorder" colspan="2" style="min-width:68px; font-size:20px">
+      <span class="uniqueWeight" style="font-size:14px;float:left">Weights must be unique!</span>
+      Confidence Points
+      <span class="uniqueWeight" style="font-size:14px;float:right">Weights must be unique!</span>
+    </td>
   </tr>
 <?php
   for($i=1; $i<5; $i++) {
@@ -158,7 +162,7 @@
           <div class="sliderReal"><div class="pointSlider" id="slider<?php echo $i; ?>"><div class="sliderGood<?php echo ($_SESSION["cbm"] ? " CBM" : ""); ?>"></div></div></div>
         </td>
         <td class="noBorder" style="min-width:5px">&nbsp;</td>
-        <td class="noBorder" style="width:50px">17</td>
+        <td class="noBorder" style="width:50px">14</td>
       </tr></table>
     </td>
     <td class="noBorder" colspan=1 style="display:none; text-align:center; font-size: 20px;"><?php echo $picks[$i]["points"]?> points</td>

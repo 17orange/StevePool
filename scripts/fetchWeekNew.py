@@ -46,8 +46,15 @@ def GrabWeekGames(week, season):
 			start = -1
 			continue
 
-		# get the CBS page to parse this info
+		# skip Damar Hamlin game
+		#if( homeTeam == "TEN" and awayTeam == "IND" and week == "6" and season == "2024" ):
+		#	start = -1
+		#	continue
+
+		# get the CBS page to parse this info 
+		# NEED TO FLIP HOME/AWAY EVERY OTHER SEASON FOR SUPER BOWL
 		cur.execute("select gameID, concat('NFL_', date_format(gameTime, '%Y%m%d'), '_', if(((season%2) = 1) and (weekNumber=23), homeTeam, awayTeam),'@', if(((season%2) = 1) and (weekNumber=23), awayTeam, homeTeam)) as URL from Game where season=" + str(season) + " and weekNumber=" + str(week) + " and homeTeam='" + homeTeam + "' and awayTeam='" + awayTeam + "'")
+		#cur.execute("select gameID, concat('NFL_', date_format(gameTime, '%Y%m%d'), '_', if(((season%2) = 1) and (weekNumber=23), homeTeam, awayTeam),'@', if(((season%2) = 1) and (weekNumber=23), awayTeam, homeTeam)) as URL from Game where season=" + str(season) + " and weekNumber=" + str(week) + " and homeTeam='" + awayTeam + "' and awayTeam='" + homeTeam + "'")
 		dbInfo = cur.fetchall()[0]
 		###print( "http://www.cbssports.com/nfl/gametracker/live/" + dbInfo[1].replace("JAX", "JAC").replace("LAC", "QXV").replace("LA", "LAR").replace("QXV", "LAC"))
 		analyzePage = str(urllib.request.urlopen("http://www.cbssports.com/nfl/gametracker/live/" + dbInfo[1].replace("JAX", "JAC").replace("LAC", "QXV").replace("LA", "LAR").replace("QXV", "LAC")).read())
