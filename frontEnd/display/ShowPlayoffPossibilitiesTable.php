@@ -1252,8 +1252,8 @@
                   {
                     advance = (j - i1) < <?php
   echo ($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 20 : 21)) ? (($_SESSION["showPicksSeason"] <= 2021) ? 5 : 6) :
-       (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20)) ? (($_SESSION["showPicksSeason"] <= 2021) ? 10 : 11) :
-       (($_SESSION["showPicksSeason"] < 2017) ? 20 : (($_SESSION["showPicksSeason"] <= 2020) ? 21 : 22))); ?>;
+       (($_SESSION["showPicksWeek"] == (($_SESSION["showPicksSeason"] <= 2020) ? 19 : 20)) ? (($_SESSION["showPicksSeason"] <= 2021) ? 10 : (($_SESSION["showPicksSeason"] <= 2022) ? 11 : 12)) :
+       (($_SESSION["showPicksSeason"] < 2017) ? 20 : (($_SESSION["showPicksSeason"] <= 2020) ? 21 : (($_SESSION["showPicksSeason"] <= 2022) ? 22 : 24)))); ?>;
                     rows[j].cells[rows[j].cells.length - 1].innerHTML = (advance ? "Yes" : "No");
                   }
                   rows[j].style.color = (advance ? "<?php echo $palette[0]; ?>": "<?php echo $palette[2]; ?>");
